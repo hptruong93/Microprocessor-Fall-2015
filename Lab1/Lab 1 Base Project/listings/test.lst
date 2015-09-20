@@ -1,0 +1,46 @@
+
+
+
+ARM Macro Assembler    Page 1 
+
+
+    1 00000000                 AREA             text, CODE, READONLY
+    2 00000000                 EXPORT           example1
+    3 00000000         
+    4 00000000         example1
+    5 00000000 F04F 0110       MOV              R1, #16
+    6 00000004 F04F 0208       MOV              R2, #8
+    7 00000008 EB02 0103       ADD              R1, R2, R3
+    8 0000000C 4770            BX               LR          ;
+    9 0000000E                 END
+Command Line: --debug --xref --diag_suppress=9931 --cpu=Cortex-M4.fp --apcs=int
+erwork --depend=.\object\test.d -o.\object\test.o -I"C:\Users\ptruon4\Downloads
+\Lab 1 Base Project\RTE" -I"C:\Users\ptruon4\Downloads\Lab 1 Base Project\RTE\D
+evice\STM32F407VG" -IC:\Keil_v5\ARM\PACK\ARM\CMSIS\4.3.0\CMSIS\Include -IC:\Kei
+l_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\Include --predefine="__MICROLIB S
+ETA 1" --predefine="__UVISION_VERSION SETA 515" --predefine="_RTE_ SETA 1" --pr
+edefine="STM32F40_41xxx SETA 1" --list=.\listings\test.lst test.s
+
+
+
+ARM Macro Assembler    Page 1 Alphabetic symbol ordering
+Relocatable symbols
+
+example1 00000000
+
+Symbol: example1
+   Definitions
+      At line 4 in file test.s
+   Uses
+      At line 2 in file test.s
+Comment: example1 used once
+text 00000000
+
+Symbol: text
+   Definitions
+      At line 1 in file test.s
+   Uses
+      None
+Comment: text unused
+2 symbols
+337 symbols in table
