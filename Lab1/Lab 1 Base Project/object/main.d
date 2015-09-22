@@ -9,3 +9,4 @@
 .\object\main.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h
 .\object\main.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\math.h
 .\object\main.o: source\viterbi.h
+.\object\main.o: source\utils.h

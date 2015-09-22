@@ -4,8 +4,8 @@
 typedef struct{
     int S; //number of states
     int V; //number of observation types
-    float** transition; //S x S transition probability matrix
-    float** emission; //S x V emission probability matrixd
+    float* transition; //S x S transition probability matrix
+    float* emission; //S x V emission probability matrixd
     float* prior; //S x 1 prior probability matrix
 } hmm_desc;
 

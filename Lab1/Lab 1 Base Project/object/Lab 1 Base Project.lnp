@@ -1,7 +1,6 @@
 --cpu Cortex-M4.fp
 ".\object\fputc_debug.o"
 ".\object\main.o"
-".\object\test.o"
 ".\object\utils.o"
 ".\object\viterbi.o"
 "C:\Keil_v5\ARM\PACK\ARM\CMSIS\4.3.0\CMSIS\Lib\ARM\arm_cortexM4lf_math.lib"

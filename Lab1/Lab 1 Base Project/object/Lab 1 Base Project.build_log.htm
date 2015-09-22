@@ -21,16 +21,33 @@ Target DLL:      STLink\ST-LINKIII-KEIL_SWO.dll V2.0.15.0_KEIL
 Dialog DLL:      TCM.DLL V1.14.5.0
  
 <h2>Project:</h2>
-C:\Users\ptruon4\Downloads\Lab 1 Base Project\Lab 1 Base Project.uvprojx
-Project File Date:  09/18/2015
+C:\Users\ptruon4\Downloads\temp\Microprocessor-Fall-2015\Lab1\Lab 1 Base Project\Lab 1 Base Project.uvprojx
+Project File Date:  09/22/2015
 
 <h2>Output:</h2>
 *** Using Compiler 'V5.05 update 2 (build 169)', folder: 'C:\Keil_v5\ARM\ARMCC\Bin'
 Build target 'Lab1'
+compiling fputc_debug.c...
+compiling main.c...
+compiling utils.c...
+source\utils.c(6): warning:  #223-D: function "printf" declared implicitly
+      printf("Finding argmax of array with size %d\n", size);
+source\utils.c(33): warning:  #223-D: function "printf" declared implicitly
+      printf("Printing array of %d elements at %d --> ", number, array1D);
+source\utils.c(38): warning:  #1-D: last line of file ends without a newline
+  }
+source\utils.c: 3 warnings, 0 errors
 compiling viterbi.c...
+source\viterbi.c(11): warning:  #223-D: function "printf" declared implicitly
+      printf("#############################################\n");
+source\viterbi.c(81): warning:  #223-D: function "printf" declared implicitly
+          printf("At iteration number %d with Observation %d\n", i, Observations[i]);
+source\viterbi.c: 2 warnings, 0 errors
+assembling startup_stm32f40_41xxx.s...
+compiling system_stm32f4xx.c...
 linking...
-Program Size: Code=776 RO-data=424 RW-data=24 ZI-data=1024  
-".\object\Lab 1 Base Project.axf" - 0 Error(s), 0 Warning(s).
+Program Size: Code=5796 RO-data=496 RW-data=12 ZI-data=1540  
+".\object\Lab 1 Base Project.axf" - 0 Error(s), 5 Warning(s).
 
 <h2>Software Packages used:</h2>
 
@@ -48,8 +65,8 @@ Package Vendor: Keil
    * Component: Startup Version: 1.3.1
 
 <h2>Collection of Component include folders:</h2>
-  C:\Users\ptruon4\Downloads\Lab 1 Base Project\RTE
-  C:\Users\ptruon4\Downloads\Lab 1 Base Project\RTE\Device\STM32F407VG
+  C:\Users\ptruon4\Downloads\temp\Microprocessor-Fall-2015\Lab1\Lab 1 Base Project\RTE
+  C:\Users\ptruon4\Downloads\temp\Microprocessor-Fall-2015\Lab1\Lab 1 Base Project\RTE\Device\STM32F407VG
   C:\Keil_v5\ARM\PACK\ARM\CMSIS\4.3.0\CMSIS\Include
   C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\Include
 
