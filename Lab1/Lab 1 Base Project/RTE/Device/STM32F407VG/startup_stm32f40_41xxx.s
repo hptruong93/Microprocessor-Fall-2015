@@ -178,6 +178,8 @@ Reset_Handler    PROC
                  EXPORT  Reset_Handler             [WEAK]
 
         IMPORT  __main
+				IMPORT ViterbiUpdate_asm
+								; enabling floating point operation
 								LDR.W R0, =0xE000ED88
 								LDR R1, [R0]
 								ORR R1, R1, #(0xF << 20)
@@ -186,7 +188,7 @@ Reset_Handler    PROC
 								ISB
 								
 
-                LDR     R0, =__main
+                LDR     R0, =ViterbiUpdate_asm
                 BX      R0
                 ENDP
 
