@@ -13,24 +13,24 @@ int ViterbiUpdate_C(float* InputArray, float* OutputArray, hmm_desc* hmm, int Ob
         float p_observation_given_k = get_index(hmm->emission, hmm->V, k, Observation);
         printf("Considering state %d with p_observation_given_k (%d, %d) is %f\n", k, k, Observation, p_observation_given_k);
 
-        float max = -1;
-
+				/*void  arm_mult_f32 (float32_t *pSrcA, float32_t *pSrcB, float32_t *pDst, uint32_t blockSize)*/
+				float temporary[number_of_states];
         for (int x = 0; x < number_of_states; x++) {
             float value = InputArray[x] * get_index(hmm->transition, number_of_states, x, k);
             printf("###### Evaluating %f * %f = %f\n", InputArray[x], get_index(hmm->transition, number_of_states, x, k), value);
-
-            if (value > max) {
-                max = value;
-                OutputArray[number_of_states + k] = x;
-            }
+						temporary[x] = value;
         }
 
-        if (max < 0) {
+				float* max;
+				int max_index = argmax(temporary, hmm->S, max);
+				OutputArray[number_of_states + k] = max_index;
+
+        if (*max < 0) {
             error = 1;
         }
         
-        OutputArray[k] = max * p_observation_given_k;
-        printf("Max value shall be %f multiply by %f gives %f\n", max, p_observation_given_k, OutputArray[k]);
+        OutputArray[k] = *max * p_observation_given_k;
+        printf("Max value shall be %f multiply by %f gives %f\n", *max, p_observation_given_k, OutputArray[k]);
         sum += OutputArray[k];
     }
 
