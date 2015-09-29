@@ -188,7 +188,7 @@ Reset_Handler    PROC
 								ISB
 								
 
-                LDR     R0, =ViterbiUpdate_asm
+                LDR     R0, =__main
                 BX      R0
                 ENDP
 

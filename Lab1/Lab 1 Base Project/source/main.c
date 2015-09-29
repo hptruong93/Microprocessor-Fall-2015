@@ -3,11 +3,11 @@
 #include "viterbi.h"
 #include "utils.h"
 
+extern int ViterbiUpdate_asm(float* InputArray, float* OutputArray, hmm_desc* hmm, int Observation);
 
 int main()
 {
     printf("AAA\n");
-
     hmm_desc hmm;
     hmm.S = 2;
     hmm.V = 3;

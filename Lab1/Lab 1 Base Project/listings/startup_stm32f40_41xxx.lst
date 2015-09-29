@@ -490,7 +490,7 @@ ARM Macro Assembler    Page 8
   188 00000010 F3BF 8F6F       ISB
   189 00000014         
   190 00000014         
-  191 00000014 4806            LDR              R0, =ViterbiUpdate_asm
+  191 00000014 4806            LDR              R0, =__main
   192 00000016 4700            BX               R0
   193 00000018                 ENDP
   194 00000018         
@@ -864,14 +864,14 @@ ARM Macro Assembler    Page 14
               00000000 
 Command Line: --debug --xref --diag_suppress=9931 --cpu=Cortex-M4.fp --apcs=int
 erwork --depend=.\object\startup_stm32f40_41xxx.d -o.\object\startup_stm32f40_4
-1xxx.o -I"\campus.mcgill.ca\emf\cpe\ptruon4\Desktop\temp\lates\Microprocessor-F
-all-2015\Lab1\Lab 1 Base Project\RTE" -I"\campus.mcgill.ca\emf\cpe\ptruon4\Desk
-top\temp\lates\Microprocessor-Fall-2015\Lab1\Lab 1 Base Project\RTE\Device\STM3
-2F407VG" -IC:\Keil_v5\ARM\PACK\ARM\CMSIS\4.3.0\CMSIS\Include -IC:\Keil_v5\ARM\P
-ACK\Keil\STM32F4xx_DFP\1.0.8\Device\Include --predefine="__MICROLIB SETA 1" --p
-redefine="__UVISION_VERSION SETA 515" --predefine="_RTE_ SETA 1" --predefine="S
-TM32F40_41xxx SETA 1" --list=.\listings\startup_stm32f40_41xxx.lst RTE\Device\S
-TM32F407VG\startup_stm32f40_41xxx.s
+1xxx.o -I"\campus.mcgill.ca\emf\cpe\ptruon4\Desktop\temp\Microprocessor-Fall-20
+15\Lab1\Lab 1 Base Project\RTE" -I"\campus.mcgill.ca\emf\cpe\ptruon4\Desktop\te
+mp\Microprocessor-Fall-2015\Lab1\Lab 1 Base Project\RTE\Device\STM32F407VG" -IC
+:\Keil_v5\ARM\PACK\ARM\CMSIS\4.3.0\CMSIS\Include -IC:\Keil_v5\ARM\PACK\Keil\STM
+32F4xx_DFP\1.0.8\Device\Include --predefine="__MICROLIB SETA 1" --predefine="__
+UVISION_VERSION SETA 515" --predefine="_RTE_ SETA 1" --predefine="STM32F40_41xx
+x SETA 1" --list=.\listings\startup_stm32f40_41xxx.lst RTE\Device\STM32F407VG\s
+tartup_stm32f40_41xxx.s
 
 
 
@@ -1954,15 +1954,15 @@ Symbol: ViterbiUpdate_asm
    Definitions
       At line 181 in file RTE\Device\STM32F407VG\startup_stm32f40_41xxx.s
    Uses
-      At line 191 in file RTE\Device\STM32F407VG\startup_stm32f40_41xxx.s
-Comment: ViterbiUpdate_asm used once
+      None
+Comment: ViterbiUpdate_asm unused
 __main 00000000
 
 Symbol: __main
    Definitions
       At line 180 in file RTE\Device\STM32F407VG\startup_stm32f40_41xxx.s
    Uses
-      None
-Comment: __main unused
+      At line 191 in file RTE\Device\STM32F407VG\startup_stm32f40_41xxx.s
+Comment: __main used once
 2 symbols
 446 symbols in table

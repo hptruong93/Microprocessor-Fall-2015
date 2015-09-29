@@ -1,15 +1,15 @@
 Dependencies for Project 'Lab 1 Base Project', Target 'Lab1': (DO NOT MODIFY !)
-F (.\source\fputc_debug.c)(0x56099BC3)(-c --cpu Cortex-M4.fp -D__MICROLIB -g -O0 --apcs=interwork -I.\source --c99-I "\\campus.mcgill.ca\emf\cpe\ptruon4\Desktop\temp\lates\Microprocessor-Fall-2015\Lab1\Lab 1 Base Project\RTE"-I "\\campus.mcgill.ca\emf\cpe\ptruon4\Desktop\temp\lates\Microprocessor-Fall-2015\Lab1\Lab 1 Base Project\RTE\Device\STM32F407VG"-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\4.3.0\CMSIS\Include-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\Include-D__UVISION_VERSION="515" -D_RTE_ -DSTM32F40_41xxx -DHSE_VALUE="8000000" -DUSE_STDPERIPH_DRIVER -DARM_MATH_CM4 -D__FPU_PRESENT="1"-o .\object\fputc_debug.o --omf_browse .\object\fputc_debug.crf --depend .\object\fputc_debug.d)
+F (.\source\fputc_debug.c)(0x560AD1D4)(-c --cpu Cortex-M4.fp -D__MICROLIB -g -O0 --apcs=interwork -I.\source --c99-I "\\campus.mcgill.ca\emf\cpe\ptruon4\Desktop\temp\Microprocessor-Fall-2015\Lab1\Lab 1 Base Project\RTE"-I "\\campus.mcgill.ca\emf\cpe\ptruon4\Desktop\temp\Microprocessor-Fall-2015\Lab1\Lab 1 Base Project\RTE\Device\STM32F407VG"-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\4.3.0\CMSIS\Include-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\Include-D__UVISION_VERSION="515" -D_RTE_ -DSTM32F40_41xxx -DHSE_VALUE="8000000" -DUSE_STDPERIPH_DRIVER -DARM_MATH_CM4 -D__FPU_PRESENT="1"-o .\object\fputc_debug.o --omf_browse .\object\fputc_debug.crf --depend .\object\fputc_debug.d)
 I (C:\Keil_v5\ARM\ARMCC\include\stdio.h)(0x54C2FC88)
-I (source\stm32f4xx.h)(0x56099BC4)
+I (source\stm32f4xx.h)(0x560AD1D4)
 I (C:\Keil_v5\ARM\PACK\ARM\CMSIS\4.3.0\CMSIS\Include\core_cm4.h)(0x5509E4C4)
 I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x54C2FC88)
 I (C:\Keil_v5\ARM\PACK\ARM\CMSIS\4.3.0\CMSIS\Include\core_cmInstr.h)(0x5509E4C4)
 I (C:\Keil_v5\ARM\PACK\ARM\CMSIS\4.3.0\CMSIS\Include\core_cmFunc.h)(0x5509E4C4)
 I (C:\Keil_v5\ARM\PACK\ARM\CMSIS\4.3.0\CMSIS\Include\core_cmSimd.h)(0x5509E4C4)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\Include\system_stm32f4xx.h)(0x529F71F2)
-I (source\stm32f4xx_conf.h)(0x56099BC4)
-F (.\source\main.c)(0x56099BC3)(-c --cpu Cortex-M4.fp -D__MICROLIB -g -O0 --apcs=interwork -I.\source --c99-I "\\campus.mcgill.ca\emf\cpe\ptruon4\Desktop\temp\lates\Microprocessor-Fall-2015\Lab1\Lab 1 Base Project\RTE"-I "\\campus.mcgill.ca\emf\cpe\ptruon4\Desktop\temp\lates\Microprocessor-Fall-2015\Lab1\Lab 1 Base Project\RTE\Device\STM32F407VG"-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\4.3.0\CMSIS\Include-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\Include-D__UVISION_VERSION="515" -D_RTE_ -DSTM32F40_41xxx -DHSE_VALUE="8000000" -DUSE_STDPERIPH_DRIVER -DARM_MATH_CM4 -D__FPU_PRESENT="1"-o .\object\main.o --omf_browse .\object\main.crf --depend .\object\main.d)
+I (source\stm32f4xx_conf.h)(0x560AD1D4)
+F (.\source\main.c)(0x560B2401)(-c --cpu Cortex-M4.fp -D__MICROLIB -g -O0 --apcs=interwork -I.\source --c99-I "\\campus.mcgill.ca\emf\cpe\ptruon4\Desktop\temp\Microprocessor-Fall-2015\Lab1\Lab 1 Base Project\RTE"-I "\\campus.mcgill.ca\emf\cpe\ptruon4\Desktop\temp\Microprocessor-Fall-2015\Lab1\Lab 1 Base Project\RTE\Device\STM32F407VG"-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\4.3.0\CMSIS\Include-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\Include-D__UVISION_VERSION="515" -D_RTE_ -DSTM32F40_41xxx -DHSE_VALUE="8000000" -DUSE_STDPERIPH_DRIVER -DARM_MATH_CM4 -D__FPU_PRESENT="1"-o .\object\main.o --omf_browse .\object\main.crf --depend .\object\main.d)
 I (C:\Keil_v5\ARM\ARMCC\include\stdio.h)(0x54C2FC88)
 I (C:\Keil_v5\ARM\PACK\ARM\CMSIS\4.3.0\CMSIS\Include\arm_math.h)(0x550C2948)
 I (C:\Keil_v5\ARM\PACK\ARM\CMSIS\4.3.0\CMSIS\Include\core_cm4.h)(0x5509E4C4)
@@ -19,29 +19,29 @@ I (C:\Keil_v5\ARM\PACK\ARM\CMSIS\4.3.0\CMSIS\Include\core_cmFunc.h)(0x5509E4C4)
 I (C:\Keil_v5\ARM\PACK\ARM\CMSIS\4.3.0\CMSIS\Include\core_cmSimd.h)(0x5509E4C4)
 I (C:\Keil_v5\ARM\ARMCC\include\string.h)(0x54C2FC88)
 I (C:\Keil_v5\ARM\ARMCC\include\math.h)(0x54C2FC88)
-I (source\viterbi.h)(0x56099BC4)
-I (source\utils.h)(0x56099BC4)
-F (.\source\stm32f4xx.h)(0x56099BC4)()
-F (.\source\stm32f4xx_conf.h)(0x56099BC4)()
-F (.\source\utils.c)(0x56099BC4)(-c --cpu Cortex-M4.fp -D__MICROLIB -g -O0 --apcs=interwork -I.\source --c99-I "\\campus.mcgill.ca\emf\cpe\ptruon4\Desktop\temp\lates\Microprocessor-Fall-2015\Lab1\Lab 1 Base Project\RTE"-I "\\campus.mcgill.ca\emf\cpe\ptruon4\Desktop\temp\lates\Microprocessor-Fall-2015\Lab1\Lab 1 Base Project\RTE\Device\STM32F407VG"-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\4.3.0\CMSIS\Include-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\Include-D__UVISION_VERSION="515" -D_RTE_ -DSTM32F40_41xxx -DHSE_VALUE="8000000" -DUSE_STDPERIPH_DRIVER -DARM_MATH_CM4 -D__FPU_PRESENT="1"-o .\object\utils.o --omf_browse .\object\utils.crf --depend .\object\utils.d)
+I (source\viterbi.h)(0x560B24E4)
+I (source\utils.h)(0x560AD1D4)
+F (.\source\stm32f4xx.h)(0x560AD1D4)()
+F (.\source\stm32f4xx_conf.h)(0x560AD1D4)()
+F (.\source\utils.c)(0x560B1EAE)(-c --cpu Cortex-M4.fp -D__MICROLIB -g -O0 --apcs=interwork -I.\source --c99-I "\\campus.mcgill.ca\emf\cpe\ptruon4\Desktop\temp\Microprocessor-Fall-2015\Lab1\Lab 1 Base Project\RTE"-I "\\campus.mcgill.ca\emf\cpe\ptruon4\Desktop\temp\Microprocessor-Fall-2015\Lab1\Lab 1 Base Project\RTE\Device\STM32F407VG"-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\4.3.0\CMSIS\Include-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\Include-D__UVISION_VERSION="515" -D_RTE_ -DSTM32F40_41xxx -DHSE_VALUE="8000000" -DUSE_STDPERIPH_DRIVER -DARM_MATH_CM4 -D__FPU_PRESENT="1"-o .\object\utils.o --omf_browse .\object\utils.crf --depend .\object\utils.d)
 I (C:\Keil_v5\ARM\ARMCC\include\float.h)(0x54C2FC88)
-I (source\utils.h)(0x56099BC4)
-F (.\source\utils.h)(0x56099BC4)()
-F (.\source\viterbi.c)(0x56099BC4)(-c --cpu Cortex-M4.fp -D__MICROLIB -g -O0 --apcs=interwork -I.\source --c99-I "\\campus.mcgill.ca\emf\cpe\ptruon4\Desktop\temp\lates\Microprocessor-Fall-2015\Lab1\Lab 1 Base Project\RTE"-I "\\campus.mcgill.ca\emf\cpe\ptruon4\Desktop\temp\lates\Microprocessor-Fall-2015\Lab1\Lab 1 Base Project\RTE\Device\STM32F407VG"-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\4.3.0\CMSIS\Include-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\Include-D__UVISION_VERSION="515" -D_RTE_ -DSTM32F40_41xxx -DHSE_VALUE="8000000" -DUSE_STDPERIPH_DRIVER -DARM_MATH_CM4 -D__FPU_PRESENT="1"-o .\object\viterbi.o --omf_browse .\object\viterbi.crf --depend .\object\viterbi.d)
-I (source\utils.h)(0x56099BC4)
-I (source\viterbi.h)(0x56099BC4)
+I (source\utils.h)(0x560AD1D4)
+F (.\source\utils.h)(0x560AD1D4)()
+F (.\source\viterbi.c)(0x560B247B)(-c --cpu Cortex-M4.fp -D__MICROLIB -g -O0 --apcs=interwork -I.\source --c99-I "\\campus.mcgill.ca\emf\cpe\ptruon4\Desktop\temp\Microprocessor-Fall-2015\Lab1\Lab 1 Base Project\RTE"-I "\\campus.mcgill.ca\emf\cpe\ptruon4\Desktop\temp\Microprocessor-Fall-2015\Lab1\Lab 1 Base Project\RTE\Device\STM32F407VG"-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\4.3.0\CMSIS\Include-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\Include-D__UVISION_VERSION="515" -D_RTE_ -DSTM32F40_41xxx -DHSE_VALUE="8000000" -DUSE_STDPERIPH_DRIVER -DARM_MATH_CM4 -D__FPU_PRESENT="1"-o .\object\viterbi.o --omf_browse .\object\viterbi.crf --depend .\object\viterbi.d)
+I (source\utils.h)(0x560AD1D4)
+I (source\viterbi.h)(0x560B24E4)
 I (C:\Keil_v5\ARM\ARMCC\include\math.h)(0x54C2FC88)
-F (.\source\viterbi.h)(0x56099BC4)()
-F (.\source\ViterbiUpdate_asm.s)(0x56099CAD)(--cpu Cortex-M4.fp -g --apcs=interwork --pd "__MICROLIB SETA 1"-I "\\campus.mcgill.ca\emf\cpe\ptruon4\Desktop\temp\lates\Microprocessor-Fall-2015\Lab1\Lab 1 Base Project\RTE"-I "\\campus.mcgill.ca\emf\cpe\ptruon4\Desktop\temp\lates\Microprocessor-Fall-2015\Lab1\Lab 1 Base Project\RTE\Device\STM32F407VG"-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\4.3.0\CMSIS\Include-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\Include--pd "__UVISION_VERSION SETA 515" --pd "_RTE_ SETA 1" --pd "STM32F40_41xxx SETA 1"--list .\listings\viterbiupdate_asm.lst --xref -o .\object\viterbiupdate_asm.o --depend .\object\viterbiupdate_asm.d)
+F (.\source\viterbi.h)(0x560B24E4)()
+F (.\source\ViterbiUpdate_asm.s)(0x560B23F6)(--cpu Cortex-M4.fp -g --apcs=interwork --pd "__MICROLIB SETA 1"-I "\\campus.mcgill.ca\emf\cpe\ptruon4\Desktop\temp\Microprocessor-Fall-2015\Lab1\Lab 1 Base Project\RTE"-I "\\campus.mcgill.ca\emf\cpe\ptruon4\Desktop\temp\Microprocessor-Fall-2015\Lab1\Lab 1 Base Project\RTE\Device\STM32F407VG"-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\4.3.0\CMSIS\Include-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\Include--pd "__UVISION_VERSION SETA 515" --pd "_RTE_ SETA 1" --pd "STM32F40_41xxx SETA 1"--list .\listings\viterbiupdate_asm.lst --xref -o .\object\viterbiupdate_asm.o --depend .\object\viterbiupdate_asm.d)
 F (C:\Keil_v5\ARM\PACK\ARM\CMSIS\4.3.0\CMSIS\Lib\ARM\arm_cortexM4lf_math.lib)(0x5424079C)()
-F (RTE\Device\STM32F407VG\RTE_Device.h)(0x56099BC2)()
-F (RTE\Device\STM32F407VG\startup_stm32f40_41xxx.s)(0x56099D01)(--cpu Cortex-M4.fp -g --apcs=interwork --pd "__MICROLIB SETA 1"-I "\\campus.mcgill.ca\emf\cpe\ptruon4\Desktop\temp\lates\Microprocessor-Fall-2015\Lab1\Lab 1 Base Project\RTE"-I "\\campus.mcgill.ca\emf\cpe\ptruon4\Desktop\temp\lates\Microprocessor-Fall-2015\Lab1\Lab 1 Base Project\RTE\Device\STM32F407VG"-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\4.3.0\CMSIS\Include-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\Include--pd "__UVISION_VERSION SETA 515" --pd "_RTE_ SETA 1" --pd "STM32F40_41xxx SETA 1"--list .\listings\startup_stm32f40_41xxx.lst --xref -o .\object\startup_stm32f40_41xxx.o --depend .\object\startup_stm32f40_41xxx.d)
-F (RTE\Device\STM32F407VG\system_stm32f4xx.c)(0x56099BC2)(-c --cpu Cortex-M4.fp -D__MICROLIB -g -O0 --apcs=interwork -I.\source --c99-I "\\campus.mcgill.ca\emf\cpe\ptruon4\Desktop\temp\lates\Microprocessor-Fall-2015\Lab1\Lab 1 Base Project\RTE"-I "\\campus.mcgill.ca\emf\cpe\ptruon4\Desktop\temp\lates\Microprocessor-Fall-2015\Lab1\Lab 1 Base Project\RTE\Device\STM32F407VG"-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\4.3.0\CMSIS\Include-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\Include-D__UVISION_VERSION="515" -D_RTE_ -DSTM32F40_41xxx -DHSE_VALUE="8000000" -DUSE_STDPERIPH_DRIVER -DARM_MATH_CM4 -D__FPU_PRESENT="1"-o .\object\system_stm32f4xx.o --omf_browse .\object\system_stm32f4xx.crf --depend .\object\system_stm32f4xx.d)
-I (.\source\stm32f4xx.h)(0x56099BC4)
+F (RTE\Device\STM32F407VG\RTE_Device.h)(0x560AD1D3)()
+F (RTE\Device\STM32F407VG\startup_stm32f40_41xxx.s)(0x560B254F)(--cpu Cortex-M4.fp -g --apcs=interwork --pd "__MICROLIB SETA 1"-I "\\campus.mcgill.ca\emf\cpe\ptruon4\Desktop\temp\Microprocessor-Fall-2015\Lab1\Lab 1 Base Project\RTE"-I "\\campus.mcgill.ca\emf\cpe\ptruon4\Desktop\temp\Microprocessor-Fall-2015\Lab1\Lab 1 Base Project\RTE\Device\STM32F407VG"-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\4.3.0\CMSIS\Include-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\Include--pd "__UVISION_VERSION SETA 515" --pd "_RTE_ SETA 1" --pd "STM32F40_41xxx SETA 1"--list .\listings\startup_stm32f40_41xxx.lst --xref -o .\object\startup_stm32f40_41xxx.o --depend .\object\startup_stm32f40_41xxx.d)
+F (RTE\Device\STM32F407VG\system_stm32f4xx.c)(0x560AD1D3)(-c --cpu Cortex-M4.fp -D__MICROLIB -g -O0 --apcs=interwork -I.\source --c99-I "\\campus.mcgill.ca\emf\cpe\ptruon4\Desktop\temp\Microprocessor-Fall-2015\Lab1\Lab 1 Base Project\RTE"-I "\\campus.mcgill.ca\emf\cpe\ptruon4\Desktop\temp\Microprocessor-Fall-2015\Lab1\Lab 1 Base Project\RTE\Device\STM32F407VG"-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\4.3.0\CMSIS\Include-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\Include-D__UVISION_VERSION="515" -D_RTE_ -DSTM32F40_41xxx -DHSE_VALUE="8000000" -DUSE_STDPERIPH_DRIVER -DARM_MATH_CM4 -D__FPU_PRESENT="1"-o .\object\system_stm32f4xx.o --omf_browse .\object\system_stm32f4xx.crf --depend .\object\system_stm32f4xx.d)
+I (.\source\stm32f4xx.h)(0x560AD1D4)
 I (C:\Keil_v5\ARM\PACK\ARM\CMSIS\4.3.0\CMSIS\Include\core_cm4.h)(0x5509E4C4)
 I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x54C2FC88)
 I (C:\Keil_v5\ARM\PACK\ARM\CMSIS\4.3.0\CMSIS\Include\core_cmInstr.h)(0x5509E4C4)
 I (C:\Keil_v5\ARM\PACK\ARM\CMSIS\4.3.0\CMSIS\Include\core_cmFunc.h)(0x5509E4C4)
 I (C:\Keil_v5\ARM\PACK\ARM\CMSIS\4.3.0\CMSIS\Include\core_cmSimd.h)(0x5509E4C4)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\Include\system_stm32f4xx.h)(0x529F71F2)
-I (.\source\stm32f4xx_conf.h)(0x56099BC4)
+I (.\source\stm32f4xx_conf.h)(0x560AD1D4)

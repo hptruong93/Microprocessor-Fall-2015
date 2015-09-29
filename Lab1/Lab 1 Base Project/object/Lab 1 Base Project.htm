@@ -3,18 +3,11 @@
 <title>Static Call Graph - [.\object\Lab 1 Base Project.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image .\object\Lab 1 Base Project.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5050169: Last Updated: Mon Sep 28 16:03:15 2015
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5050169: Last Updated: Tue Sep 29 19:57:04 2015
 <BR><P>
-<H3>Maximum Stack Usage =        328 bytes + Unknown(Functions without stacksize, Cycles, Untraceable Function Pointers)</H3><H3>
+<H3>Maximum Stack Usage =        256 bytes + Unknown(Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
-main &rArr; Viterbi_C &rArr; ViterbiUpdate_C &rArr; print_array &rArr; __2printf
-<P>
-<H3>
-Functions with no stack information
-</H3><UL>
- <LI><a href="#[5d]">ViterbiUpdate_asm</a>
-</UL>
-</UL>
+main &rArr; Viterbi_C &rArr; argmax &rArr; __2printf
 <P>
 <H3>
 Mutually Recursive functions
@@ -124,8 +117,8 @@ Function Pointers
  <LI><a href="#[31]">USART3_IRQHandler</a> from startup_stm32f40_41xxx.o(.text) referenced from startup_stm32f40_41xxx.o(RESET)
  <LI><a href="#[51]">USART6_IRQHandler</a> from startup_stm32f40_41xxx.o(.text) referenced from startup_stm32f40_41xxx.o(RESET)
  <LI><a href="#[5]">UsageFault_Handler</a> from startup_stm32f40_41xxx.o(.text) referenced from startup_stm32f40_41xxx.o(RESET)
- <LI><a href="#[5d]">ViterbiUpdate_asm</a> from viterbiupdate_asm.o(text) referenced from startup_stm32f40_41xxx.o(.text)
  <LI><a href="#[a]">WWDG_IRQHandler</a> from startup_stm32f40_41xxx.o(.text) referenced from startup_stm32f40_41xxx.o(RESET)
+ <LI><a href="#[5d]">__main</a> from entry.o(.ARM.Collect$$$$00000000) referenced from startup_stm32f40_41xxx.o(.text)
  <LI><a href="#[5e]">fputc</a> from fputc_debug.o(.text) referenced from printfa.o(i.__0printf)
  <LI><a href="#[5c]">main</a> from main.o(.text) referenced from entry9a.o(.ARM.Collect$$$$0000000B)
 </UL>
@@ -133,16 +126,17 @@ Function Pointers
 <H3>
 Global Symbols
 </H3>
-<P><STRONG><a name="[5f]"></a>__main</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, entry.o(.ARM.Collect$$$$00000000))
-
+<P><STRONG><a name="[5d]"></a>__main</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, entry.o(.ARM.Collect$$$$00000000))
+<BR>[Address Reference Count : 1]<UL><LI> startup_stm32f40_41xxx.o(.text)
+</UL>
 <P><STRONG><a name="[81]"></a>_main_stk</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, entry2.o(.ARM.Collect$$$$00000001))
 
-<P><STRONG><a name="[60]"></a>_main_scatterload</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, entry5.o(.ARM.Collect$$$$00000004))
-<BR><BR>[Calls]<UL><LI><a href="#[61]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__scatterload
+<P><STRONG><a name="[5f]"></a>_main_scatterload</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, entry5.o(.ARM.Collect$$$$00000004))
+<BR><BR>[Calls]<UL><LI><a href="#[60]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__scatterload
 </UL>
 
 <P><STRONG><a name="[7a]"></a>__main_after_scatterload</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, entry5.o(.ARM.Collect$$$$00000004))
-<BR><BR>[Called By]<UL><LI><a href="#[61]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__scatterload
+<BR><BR>[Called By]<UL><LI><a href="#[60]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__scatterload
 </UL>
 
 <P><STRONG><a name="[82]"></a>_main_clock</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, entry7b.o(.ARM.Collect$$$$00000008))
@@ -161,64 +155,61 @@ Global Symbols
 <BR>[Address Reference Count : 1]<UL><LI> printfa.o(i.__0printf)
 </UL>
 <P><STRONG><a name="[5c]"></a>main</STRONG> (Thumb, 132 bytes, Stack size 104 bytes, main.o(.text))
-<BR><BR>[Stack]<UL><LI>Max Depth = 328<LI>Call Chain = main &rArr; Viterbi_C &rArr; ViterbiUpdate_C &rArr; print_array &rArr; __2printf
+<BR><BR>[Stack]<UL><LI>Max Depth = 256<LI>Call Chain = main &rArr; Viterbi_C &rArr; argmax &rArr; __2printf
 </UL>
-<BR>[Calls]<UL><LI><a href="#[62]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__2printf
-<LI><a href="#[63]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memcpy4
-<LI><a href="#[64]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Viterbi_C
+<BR>[Calls]<UL><LI><a href="#[61]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__2printf
+<LI><a href="#[62]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memcpy4
+<LI><a href="#[63]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Viterbi_C
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> entry9a.o(.ARM.Collect$$$$0000000B)
 </UL>
-<P><STRONG><a name="[65]"></a>argmax</STRONG> (Thumb, 188 bytes, Stack size 48 bytes, utils.o(.text))
+<P><STRONG><a name="[64]"></a>argmax</STRONG> (Thumb, 188 bytes, Stack size 48 bytes, utils.o(.text))
 <BR><BR>[Stack]<UL><LI>Max Depth = 72<LI>Call Chain = argmax &rArr; __2printf
 </UL>
-<BR>[Calls]<UL><LI><a href="#[62]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__2printf
-<LI><a href="#[66]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_f2d
+<BR>[Calls]<UL><LI><a href="#[61]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__2printf
+<LI><a href="#[65]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_f2d
 </UL>
-<BR>[Called By]<UL><LI><a href="#[64]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Viterbi_C
+<BR>[Called By]<UL><LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ViterbiUpdate_C
+<LI><a href="#[63]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Viterbi_C
 </UL>
 
-<P><STRONG><a name="[69]"></a>get_index</STRONG> (Thumb, 16 bytes, Stack size 8 bytes, utils.o(.text))
+<P><STRONG><a name="[68]"></a>get_index</STRONG> (Thumb, 16 bytes, Stack size 8 bytes, utils.o(.text))
 <BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = get_index
 </UL>
-<BR>[Called By]<UL><LI><a href="#[68]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ViterbiUpdate_C
-<LI><a href="#[64]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Viterbi_C
+<BR>[Called By]<UL><LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ViterbiUpdate_C
+<LI><a href="#[63]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Viterbi_C
 </UL>
 
-<P><STRONG><a name="[67]"></a>print_array</STRONG> (Thumb, 74 bytes, Stack size 24 bytes, utils.o(.text))
+<P><STRONG><a name="[66]"></a>print_array</STRONG> (Thumb, 74 bytes, Stack size 24 bytes, utils.o(.text))
 <BR><BR>[Stack]<UL><LI>Max Depth = 48<LI>Call Chain = print_array &rArr; __2printf
 </UL>
-<BR>[Calls]<UL><LI><a href="#[62]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__2printf
-<LI><a href="#[66]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_f2d
+<BR>[Calls]<UL><LI><a href="#[61]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__2printf
+<LI><a href="#[65]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_f2d
 </UL>
-<BR>[Called By]<UL><LI><a href="#[68]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ViterbiUpdate_C
-<LI><a href="#[64]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Viterbi_C
-</UL>
-
-<P><STRONG><a name="[68]"></a>ViterbiUpdate_C</STRONG> (Thumb, 438 bytes, Stack size 96 bytes, viterbi.o(.text))
-<BR><BR>[Stack]<UL><LI>Max Depth = 144<LI>Call Chain = ViterbiUpdate_C &rArr; print_array &rArr; __2printf
-</UL>
-<BR>[Calls]<UL><LI><a href="#[62]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__2printf
-<LI><a href="#[66]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_f2d
-<LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;print_array
-<LI><a href="#[69]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;get_index
-</UL>
-<BR>[Called By]<UL><LI><a href="#[64]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Viterbi_C
+<BR>[Called By]<UL><LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ViterbiUpdate_C
+<LI><a href="#[63]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Viterbi_C
 </UL>
 
-<P><STRONG><a name="[64]"></a>Viterbi_C</STRONG> (Thumb, 420 bytes, Stack size 80 bytes, viterbi.o(.text))
-<BR><BR>[Stack]<UL><LI>Max Depth = 224<LI>Call Chain = Viterbi_C &rArr; ViterbiUpdate_C &rArr; print_array &rArr; __2printf
+<P><STRONG><a name="[67]"></a>ViterbiUpdate_C</STRONG> (Thumb, 256 bytes, Stack size 72 bytes, viterbi.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[66]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;print_array
+<LI><a href="#[68]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;get_index
+<LI><a href="#[64]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;argmax
+<LI><a href="#[69]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;malloc
+<LI><a href="#[6a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;free
 </UL>
-<BR>[Calls]<UL><LI><a href="#[62]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__2printf
-<LI><a href="#[6b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__hardfp_fabs
+
+<P><STRONG><a name="[63]"></a>Viterbi_C</STRONG> (Thumb, 408 bytes, Stack size 80 bytes, viterbi.o(.text))
+<BR><BR>[Stack]<UL><LI>Max Depth = 152<LI>Call Chain = Viterbi_C &rArr; argmax &rArr; __2printf
+</UL>
+<BR>[Calls]<UL><LI><a href="#[6b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__hardfp_fabs
 <LI><a href="#[6c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_cdrcmple
-<LI><a href="#[68]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ViterbiUpdate_C
-<LI><a href="#[66]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_f2d
-<LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;print_array
-<LI><a href="#[69]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;get_index
-<LI><a href="#[65]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;argmax
-<LI><a href="#[6a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;malloc
-<LI><a href="#[6d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;free
+<LI><a href="#[6d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ViterbiUpdate_asm
+<LI><a href="#[65]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_f2d
+<LI><a href="#[66]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;print_array
+<LI><a href="#[68]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;get_index
+<LI><a href="#[64]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;argmax
+<LI><a href="#[69]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;malloc
+<LI><a href="#[6a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;free
 </UL>
 <BR>[Called By]<UL><LI><a href="#[5c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
@@ -541,22 +532,21 @@ Global Symbols
 </UL>
 <P><STRONG><a name="[87]"></a>__aeabi_memcpy</STRONG> (Thumb, 36 bytes, Stack size 0 bytes, memcpya.o(.text), UNUSED)
 
-<P><STRONG><a name="[63]"></a>__aeabi_memcpy4</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, memcpya.o(.text))
+<P><STRONG><a name="[62]"></a>__aeabi_memcpy4</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, memcpya.o(.text))
 <BR><BR>[Called By]<UL><LI><a href="#[5c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
 <P><STRONG><a name="[88]"></a>__aeabi_memcpy8</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, memcpya.o(.text), UNUSED)
 
-<P><STRONG><a name="[66]"></a>__aeabi_f2d</STRONG> (Thumb, 38 bytes, Stack size 0 bytes, f2d.o(.text))
-<BR><BR>[Called By]<UL><LI><a href="#[68]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ViterbiUpdate_C
-<LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;print_array
-<LI><a href="#[65]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;argmax
-<LI><a href="#[64]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Viterbi_C
+<P><STRONG><a name="[65]"></a>__aeabi_f2d</STRONG> (Thumb, 38 bytes, Stack size 0 bytes, f2d.o(.text))
+<BR><BR>[Called By]<UL><LI><a href="#[66]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;print_array
+<LI><a href="#[64]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;argmax
+<LI><a href="#[63]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Viterbi_C
 </UL>
 
 <P><STRONG><a name="[6c]"></a>__aeabi_cdrcmple</STRONG> (Thumb, 48 bytes, Stack size 0 bytes, cdrcmple.o(.text))
 <BR><BR>[Called By]<UL><LI><a href="#[7d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_fp_digits
-<LI><a href="#[64]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Viterbi_C
+<LI><a href="#[63]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Viterbi_C
 </UL>
 
 <P><STRONG><a name="[89]"></a>__aeabi_uidiv</STRONG> (Thumb, 0 bytes, Stack size 12 bytes, uidiv.o(.text), UNUSED)
@@ -613,10 +603,10 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[7d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_fp_digits
 </UL>
 
-<P><STRONG><a name="[61]"></a>__scatterload</STRONG> (Thumb, 28 bytes, Stack size 0 bytes, init.o(.text))
+<P><STRONG><a name="[60]"></a>__scatterload</STRONG> (Thumb, 28 bytes, Stack size 0 bytes, init.o(.text))
 <BR><BR>[Calls]<UL><LI><a href="#[7a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__main_after_scatterload
 </UL>
-<BR>[Called By]<UL><LI><a href="#[60]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_main_scatterload
+<BR>[Called By]<UL><LI><a href="#[5f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_main_scatterload
 </UL>
 
 <P><STRONG><a name="[8b]"></a>__scatterload_rt2</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, init.o(.text), UNUSED)
@@ -665,13 +655,11 @@ Global Symbols
 
 <P><STRONG><a name="[8f]"></a>__1printf</STRONG> (Thumb, 0 bytes, Stack size 24 bytes, printfa.o(i.__0printf), UNUSED)
 
-<P><STRONG><a name="[62]"></a>__2printf</STRONG> (Thumb, 0 bytes, Stack size 24 bytes, printfa.o(i.__0printf))
+<P><STRONG><a name="[61]"></a>__2printf</STRONG> (Thumb, 0 bytes, Stack size 24 bytes, printfa.o(i.__0printf))
 <BR><BR>[Stack]<UL><LI>Max Depth = 24<LI>Call Chain = __2printf
 </UL>
-<BR>[Called By]<UL><LI><a href="#[68]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ViterbiUpdate_C
-<LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;print_array
-<LI><a href="#[65]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;argmax
-<LI><a href="#[64]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Viterbi_C
+<BR>[Called By]<UL><LI><a href="#[66]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;print_array
+<LI><a href="#[64]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;argmax
 <LI><a href="#[5c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
@@ -682,7 +670,7 @@ Global Symbols
 <P><STRONG><a name="[6b]"></a>__hardfp_fabs</STRONG> (Thumb, 20 bytes, Stack size 8 bytes, fabs.o(i.__hardfp_fabs))
 <BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = __hardfp_fabs
 </UL>
-<BR>[Called By]<UL><LI><a href="#[64]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Viterbi_C
+<BR>[Called By]<UL><LI><a href="#[63]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Viterbi_C
 </UL>
 
 <P><STRONG><a name="[92]"></a>__scatterload_copy</STRONG> (Thumb, 14 bytes, Stack size unknown bytes, handlers.o(i.__scatterload_copy), UNUSED)
@@ -691,21 +679,24 @@ Global Symbols
 
 <P><STRONG><a name="[94]"></a>__scatterload_zeroinit</STRONG> (Thumb, 14 bytes, Stack size unknown bytes, handlers.o(i.__scatterload_zeroinit), UNUSED)
 
-<P><STRONG><a name="[6d]"></a>free</STRONG> (Thumb, 76 bytes, Stack size 8 bytes, malloc.o(i.free))
+<P><STRONG><a name="[6a]"></a>free</STRONG> (Thumb, 76 bytes, Stack size 8 bytes, malloc.o(i.free))
 <BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = free
 </UL>
-<BR>[Called By]<UL><LI><a href="#[64]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Viterbi_C
+<BR>[Called By]<UL><LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ViterbiUpdate_C
+<LI><a href="#[63]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Viterbi_C
 </UL>
 
-<P><STRONG><a name="[6a]"></a>malloc</STRONG> (Thumb, 92 bytes, Stack size 20 bytes, malloc.o(i.malloc))
+<P><STRONG><a name="[69]"></a>malloc</STRONG> (Thumb, 92 bytes, Stack size 20 bytes, malloc.o(i.malloc))
 <BR><BR>[Stack]<UL><LI>Max Depth = 20<LI>Call Chain = malloc
 </UL>
-<BR>[Called By]<UL><LI><a href="#[64]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Viterbi_C
+<BR>[Called By]<UL><LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ViterbiUpdate_C
+<LI><a href="#[63]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Viterbi_C
 </UL>
 
-<P><STRONG><a name="[5d]"></a>ViterbiUpdate_asm</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, viterbiupdate_asm.o(text))
-<BR>[Address Reference Count : 1]<UL><LI> startup_stm32f40_41xxx.o(.text)
-</UL><P>
+<P><STRONG><a name="[6d]"></a>ViterbiUpdate_asm</STRONG> (Thumb, 196 bytes, Stack size 0 bytes, viterbiupdate_asm.o(text))
+<BR><BR>[Called By]<UL><LI><a href="#[63]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Viterbi_C
+</UL>
+<P>
 <H3>
 Local Symbols
 </H3>

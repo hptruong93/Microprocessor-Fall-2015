@@ -70,7 +70,7 @@ int Viterbi_C(int* Observations, int Nobs, int* EstimatedStates, hmm_desc* hmm) 
     for (int i = 1; i < Nobs; i++) {
         //printf("At iteration number %d with Observation %d\n", i, Observations[i]);
         print_array(viterbi[i - 1], hmm->S);
-        int return_value = ViterbiUpdate_C(viterbi[i - 1], viterbi[i], hmm, Observations[i]);
+        int return_value = VITERBI_UPDATE(viterbi[i - 1], viterbi[i], hmm, Observations[i]);
 
         if (return_value != 0) {
             return return_value;

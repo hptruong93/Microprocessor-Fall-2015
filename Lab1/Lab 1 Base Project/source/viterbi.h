@@ -9,7 +9,10 @@ typedef struct{
     float* prior; //S x 1 prior probability matrix
 } hmm_desc;
 
+extern int ViterbiUpdate_asm(float* InputArray, float* OutputArray, hmm_desc* hmm, int Observation);
 int ViterbiUpdate_C(float* InputArray, float* OutputArray, hmm_desc* hmm, int Observation);
 int Viterbi_C(int* Observations, int Nobs, int* EstimatedStates, hmm_desc* hmm);
+
+#define VITERBI_UPDATE ViterbiUpdate_asm
 
 #endif
