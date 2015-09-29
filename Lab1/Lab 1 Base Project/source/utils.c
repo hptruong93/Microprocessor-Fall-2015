@@ -1,7 +1,6 @@
 #include <float.h>
 #include "utils.h"
 
-/*void  arm_max_f32 (float32_t *pSrc, uint32_t blockSize, float32_t *pResult, uint32_t *pIndex)*/
 int argmax(float* array, int size, float* max_value) {
     printf("Finding argmax of array with size %d\n", size);
     if (size == 0) {
