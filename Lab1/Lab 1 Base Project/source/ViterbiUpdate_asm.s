@@ -95,32 +95,16 @@ LOOP1 ;R6 = error and R10 = k and R11 = number_of_states
 	LDR R5, [R3, #4] ; R5 = V
 	MUL R5, R10, R5 ; R5 = k * V
 	ADD R5, R5, R2 ; R5 = k * V + Observation
-	LSL R5, #2
-	ADD R5, R4, R5
+	ADD R5, R4, R5, LSL #2
 	VLDR.F32 S12, [R5]; p_observation_given_k = get_index(hmm->emission, hmm->V, k, Observation);
 
 	;#########################Matrix term by term multiplication####################
 	MOV R9, #0
 	ADD R4, R3, #8; R4 = hmm->transition
+	VSUB.F32 S11, S11 ; *max = 0
+
 	B LOOP2
 BACK2
-	; Now the whole temporary array is in stack
-	; Must use it immediately
-	;#########################Find max index########################################
-	MOV R9, #0; i = 0
-	VSUB.F32 S11, S11 ; *max = 0
-	
-	B LOOP2_5
-BACK2_5
-	; Now everything should be removed from stack
-	; S6 = max_index; S11 = *max
-    
-	ADD R4, R10, R11 ; R4 = k + number_of_states
-	LSL R4, #2 ; R4 = R4 * 4
-	ADD R4, R4, R1
-	VSTR.F32 S6, [R4] ; OutputArray[number_of_states + k] = max_index
-
-
     ;#########################Check for error#######################################
 	;S11 = *max and S12 = p_observation_given_k
 	VCMP.F32 S11, #0.0 ;if *max < 0
@@ -130,12 +114,10 @@ BACK2_5
 
 	;#########################Assign value and accumulate sum ######################
 	VMUL.F32 S2, S11, S12 ; temp = max * p_observation_given_k
-	MOV R4, R10
-	LSL R4, #2
-	ADD R4, R1
+	ADD R5, R1, R10, LSL #2
 
 	VADD.F32 S1, S1, S2 ; sum = sum + temp
-	VSTR.F32 S2, [R4] ; OutputArray[k] = temp
+	VSTR.F32 S2, [R5] ; OutputArray[k] = temp
 	
 
 	ADD R10, #1 ; k++
@@ -151,8 +133,7 @@ LOOP2 ; R9 = x and R10 = k and R11 = number_of_states and S5 = InputArray[x] and
 	;S6 = get_index(hmm->transition, number_of_states, x, k);
 	MUL R5, R9, R11; R5 = x * number_of_states
 	ADD R5, R5, R10 ; R5 = x * number_of_states + k
-	LSL R5, #2 ; R5 = R5 * 4
-	ADD R5, R4, R5 ; R5 = address of get_index(hmm->transition, number_of_states, x, k)
+	ADD R5, R4, R5, LSL 2 ; R5 = address of get_index(hmm->transition, number_of_states, x, k)
 	VLDR.F32 S6, [R5] ; S6 = get_index(hmm->transition, number_of_states, x, k);
 
 	;S5 = InputArray[x]
@@ -162,30 +143,25 @@ LOOP2 ; R9 = x and R10 = k and R11 = number_of_states and S5 = InputArray[x] and
 
 	VMUL.F32 S6, S5, S6 ; S6 = InputArray[x] * get_index(hmm->transition, number_of_states, x, k);
 
-	VPUSH {S6}
-	ADD R9, #1
-	B LOOP2
-
-
-;#########################Find max index########################################
-LOOP2_5; R9 = i and R11 = number_of_states
-	CMP R9, R11
-	BEQ BACK2_5
-
-	;S6 = max_index; S11 = *max
-	VPOP {S2} ; S2 = next element in temp array
+	VMOV.F32 S2, S6 ; next element in temp array
 	VCMP.F32 S11, S2 ; max compare to current??
 	VMRS APSR_nzcv, FPSCR
 	BGE PASS; if max >= current, pass. Else
 	VMOV.F32 S11, S2 ; max = current
-	SUB R4, R11, R9 ; R4 = number_of_states - i
-	SUB R4, #1 ; R4 = number_of_states - i - 1
-	VMOV S6, R4; max_index = number_of_states - i - 1
-	VCVT.F32.S32 S6, S6
-PASS
 
+	VMOV S6, R9; max_index = x
+	VCVT.F32.S32 S6, S6 ; convert from int --> float
+
+	ADD R5, R10, R11 ; R5 = k + number_of_states
+	LSL R5, #2 ; R5 = R5 * 4
+	ADD R5, R5, R1
+	VSTR.F32 S6, [R5] ; OutputArray[number_of_states + k] = max_index
+
+	
+PASS
 	ADD R9, #1
-	B LOOP2_5
+	B LOOP2
+
 
 	;#########################Divide by sum ########################################
 LOOP3 ;R10 = k and R11 = number_of_states and S1 = sum

@@ -34,7 +34,12 @@
 #endif
 
 
-
+/**
+* 
+*
+*
+*
+*/
 typedef struct{
     int S; //number of states
     int V; //number of observation types
@@ -43,8 +48,20 @@ typedef struct{
     float prior[S_DEF]; //S x 1 prior probability matrix
 } hmm_desc;
 
+/**
+* 
+*
+*
+*
+*/
 #define ZERO_THRESHOLD 0.0000000001
 
+/**
+* 
+*
+*
+*
+*/
 extern int ViterbiUpdate_asm(float* InputArray, float* OutputArray, int Observation, hmm_desc* hmm);
 int ViterbiUpdate_C(float* InputArray, float* OutputArray, hmm_desc* hmm, int Observation);
 int Viterbi_C(int* Observations, int Nobs, int* EstimatedStates, hmm_desc* hmm);

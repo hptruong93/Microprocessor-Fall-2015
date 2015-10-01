@@ -6,7 +6,13 @@
 
 int main()
 {
-    printf("The quick brown fox jumps over the lazy dog.\n");
+    //printf("The quick brown fox jumps over the lazy dog.\n");
+
+#ifdef VITERBI_ASM
+    printf("Using ViterbiUpdate_asm\n");
+#else
+    printf("Using ViterbiUpdate_C\n");
+#endif
 
 #ifdef TEST_1
      hmm_desc hmm1;
@@ -73,14 +79,14 @@ int main()
     float outputArray[2 * hmm.S];
     int observation = 2;
     
-        printf("Before inputAray = %x\n", inputArray);
-        printf("Before hmm = %x\n", &hmm);
+    printf("Before inputAray = %x\n", inputArray);
+    printf("Before hmm = %x\n", &hmm);
     int viterbiUpdate = ViterbiUpdate_asm(inputArray, outputArray, observation, &hmm);
     
     //0.3529| 0.2941| 0.3529| 2.0000| 0.0000| 1.0000|
-        printf("Return code = %d\n", viterbiUpdate);
-        printf("Return inputAray = %x\n", inputArray);
-        printf("Return hmm = %x\n", &hmm);
+    printf("Return code = %d\n", viterbiUpdate);
+    printf("Return inputAray = %x\n", inputArray);
+    printf("Return hmm = %x\n", &hmm);
         
     for (int i = 0; i < 2* hmm.S; i++) {
         printf(" --> %f", outputArray[i]);
