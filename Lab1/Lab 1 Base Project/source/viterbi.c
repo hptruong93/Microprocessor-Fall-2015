@@ -2,7 +2,7 @@
 #include "viterbi.h"
 #include "math.h"
 
-float viterbi[NOBS][2 * S_DEF]; 
+float viterbi[NOBS][2 * S_DEF];
 
 int ViterbiUpdate_C(float* InputArray, float* OutputArray, hmm_desc* hmm, int Observation) {
     int number_of_states = hmm->S;
@@ -17,7 +17,7 @@ int ViterbiUpdate_C(float* InputArray, float* OutputArray, hmm_desc* hmm, int Ob
                 float temporary[number_of_states];
         for (int x = 0; x < number_of_states; x++) {
             float value = InputArray[x] * get_index(&((hmm->transition)[0][0]), number_of_states, x, k);
-            // printf("###### Evaluating InputArray[%d] * transition[%d][%d] = %f * %f = %f\n", x, k, x, InputArray[x], get_index(&((hmm->transition)[0][0]), number_of_states, k, x), value);
+            printf("###### Evaluating InputArray[%d] * transition[%d][%d] = %f * %f = %f\n", x, x, k, InputArray[x], get_index(&((hmm->transition)[0][0]), number_of_states, x, k), value);
             temporary[x] = value;
         }
 
@@ -81,13 +81,14 @@ int Viterbi_C(int* Observations, int Nobs, int* EstimatedStates, hmm_desc* hmm) 
         printf("-----> At iteration number %d with Observation %d\n", i, Observations[i]);
         print_array(viterbi[i - 1], hmm->S);
 
-        //printf("Array output address before is %x\n", viterbi[i]);
+        printf("Array output address before is %x\n", viterbi[i]);
 #ifdef VITERBI_ASM
         int return_value = ViterbiUpdate_asm(viterbi[i - 1], viterbi[i], Observations[i], hmm);   
 #else
         int return_value = ViterbiUpdate_C(viterbi[i - 1], viterbi[i], hmm, Observations[i]);
 #endif
         printf("Array output address after is %x\n", viterbi[i]);
+        // printf("vitpsi is --> ");
         print_array(viterbi[i], hmm->S);
 
         if (return_value != 0) {

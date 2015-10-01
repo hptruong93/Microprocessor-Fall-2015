@@ -125,8 +125,8 @@ BACK2_5
 	;S11 = *max and S12 = p_observation_given_k
 	VCMP.F32 S11, #0.0 ;if *max < 0
 	VMRS APSR_nzcv, FPSCR
-	IT LE ; then
-	MOVLE R6, #1 ; error = 1
+	IT LT ; then
+	MOVLT R6, #1 ; error = 1
 
 	;#########################Assign value and accumulate sum ######################
 	VMUL.F32 S2, S11, S12 ; temp = max * p_observation_given_k
@@ -148,19 +148,19 @@ LOOP2 ; R9 = x and R10 = k and R11 = number_of_states and S5 = InputArray[x] and
 
 	;S6 = value
 
-	;S6 = get_index(hmm->transition, number_of_states, k, x);
-	MUL R5, R10, R11; R5 = k * number_of_states
-	ADD R5, R5, R9 ; R5 = k * number_of_states + x
+	;S6 = get_index(hmm->transition, number_of_states, x, k);
+	MUL R5, R9, R11; R5 = x * number_of_states
+	ADD R5, R5, R10 ; R5 = x * number_of_states + k
 	LSL R5, #2 ; R5 = R5 * 4
-	ADD R5, R4, R5 ; R5 = address of get_index(hmm->transition, number_of_states, k, x)
-	VLDR.F32 S6, [R5] ; S6 = get_index(hmm->transition, number_of_states, k, x);
+	ADD R5, R4, R5 ; R5 = address of get_index(hmm->transition, number_of_states, x, k)
+	VLDR.F32 S6, [R5] ; S6 = get_index(hmm->transition, number_of_states, x, k);
 
 	;S5 = InputArray[x]
 	LSL R5, R9, #2 ; R5 = 4 * x
 	ADD R5, R0
 	VLDR.F32 S5, [R5]
 
-	VMUL.F32 S6, S5, S6 ; S6 = InputArray[x] * get_index(hmm->transition, number_of_states, k, x);
+	VMUL.F32 S6, S5, S6 ; S6 = InputArray[x] * get_index(hmm->transition, number_of_states, x, k);
 
 	VPUSH {S6}
 	ADD R9, #1
