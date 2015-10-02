@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include "math.h"
 
-int check(int state, int step, int N1, int N2, int N3) {
+int accelometer_check(int state, int step, int N1, int N2, int N3) {
     if (state == 0) {
         if (step > N1) {
             return 1;
@@ -43,7 +43,7 @@ int accelometer(int accT, float* accObs, int* output, float alpha1, float alpha2
         int currentState = output[i];
         // printf("state = %d, picked up %d, Step = %d so --> ", state, currentState, step);
         if (currentState != state && i != 0) {
-            int condition = check(state, step, N1, N2, N3);
+            int condition = accelometer_check(state, step, N1, N2, N3);
             // printf("Condition is %d --> \n", condition);
             if (condition) {
                 // printf("Different and udated --> %d\n", outputIndex);

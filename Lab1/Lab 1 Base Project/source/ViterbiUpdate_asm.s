@@ -52,7 +52,6 @@ ViterbiUpdate_asm FUNCTION
 	;Always use 10 & 11 as temp/ calculation var
 	;R6 = error and S1 = sum and R10 = k and R11 = number_of_states
 	PUSH {R4, R5, R6, R9, R10, R11}
-	VSUB.F32 S0, S0
 	VSUB.F32 S1, S1
 	VSUB.F32 S2, S2
 	VSUB.F32 S5, S5

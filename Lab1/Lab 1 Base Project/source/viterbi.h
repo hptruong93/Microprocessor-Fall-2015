@@ -1,6 +1,10 @@
 #ifndef VITERBI_H
 #define VITERBI_H
 
+
+// #define VITERBI_ASM
+// #define USING_CMSIS_DSP_LIB
+
 #define TEST_3
 
 #ifdef TEST_1
@@ -32,6 +36,13 @@
 #define V_DEF  3
 #define NOBS   9
 #endif
+
+#ifdef TEST_6
+#define S_DEF  ?
+#define V_DEF  ?
+#define NOBS   ?
+#endif
+
 
 
 /**
@@ -65,7 +76,8 @@ typedef struct{
 extern int ViterbiUpdate_asm(float* InputArray, float* OutputArray, int Observation, hmm_desc* hmm);
 int ViterbiUpdate_C(float* InputArray, float* OutputArray, hmm_desc* hmm, int Observation);
 int Viterbi_C(int* Observations, int Nobs, int* EstimatedStates, hmm_desc* hmm);
+int accelometer(int accT, float* accObs, int* output, float alpha1, float alpha2, int N1, int N2, int N3);
 
-#define VITERBI_ASM
+
 
 #endif

@@ -1,8 +1,18 @@
 #include <float.h>
 #include "utils.h"
+#include "viterbi.h"
+#include "arm_math.h"
 
 int argmax(float* array, int size, float* max_value) {
-    // printf("Finding argmax of array with size %d\n", size);
+
+#ifdef USING_CMSIS_DSP_LIB
+    printf("Using vector library to calculate argmax\n");
+    // void    arm_max_f32 (float32_t *pSrc, uint32_t blockSize, float32_t *pResult, uint32_t *pIndex)
+    int index = 0;
+    arm_max_f32(array, size, max_value, &index);
+    return index;
+#else
+    printf("Finding argmax of array with size %d\n", size);
     if (size == 0) {
         return 0;
     }
@@ -20,8 +30,21 @@ int argmax(float* array, int size, float* max_value) {
     // printf("Found max value %f at index %d\n", *max_value, max_index);
 
     return max_index;
+#endif
 }
 
+void array_scale_divide(float* array, int size, float scale_const) {
+
+#ifdef USING_CMSIS_DSP_LIB
+    // printf("Using vector library to scale down\n");
+    //void  arm_scale_f32 (float32_t *pSrc, float32_t scale, float32_t *pDst, uint32_t blockSize)
+    arm_scale_f32(array, 1.0 / scale_const, array, size);
+#else
+    for (int k = 0; k < size; k++) {
+        array[k] = array[k] / scale_const;
+    }
+#endif
+}
 
 float get_index(float* array2D, int number_of_cols, int i, int j) {
     return array2D[number_of_cols * i + j];
