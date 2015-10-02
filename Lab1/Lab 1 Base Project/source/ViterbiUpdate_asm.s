@@ -132,7 +132,7 @@ LOOP2 ; R9 = x and R10 = k and R11 = number_of_states and S5 = InputArray[x] and
 	;S6 = get_index(hmm->transition, number_of_states, x, k);
 	MUL R5, R9, R11; R5 = x * number_of_states
 	ADD R5, R5, R10 ; R5 = x * number_of_states + k
-	ADD R5, R4, R5, LSL 2 ; R5 = address of get_index(hmm->transition, number_of_states, x, k)
+	ADD R5, R4, R5, LSL #2 ; R5 = address of get_index(hmm->transition, number_of_states, x, k)
 	VLDR.F32 S6, [R5] ; S6 = get_index(hmm->transition, number_of_states, x, k);
 
 	;S5 = InputArray[x]
