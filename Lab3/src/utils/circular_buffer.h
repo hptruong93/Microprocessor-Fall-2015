@@ -6,7 +6,7 @@
 /*	defined circular_buffer struct with values data, head, tail and max size
 */
 
-#define BUFFER_TYPE float
+#define BUFFER_TYPE int16_t
 
 typedef struct {
   BUFFER_TYPE* data;

@@ -1,0 +1,29 @@
+#include "ma_filter.h"
+#include "utils/circular_buffer.h"
+
+void ma_filter_initialize(ma_filter* empty, circular_buffer* cb_data, int16_t* buffer) {
+	circular_buffer_init(cb_data, buffer, MA_FILTER_DEPTH);
+	empty->cb = cb_data;
+	empty->average = 0;
+}
+
+float ma_filter_add(ma_filter* filter, int16_t input) {
+	uint16_t size = 0;
+	circular_buffer_size(filter->cb, &size);
+	//if size is less than depth, then only size of the circular buffer will be used to calculate the average
+	if (size < MA_FILTER_DEPTH) {
+		float sum = (filter->average) * size + input;
+		circular_buffer_append(filter->cb, &input);
+		filter->average = sum / (size + 1);		//computing the average of the by taking the sum of elements in the filter depth and dividing it by depth continuously
+		return filter->average;
+	} else {
+		float sum = (filter->average) * MA_FILTER_DEPTH;
+		int16_t removing = 1;
+		circular_buffer_remove_first(filter->cb, &removing);
+		circular_buffer_append(filter->cb, &input);
+		sum -= removing;
+		sum += input;
+		filter->average = sum / (float)MA_FILTER_DEPTH;
+		return filter->average;
+	}
+}
