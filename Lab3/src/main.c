@@ -1,14 +1,11 @@
 #include <stdio.h>
 #include "system_config.h"
 
-#include "interfaces/accelerometer_interface.h"
-
-
 #include "modules/led_rotation_sm.h"
-
+#include "modules/accelerometer_sm.h"
+#include "interfaces/seven_segments_interface.h"
 
 static uint8_t system_ticks;
-extern accelerometer_info accelerometer_angles;
 
 int main() {
 	printf("Begin\n");
@@ -22,11 +19,8 @@ int main() {
 		while (!system_ticks);
 
 		led_rotation_rotate_leds();
-
-		static float x, y, z;
-		accelerometer_read(&x, &y, &z);
-		accelerometer_calculate_rotation(x, y, z);
-		printf("PRY = (%.2f, %.2f, %.2f)\n", accelerometer_angles.pitch, accelerometer_angles.roll, accelerometer_angles.yaw);
+		accelerometer_process();
+		seven_segment_display(SEVEN_SEGMENT_DIGIT_1, 1);
 
 		system_ticks = 0;
 	}
@@ -39,6 +33,6 @@ int main() {
 /*interrupt handler
 */
 
-void SysTick_Handler(){
+void SysTick_Handler() {
 	system_ticks = 1;
 }

@@ -15,7 +15,6 @@ static circular_buffer cb_x, cb_y, cb_z;
 static ma_filter filter_x, filter_y, filter_z;
 
 static int16_t x_raw, y_raw, z_raw;
-accelerometer_info accelerometer_angles;
 
 static void accelerometer_normalize(int16_t* x, int16_t* y, int16_t* z) {
 	//Do nothing for now
