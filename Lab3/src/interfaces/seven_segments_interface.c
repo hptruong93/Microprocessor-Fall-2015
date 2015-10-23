@@ -11,6 +11,8 @@ void seven_segment_init(void) {
 	for (uint8_t i = 0; i < SEVEN_SEGMENT_NUM_SEGMENT; i++) {
 		gpio_init_s.GPIO_Pin |= all_segments[i];
 	}
+	gpio_init_s.GPIO_Pin |= SEVEN_SEGMENT_SEGMENT_DOT;
+
 	gpio_init_s.GPIO_Mode = GPIO_Mode_OUT;
 	gpio_init_s.GPIO_Speed = GPIO_Speed_100MHz;
 	gpio_init_s.GPIO_OType = GPIO_OType_PP;
@@ -48,7 +50,7 @@ void seven_segments_clear_segments_at_digit(uint8_t digit) {
 	clear_segments();
 }
 
-void seven_segment_display(uint8_t digit, uint8_t value) {
+void seven_segment_display(uint8_t digit, uint8_t value, uint8_t dot_on) {
 	choose_digit(digit);
 	clear_segments();
 	
@@ -82,12 +84,8 @@ void seven_segment_display(uint8_t digit, uint8_t value) {
 			GPIO_SetBits(SEVEN_SEGMENT_SEGMENT_GPIO, all_segments[i]);
 		}
 	}
-}
 
-void seven_segment_display_dot(uint8_t digit, uint8_t on) {
-	choose_digit(digit);
-
-	if (on) {
+	if (dot_on) {
 		GPIO_SetBits(SEVEN_SEGMENT_SEGMENT_GPIO, SEVEN_SEGMENT_SEGMENT_DOT);
 	} else {
 		GPIO_ResetBits(SEVEN_SEGMENT_SEGMENT_GPIO, SEVEN_SEGMENT_SEGMENT_DOT);

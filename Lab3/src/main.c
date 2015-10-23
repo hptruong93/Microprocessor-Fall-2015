@@ -20,7 +20,35 @@ int main() {
 
 		led_rotation_rotate_leds();
 		accelerometer_process();
-		seven_segment_display(SEVEN_SEGMENT_DIGIT_1, 1);
+		
+		static uint8_t x = 0, y = 0;
+		static uint16_t count = 0;
+		
+		count++;
+		
+		if (count == 200) {
+			x = (x + 1) % 16;
+			count = 0;
+		}
+		
+		static uint8_t is_1 = 0;
+		
+		if (is_1 == 0) {
+			seven_segment_display(SEVEN_SEGMENT_DIGIT_1, x, x % 2);
+		} else if (is_1 == 1) {
+			seven_segment_display(SEVEN_SEGMENT_DIGIT_2, x, 1 - (x % 2));
+		} else if (is_1 == 2) {
+			seven_segment_display(SEVEN_SEGMENT_DIGIT_3, x, x % 2);
+		} else {
+			seven_segment_display(SEVEN_SEGMENT_DIGIT_4, x, 1 - (x % 2));
+		}
+		is_1 = (is_1 + 1) % 4;
+		
+		//seven_segment_display(SEVEN_SEGMENT_DIGIT_2, (x + 1) % 16);
+		//seven_segment_display(SEVEN_SEGMENT_DIGIT_3, (x + 2) % 16);
+		//seven_segment_display(SEVEN_SEGMENT_DIGIT_4, (x + 3) % 16);
+		
+		
 
 		system_ticks = 0;
 	}

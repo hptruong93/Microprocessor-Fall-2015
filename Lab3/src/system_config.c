@@ -3,6 +3,7 @@
 #include "interfaces/accelerometer_interface.h"
 #include "interfaces/led_interface.h"
 #include "interfaces/seven_segments_interface.h"
+#include "interfaces/keypad_interface.h"
 
 static void generic_init(void) {
 	/* TIM3 clock enable */
@@ -20,6 +21,7 @@ void system_init(void) {
 	generic_init();
 	led_init();
 	seven_segment_init();
+	keypad_init();
 	accelerometer_init();
 }
 

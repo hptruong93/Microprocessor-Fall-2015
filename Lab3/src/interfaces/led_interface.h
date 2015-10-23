@@ -9,16 +9,22 @@
 *	@param  CLEAR_LED 						will reset all the GPIO bits corresponding to the GPIO pin
 */
 
-
 #define LED_COUNT 4
+#define LED_GPIO GPIOD
+
+
 #define LED_1 GPIO_Pin_12
 #define LED_2 GPIO_Pin_13
 #define LED_3 GPIO_Pin_14
 #define LED_4 GPIO_Pin_15
 
-#define SET_LED(id) GPIO_SetBits(GPIOD, id)
-#define CLEAR_LED(id) GPIO_ResetBits(GPIOD, id)
+#define SET_LED(id) GPIO_SetBits(LED_GPIO, id)
+#define CLEAR_LED(id) GPIO_ResetBits(LED_GPIO, id)
 
+
+/*
+*  @param
+*/
 void led_init(void);
 void led_all_on(void);
 void led_all_off(void);

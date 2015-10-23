@@ -24,7 +24,7 @@
 
 
 void seven_segment_init(void);
-void seven_segment_display(uint8_t digit, uint8_t value);
+void seven_segment_display(uint8_t digit, uint8_t value, uint8_t dot_on);
 void seven_segments_clear_segments_at_digit(uint8_t digit);
 
 #endif

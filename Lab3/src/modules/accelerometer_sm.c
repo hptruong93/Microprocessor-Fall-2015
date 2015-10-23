@@ -7,5 +7,12 @@ void accelerometer_process(void) {
 	static float x, y, z;
 	accelerometer_read(&x, &y, &z);
 	accelerometer_calculate_rotation(x, y, z);
-	printf("PRY = (%.2f, %.2f, %.2f)\n", accelerometer_angles.pitch, accelerometer_angles.roll, accelerometer_angles.yaw);
+	
+	static uint16_t display = 0;
+	display++;
+	
+	if (display == 40) {
+		printf("PRY = (%.2f, %.2f, %.2f)\n", accelerometer_angles.pitch, accelerometer_angles.roll, accelerometer_angles.yaw);
+		display = 0;
+	}
 }

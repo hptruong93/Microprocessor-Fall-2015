@@ -109,9 +109,9 @@ void accelerometer_calculate_rotation(float x, float y, float z) {
 	}
 }
 
-uint8_t c;
 void EXTI0_IRQHandler(void) {
-	c++;
-	accelerometer_read_raw();
-	EXTI_ClearITPendingBit(EXTI_Line0);
+	if (EXTI_GetITStatus(EXTI_Line0) != RESET) {	
+		accelerometer_read_raw();
+		EXTI_ClearITPendingBit(EXTI_Line0);
+	}
 }

@@ -7,7 +7,7 @@ void led_rotation_rotate_leds(void) {
 	fun++;
 
 	led_all_off();
-	static const uint16_t count_max = 50;
+	static const uint16_t count_max = 200;
 	if (fun % count_max < count_max / 4) {
 		SET_LED(LED_1);
 	} else if (fun % count_max < count_max / 2) {
