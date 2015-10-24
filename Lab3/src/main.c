@@ -21,12 +21,14 @@ int main() {
 
 		led_rotation_rotate_leds();
 		accelerometer_process();
+		keypad_read_state();
+		
 		
 		uint8_t pressed = keypad_input_read();
 		if (pressed != 255) {
 			seven_segment_set_display_int(pressed, SEVEN_SEGMENT_BASE_10);
 		}
-		
+
 		system_ticks = 0;
 	}
 	
