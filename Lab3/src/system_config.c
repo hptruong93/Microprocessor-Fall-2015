@@ -28,7 +28,7 @@ void system_init(void) {
 	led_init();
 	seven_segment_init();
 	seven_segments_sm_init();
-	// keypad_init();
+	keypad_init();
 	accelerometer_init();
 }
 

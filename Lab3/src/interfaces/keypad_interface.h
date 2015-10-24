@@ -14,17 +14,17 @@
 #define KEYPAD_MIN_PRESS_DELAY			20 //Minimum delay between presses
 #define KEYPAD_NO_PRESSED				255
 
-#define KEYPAD_POLL_PERIOD_MS			100
+#define KEYPAD_POLL_PERIOD_MS			200
 
-#define KEYPAD_GPIO 					GPIOA
-#define KEYPAD_PIN_1					GPIO_Pin_1
-#define KEYPAD_PIN_2					GPIO_Pin_2
-#define KEYPAD_PIN_3					GPIO_Pin_3
-#define KEYPAD_PIN_4					GPIO_Pin_4
-#define KEYPAD_PIN_5					GPIO_Pin_5
-#define KEYPAD_PIN_6					GPIO_Pin_6
-#define KEYPAD_PIN_7					GPIO_Pin_7
-#define KEYPAD_PIN_8					GPIO_Pin_8
+#define KEYPAD_GPIO 					GPIOE
+#define KEYPAD_PIN_1					GPIO_Pin_11
+#define KEYPAD_PIN_2					GPIO_Pin_4
+#define KEYPAD_PIN_3					GPIO_Pin_5
+#define KEYPAD_PIN_4					GPIO_Pin_6
+#define KEYPAD_PIN_5					GPIO_Pin_7
+#define KEYPAD_PIN_6					GPIO_Pin_8
+#define KEYPAD_PIN_7					GPIO_Pin_9
+#define KEYPAD_PIN_8					GPIO_Pin_10
 
 
 #define KEYPAD_ROW_1					KEYPAD_PIN_1

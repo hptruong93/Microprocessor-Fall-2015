@@ -3,6 +3,6 @@
 
 #include "stm32f4xx.h"
 
-void accelerometer_process(void);
+float accelerometer_calculate_angle(void);
 
 #endif

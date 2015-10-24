@@ -18,6 +18,20 @@ static int16_t x_raw, y_raw, z_raw;
 
 static void accelerometer_normalize(int16_t* x, int16_t* y, int16_t* z) {
 	//Do nothing for now
+	static const float normalizing_matrix[3][3] = {
+		{1,0,0},
+		{0,1,0},
+		{0,0,1}
+	};
+
+	float normalized_values[3];
+	for (uint8_t i = 0; i < 3; i++) {
+		normalized_values[i] = normalizing_matrix[i][0] * (*x) + normalizing_matrix[i][1] * (*y) + normalizing_matrix[i][2] * (*z);
+	}
+
+	*x = (int16_t) (normalized_values[0]);
+	*y = (int16_t) (normalized_values[1]);
+	*z = (int16_t) (normalized_values[2]);
 }
 
 void accelerometer_init(void) {
@@ -111,7 +125,7 @@ void accelerometer_calculate_rotation(float x, float y, float z) {
 
 void EXTI0_IRQHandler(void) {
 	if (EXTI_GetITStatus(EXTI_Line0) != RESET) {	
-		accelerometer_read_raw();
 		EXTI_ClearITPendingBit(EXTI_Line0);
+		accelerometer_read_raw();
 	}
 }

@@ -28,8 +28,8 @@ void seven_segments_sm_init(void) {
 	NVIC_InitTypeDef NVIC_InitStructure;
 	/* Enable the TIM3 gloabal Interrupt */
 	NVIC_InitStructure.NVIC_IRQChannel = TIM2_IRQn;
-	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0x00;
-	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0x01;
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0x01;
+	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0x00;
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
 	NVIC_Init(&NVIC_InitStructure);
 }
@@ -48,6 +48,10 @@ void seven_segment_set_display_int(uint16_t value, uint8_t base) {
 }
 
 void seven_segment_set_display_float(float f, uint8_t decimal_places) {
+	if (f < 0) {
+		f = -f;
+	}
+
 	for (uint8_t i = 0; i < 4; i++) {
 		dots[i] = 0;
 	}	

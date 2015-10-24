@@ -16,7 +16,7 @@
 #define SEVEN_SEGMENT_SEGMENT_B GPIO_Pin_2 //hardware pin 16
 #define SEVEN_SEGMENT_SEGMENT_C GPIO_Pin_3 //hardware pin 13
 #define SEVEN_SEGMENT_SEGMENT_D GPIO_Pin_4 //hardware pin 3
-#define SEVEN_SEGMENT_SEGMENT_E GPIO_Pin_5 //hardware pin 5
+#define SEVEN_SEGMENT_SEGMENT_E GPIO_Pin_0 //hardware pin 5
 #define SEVEN_SEGMENT_SEGMENT_F GPIO_Pin_6 //hardware pin 11
 #define SEVEN_SEGMENT_SEGMENT_G GPIO_Pin_7 //hardware pin 15
 //Special segment: the dot

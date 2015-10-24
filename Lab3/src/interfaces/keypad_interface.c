@@ -82,8 +82,8 @@ void keypad_init(void) {
 	NVIC_InitTypeDef NVIC_InitStructure;
 	/* Enable the TIM3 gloabal Interrupt */
 	NVIC_InitStructure.NVIC_IRQChannel = TIM3_IRQn;
-	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0x00;
-	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0x01;
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0x02;
+	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0x00;
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
 	NVIC_Init(&NVIC_InitStructure);
 }
@@ -132,11 +132,10 @@ void keypad_periodic_read_state(void) {
 
 		// printf("Col are %d, %d, %d, %d\n", row1, row2, row3, row4);
 	} else {
-		static const uint8_t DISALBED_ROW = 1;
 		found_row = KEYPAD_NO_PRESSED;
 		for (uint8_t i = 0; i < KEYPAD_NUM_PINS_ROW; i++) {
 			uint8_t pin_state = KEYPAD_READ_GPIO(keypad_cols[i]);
-			if (pin_state == expected_pressed_value && i != DISALBED_ROW) {
+			if (pin_state == expected_pressed_value) {
 				// printf("Row %d is pressed\n", i);
 				found_row = i;
 				break;
