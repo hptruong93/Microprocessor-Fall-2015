@@ -12,7 +12,7 @@ void accelerometer_process(void) {
 	display++;
 	
 	if (display == 40) {
-		printf("PRY = (%.2f, %.2f, %.2f)\n", accelerometer_angles.pitch, accelerometer_angles.roll, accelerometer_angles.yaw);
+		//printf("PRY = (%.2f, %.2f, %.2f)\n", accelerometer_angles.pitch, accelerometer_angles.roll, accelerometer_angles.yaw);
 		display = 0;
 	}
 }

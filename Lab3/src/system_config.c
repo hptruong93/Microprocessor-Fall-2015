@@ -8,6 +8,7 @@
 static void generic_init(void) {
 	/* TIM3 clock enable */
 	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3, ENABLE);
+	RCC_AHB1PeriphClockCmd (RCC_AHB1Periph_GPIOA, ENABLE); // Enables the AHB1 peripheral clock, providing power to GPIOC branch
 	RCC_AHB1PeriphClockCmd (RCC_AHB1Periph_GPIOB, ENABLE); // Enables the AHB1 peripheral clock, providing power to GPIOB branch
 	RCC_AHB1PeriphClockCmd (RCC_AHB1Periph_GPIOD, ENABLE); // Enables the AHB1 peripheral clock, providing power to GPIOD branch
 	
@@ -20,7 +21,7 @@ static void generic_init(void) {
 void system_init(void) {
 	generic_init();
 	led_init();
-	seven_segment_init();
+	// seven_segment_init();
 	keypad_init();
 	accelerometer_init();
 }
