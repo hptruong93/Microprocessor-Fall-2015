@@ -2,6 +2,22 @@
 #include "modulo_math.h"
 #include "my_types.h"
 
+/*	Used circular buffer to store values dynamically to calculate moving average to filter temperature reading measurements
+*	circular_buffer_init 				will initalize the buffer 
+*	circular_buffer_is_full 			will check if the buffer is full by checking if tail is equal to head by incrementing
+*	circular_buffer_is_empty 			will check if the buffer is empty by checking head is equal to tail
+*	circular_buffer_append 				add a new value in the buffer and increase the size by 1
+*	circular_buffer_remove_last			remove the last element in the circular buffer and decrease the size by 1
+*	circular_buffer_get_first 			will get the first element's data (which is the head)
+*	circular_buffer_get_last 			will get last element's data
+*	circular_buffer_add_first 			will add the value before the 1st element
+*	circular_buffer_remove_first 		will remove the first element
+*	circular_buffer_clear 				will clear the buffer of all the elements
+*	circular_buffer_size 				will give the number of elements in the circular buffer
+*	circular_buffer_get 				will get any element in the circular buffer
+*	We expect data buffer to have at least size + 1 elements
+*/
+
 int circular_buffer_init(circular_buffer* empty, BUFFER_TYPE* data, uint16_t size) {
 	if (size <= 1) {
 		return -1;

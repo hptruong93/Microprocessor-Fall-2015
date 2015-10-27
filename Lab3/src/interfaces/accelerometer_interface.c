@@ -25,7 +25,6 @@ static int16_t x_raw, y_raw, z_raw;
 */
 
 static void accelerometer_normalize(int16_t* x, int16_t* y, int16_t* z) {
-	//Do nothing for now
 	static const float normalizing_matrix[3][3] = {
 		{1,0,0},
 		{0,1,0},

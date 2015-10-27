@@ -2,6 +2,9 @@
 #include "my_types.h"
 #include "utils/utils.h"
 
+/*	radian_to_degree method will convert input values of radians to degrees using the linear equation --> degree = radians * 180 / PI
+*/
+
 inline float radian_to_degree(float rad) {
 	return rad * (180.0 / M_PI);
 }

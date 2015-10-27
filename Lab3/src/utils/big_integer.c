@@ -2,6 +2,7 @@
 #include "utils/utils.h"
 #include "my_types.h"
 
+
 void big_integer_increment(uint32_t* big_integer) {
 	uint16_t index = 0;
 
