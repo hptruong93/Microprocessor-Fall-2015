@@ -3,8 +3,9 @@
 
 accelerometer_info accelerometer_angles;
 
-/*
-* Return roll
+/*	accelerometer_sm.c defines accelerometer_calculate_angle method which will print the pitch, roll and yaw angles
+* 	@param 		display							counter will which count till 200 and then reset itself to 0
+*	@param		accelerometer_angles.roll		roll is used for the guess game 
 */
 float accelerometer_calculate_angle(void) {
 	static float x, y, z;

@@ -5,6 +5,11 @@
 #include "interfaces/keypad_interface.h"
 #include "utils/utils.h"
 
+/*	keypad_interface.c contains all the methods inlcuding input/output configuration, switch readings and the TIM3 hardware timer for switching delays
+*	@param 		keypad_rows			an array which stores all the GPIOE pins for the 4 rows
+*	@param 		keypad_cols			an array which stores all the GPIOE pins for the 4 columns
+*/
+
 static const uint16_t keypad_rows[KEYPAD_NUM_PINS_ROW] = {KEYPAD_ROW_1, KEYPAD_ROW_2, KEYPAD_ROW_3, KEYPAD_ROW_4};
 static const uint16_t keypad_cols[KEYPAD_NUM_PINS_COL] = {KEYPAD_COL_1, KEYPAD_COL_2, KEYPAD_COL_3, KEYPAD_COL_4};
 
@@ -17,6 +22,9 @@ static uint8_t expected_pressed_value = 1;
 
 #define KEYPAD_SET_GPIO(keypad_pin) GPIO_SetBits(KEYPAD_GPIO, keypad_pin)
 #define KEYPAD_READ_GPIO(keypad_pin) GPIO_ReadInputDataBit(KEYPAD_GPIO, keypad_pin)
+
+/*	configure_gpio_input method will initialize all the GPIO pins that are defined and set the mode as IN
+*/
 
 static void configure_gpio_input(GPIO_InitTypeDef* gpio_init_s, const uint16_t* pins, uint8_t number_of_pins) {
 	GPIO_StructInit(gpio_init_s);
@@ -32,6 +40,9 @@ static void configure_gpio_input(GPIO_InitTypeDef* gpio_init_s, const uint16_t* 
 	GPIO_Init(KEYPAD_GPIO, gpio_init_s);
 }
 
+/*	configure_gpio_output method will initialize all the GPIO pins that are defined and set the mode as OUT
+*/
+
 static void configure_gpio_output(GPIO_InitTypeDef* gpio_init_s, const uint16_t* pins, uint8_t number_of_pins) {
 	GPIO_StructInit(gpio_init_s);
 	gpio_init_s->GPIO_Pin = 0;
@@ -45,6 +56,12 @@ static void configure_gpio_output(GPIO_InitTypeDef* gpio_init_s, const uint16_t*
 	gpio_init_s->GPIO_PuPd = GPIO_PuPd_NOPULL;
 	GPIO_Init(KEYPAD_GPIO, gpio_init_s);
 }
+
+/*	switch_readings method will check if it's reading column or row as input or output
+*	If it's reading column (set high as 1), then it will first configure the output by initializing pins and set the mode OUT and then configure the input by initializing pins and set the mode IN
+*	If it's reading row, it will first configure the input by initializing the pins and set the mode IN 
+*	We first configure the row as output and columns as input (with pull down enabled)
+*/
 
 static void switch_readings(void) {
 	static GPIO_InitTypeDef gpio_init_s;
@@ -62,6 +79,10 @@ static void switch_readings(void) {
 
 	is_reading_col = 1 - is_reading_col;
 }
+
+/*	keypad_init method will initialize the switch_readings method and the TIM3 hardware configuration for keypad interface
+*	TIM_Period defined as 200-1 = 199ms
+*/
 
 void keypad_init(void) {
 	switch_readings();

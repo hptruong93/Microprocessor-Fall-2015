@@ -1,6 +1,10 @@
 #include "modules/keypad_input_sm.h"
 #include "interfaces/keypad_interface.h"
 
+/*	keypad_input_read method will initialize the buttons on the keypad 
+*	@param 			key_mapping			a 4X4 matrix to store all the buttons
+*/
+
 uint8_t keypad_input_read(void) {
 	static const uint8_t key_mapping[4][4] = {
 		{1, 2, 3, 0x0A},

@@ -9,6 +9,9 @@
 
 #define GRAVITATIONAL_ACCELERATION     9.81
 
+/* accelerometer_info struct defined to take in parameters roll, pitch and yaw for tilting along x, y and z axes
+*/
+
 typedef struct accelerometer_info {
 	float roll;
 	float pitch;
