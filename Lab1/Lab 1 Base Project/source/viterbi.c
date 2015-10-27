@@ -193,7 +193,7 @@ int accelometer_check(int state, int step, int N1, int N2, int N3) {
 /** @param accelometer          combining both the methods above to display the output array
 *   @param currentState         evaluating the current state after converting with respect to alpha1 and alpha 2
 *   @param condition            will check the states after calculating the number of steps with respect to N1, N2 and N3
-*   @param 
+*   @param output               the output array with all the state transitioning elements 
 */
 
 int accelometer(int accT, float* accObs, int* output, float alpha1, float alpha2, int N1, int N2, int N3) {
@@ -208,7 +208,7 @@ int accelometer(int accT, float* accObs, int* output, float alpha1, float alpha2
             // printf("Condition is %d --> \n", condition);
             if (condition) {
                 // printf("Different and udated --> %d\n", outputIndex);
-                output[outputIndex] = state;
+                output[outputIndex] = state;              //will store the state value
                 // printf("array[%d] = %d\n", outputIndex, state);
                 outputIndex++;
             }

@@ -1,7 +1,9 @@
 #include "seven_segments_interface.h"
 
-static const uint16_t all_digits[SEVEN_SEGMENT_NUM_DIGIT] = {SEVEN_SEGMENT_DIGIT_1, SEVEN_SEGMENT_DIGIT_2, SEVEN_SEGMENT_DIGIT_3, SEVEN_SEGMENT_DIGIT_4};
-static const uint16_t all_segments[SEVEN_SEGMENT_NUM_SEGMENT] = {SEVEN_SEGMENT_SEGMENT_A, SEVEN_SEGMENT_SEGMENT_B, SEVEN_SEGMENT_SEGMENT_C, SEVEN_SEGMENT_SEGMENT_D, SEVEN_SEGMENT_SEGMENT_E, SEVEN_SEGMENT_SEGMENT_F, SEVEN_SEGMENT_SEGMENT_G};
+static const uint16_t all_digits[SEVEN_SEGMENT_NUM_DIGIT] = {SEVEN_SEGMENT_DIGIT_1, SEVEN_SEGMENT_DIGIT_2, SEVEN_SEGMENT_DIGIT_3, SEVEN_SEGMENT_DIGIT_4, SEVEN_SEGMENT_DIGIT_DEGREE_SYMBOL};
+static const uint16_t all_segments[SEVEN_SEGMENT_NUM_SEGMENT] = {SEVEN_SEGMENT_SEGMENT_A, SEVEN_SEGMENT_SEGMENT_B, SEVEN_SEGMENT_SEGMENT_C, 
+																																 SEVEN_SEGMENT_SEGMENT_D, SEVEN_SEGMENT_SEGMENT_E, SEVEN_SEGMENT_SEGMENT_F, 
+                                                                 SEVEN_SEGMENT_SEGMENT_G, SEVEN_SEGMENT_SEGMENT_DEGREE_SYMBOL};
 
 void seven_segment_init(void) {
 	GPIO_InitTypeDef gpio_init_s;
@@ -12,6 +14,7 @@ void seven_segment_init(void) {
 		gpio_init_s.GPIO_Pin |= all_segments[i];
 	}
 	gpio_init_s.GPIO_Pin |= SEVEN_SEGMENT_SEGMENT_DOT;
+	gpio_init_s.GPIO_Pin |= SEVEN_SEGMENT_SEGMENT_DEGREE_SYMBOL;
 
 	gpio_init_s.GPIO_Mode = GPIO_Mode_OUT;
 	gpio_init_s.GPIO_Speed = GPIO_Speed_100MHz;
@@ -27,7 +30,7 @@ void seven_segment_init(void) {
 	GPIO_Init(SEVEN_SEGMENT_DIGIT_GPIO, &gpio_init_s);
 }
 
-static void choose_digit(uint8_t digit) {
+static void choose_digit(uint16_t digit) {
 	//Configure the digit first by setting it to low, and everything else to high
 	for (uint8_t i = 0; i < SEVEN_SEGMENT_NUM_DIGIT; i++) {
 		if (all_digits[i] == digit) {
@@ -50,9 +53,14 @@ void seven_segments_clear_segments_at_digit(uint8_t digit) {
 	clear_segments();
 }
 
-void seven_segment_display(uint8_t digit, uint8_t value, uint8_t dot_on) {
+void seven_segment_display(uint16_t digit, uint8_t value, uint8_t dot_on) {
 	choose_digit(digit);
 	clear_segments();
+	
+	if (digit == SEVEN_SEGMENT_DIGIT_DEGREE_SYMBOL) {
+		GPIO_SetBits(SEVEN_SEGMENT_SEGMENT_GPIO, SEVEN_SEGMENT_SEGMENT_DEGREE_SYMBOL);
+		return;
+	}
 	
 	static const uint16_t values[16][SEVEN_SEGMENT_NUM_SEGMENT] = {
 	//   A  B  C  D  E  F  G

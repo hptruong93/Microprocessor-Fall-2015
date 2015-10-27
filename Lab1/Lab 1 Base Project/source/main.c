@@ -3,6 +3,11 @@
 #include "viterbi.h"
 #include "utils.h"
 
+/** @param VITERBI_ASM 		to call the assembly function
+*	else call C function
+*	defined 5 test cases 
+*/
+
 int main()
 {
     //printf("The quick brown fox jumps over the lazy dog.\n");

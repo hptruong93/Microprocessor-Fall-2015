@@ -3,7 +3,10 @@
 
 accelerometer_info accelerometer_angles;
 
-void accelerometer_process(void) {
+/*
+* Return roll
+*/
+float accelerometer_calculate_angle(void) {
 	static float x, y, z;
 	accelerometer_read(&x, &y, &z);
 	accelerometer_calculate_rotation(x, y, z);
@@ -11,8 +14,9 @@ void accelerometer_process(void) {
 	static uint16_t display = 0;
 	display++;
 	
-	if (display == 40) {
+	if (display == 200) {
 		printf("PRY = (%.2f, %.2f, %.2f)\n", accelerometer_angles.pitch, accelerometer_angles.roll, accelerometer_angles.yaw);
 		display = 0;
 	}
+	return accelerometer_angles.roll;
 }

@@ -18,6 +18,12 @@
 #define LED_3 GPIO_Pin_14
 #define LED_4 GPIO_Pin_15
 
+#define LED_GREEN LED_1
+#define LED_ORANGE LED_2
+#define LED_RED   LED_3
+#define LED_BLUE  LED_4
+
+
 #define SET_LED(id) GPIO_SetBits(LED_GPIO, id)
 #define CLEAR_LED(id) GPIO_ResetBits(LED_GPIO, id)
 

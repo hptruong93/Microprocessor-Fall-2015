@@ -3,6 +3,9 @@
 
 #include "stm32f4xx.h"
 
+/*
+* Using NVIC with priority (0,0)
+*/
 
 #define GRAVITATIONAL_ACCELERATION     9.81
 

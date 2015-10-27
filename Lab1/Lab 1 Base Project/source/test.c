@@ -1,7 +1,9 @@
 #include "viterbi.h"
 #include "test.h"
 
-
+/** test4 is for AccObs
+*   test5 is for 
+*/
 
 
 void test1(void) {

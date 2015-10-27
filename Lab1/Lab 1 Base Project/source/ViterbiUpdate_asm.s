@@ -47,10 +47,13 @@
 ;    return error;
 ;}
 
+
+	
 ViterbiUpdate_asm FUNCTION
 	;We have 4, 5, 6, 7, 8, 10 and 11
 	;Always use 10 & 11 as temp/ calculation var
 	;R6 = error and S1 = sum and R10 = k and R11 = number_of_states
+	;initializing S1,S2, S5, S6, S11 and S12 to 0
 	PUSH {R4, R5, R6, R9, R10, R11}
 	VSUB.F32 S1, S1
 	VSUB.F32 S2, S2
