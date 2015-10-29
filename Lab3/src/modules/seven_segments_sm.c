@@ -32,7 +32,7 @@ void seven_segments_sm_init(void) {
 
 
 	NVIC_InitTypeDef NVIC_InitStructure;
-	/* Enable the TIM3 gloabal Interrupt */
+	/* Enable the TIM2 gloabal Interrupt */
 	NVIC_InitStructure.NVIC_IRQChannel = TIM2_IRQn;
 	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0x01;
 	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0x00;
