@@ -148,17 +148,17 @@ void accelerometer_read(float* x, float *y, float *z) {
 *	equation with arctan function is used to produce constant sensitivity over 360 degrees rotation of the processor in X, Y or Z axis
 */
 
-void accelerometer_calculate_rotation(float x, float y, float z) {
+void accelerometer_calculate_rotation(accelerometer_info* accelerometer_angles, float x, float y, float z) {
 	if (y != 0 && z != 0) {
-		accelerometer_angles.pitch = radian_to_degree(atan(x / sqrt(y*y + z*z)));
+		accelerometer_angles->pitch = radian_to_degree(atan(x / sqrt(y*y + z*z)));
 	}
 
 	if (x != 0 && z != 0) {
-		accelerometer_angles.roll = radian_to_degree(atan(y / sqrt(x*x + z*z)));
+		accelerometer_angles->roll = radian_to_degree(atan(y / sqrt(x*x + z*z)));
 	}
 
 	if (x != 0 && y != 0) {
-		accelerometer_angles.yaw = radian_to_degree(atan(z / sqrt(x*x + y*y)));
+		accelerometer_angles->yaw = radian_to_degree(atan(z / sqrt(x*x + y*y)));
 	}
 }
 

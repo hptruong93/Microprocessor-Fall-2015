@@ -15,6 +15,8 @@
 
 void seven_segments_sm_init(void);
 void seven_segment_set_display_mode(uint8_t mode);
+void seven_segment_set_display_degree(uint8_t is_on);
+
 void seven_segment_set_display_int(uint16_t value, uint8_t base);
 void seven_segment_set_display_float(float f, uint8_t decimal_places);
 void seven_segments_set_display_float_smart(float f);

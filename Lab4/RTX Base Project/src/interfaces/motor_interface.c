@@ -1,6 +1,5 @@
 #include "motor_interface.h"
-#include "utils/my_types.h"
-#include "utils/util_timer.h"
+#include "my_types.h"
 
 /*	motor_interface.c implements the PWM signal theory to enable motor rotation from 0 to 180 degrees to plot the temperature of the processor. 
 */
@@ -27,9 +26,9 @@ int motor_rotate_to(float angle) {
 */
 	uint32_t wait_time = (uint32_t)(_0_DEGREE + (angle / (float)MAX_ANGLE) * (_180_DEGREE - _0_DEGREE));
 	
-	blocking_wait(wait_time * ONE_MICRO_SECOND_DELAY);
+	//blocking_wait(wait_time * ONE_MICRO_SECOND_DELAY);
 	//after the operation is over it will reset GPIOD_7
-	GPIO_ResetBits(GPIOD, MOTOR_PIN);
+	//GPIO_ResetBits(GPIOD, MOTOR_PIN);
 
 	return TRUE;
 }

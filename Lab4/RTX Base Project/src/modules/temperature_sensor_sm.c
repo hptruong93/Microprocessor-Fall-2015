@@ -7,7 +7,7 @@ void temperature_sensor_alarm(float temperature) {
 		//Alarm
 		seven_segment_set_display_mode(SEVEN_SEGMENT_DISPLAY_MODE_BLINK);
 	} else {
-		//Normal	
+		//Normal
 		seven_segment_set_display_mode(SEVEN_SEGMENT_DISPLAY_MODE_NORMAL);
 	}
 }

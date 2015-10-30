@@ -3,12 +3,14 @@
 #include "interfaces/seven_segments_interface.h"
 #include "modules/seven_segments_sm.h"
 #include "system_config.h"
+#include "my_types.h"
 
 /*	seven_segments_cm.c contains methods to display the digits on the clock display in different formats: XXX, XX.Y, X.YY
 */
 static uint8_t digits[4];
 static uint8_t dots[4];
 static uint8_t display_mode = SEVEN_SEGMENT_DISPLAY_MODE_NORMAL;
+static uint8_t display_degree = TRUE;
 
 /*	seven_segments_sm_init method will initialize the TIM2 hardware timer for the seven_segment display for each digit
 *	TIM2 is passed on as a hardware interrupt request to the NVIC of the processor
@@ -39,6 +41,10 @@ void seven_segments_sm_init(void) {
 
 void seven_segment_set_display_mode(uint8_t mode) {
 	display_mode = mode;
+}
+
+void seven_segment_set_display_degree(uint8_t is_on) {
+
 }
 
 /*	to display seven_segment as an integer 
@@ -98,7 +104,7 @@ void seven_segment_periodic_display(void) {
 	static uint16_t blink_count;
 
 	blink_count = (blink_count + 1) % SEVEN_SEGMENT_BLINK_PERIOD;
-	state = (state + 1) % 3;
+	state = (state + 1) % (display_degree == TRUE ? 4 : 3);
 
 	if (display_mode == SEVEN_SEGMENT_DISPLAY_MODE_BLINK && blink_count < SEVEN_SEGMENT_BLINK_PERIOD / 2) {
 		seven_segment_display(SEVEN_SEGMENT_NO_DIGIT, 0, 0);

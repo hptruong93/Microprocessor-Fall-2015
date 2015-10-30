@@ -130,6 +130,7 @@ static void accelerometer_read_raw(void) {
 */
 
 void accelerometer_read(float* x, float *y, float *z) {
+	printf("x, y, z = (%d, %d, %d)", x_raw, y_raw, z_raw);
 	accelerometer_normalize(&x_raw, &y_raw, &z_raw);
 
 	*x = ma_filter_add(&filter_x, x_raw);

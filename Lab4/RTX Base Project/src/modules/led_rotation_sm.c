@@ -1,7 +1,7 @@
 #include "interfaces/led_interface.h"
 #include "modules/led_rotation_sm.h"
 
-static uint8_t rotation_mode = LED_ROTATION_MODE_ROTATE_SINGLE;
+static uint8_t rotation_mode = LED_ROTATION_MODE_ROTATE_RACE;
 
 static void led_rotation_rotate_leds_single(void) {
 	static uint16_t count;
