@@ -1,55 +1,67 @@
 #include <stdio.h>
 #include "system_config.h"
-#include "modules/led_rotation_sm.h"
 
-#include "interfaces/led_interface.h"
-#include "interfaces/seven_segments_interface.h"
-#include "modules/accelerometer_sm.h"
-#include "modules/seven_segments_sm.h"
-#include "modules/keypad_input_sm.h"
+
+// #include "interfaces/led_interface.h"
+// #include "interfaces/seven_segments_interface.h"
+// #include "interfaces/temperature_sensor_interface.h"
+
+// #include "modules/led_rotation_sm.h"
+// #include "modules/accelerometer_sm.h"
+// #include "modules/seven_segments_sm.h"
+// #include "modules/keypad_input_sm.h"
+// #include "modules/temperature_sensor_sm.h"
+
+#include "cmsis_os.h" // ARM::CMSIS:RTOS:Keil RTX
 
 /* This file contains a list of methods that are defined in the main method and SysTick_Handler
 */
 
-static uint8_t system_ticks;
+void just_do_it(void) {
+	// led_rotation_rotate_leds();
+		
+//	temperature_sensor_read_temperature_raw();
+//	float temp = 1;
+//	temperature_sensor_read(&temp);
+
+//	printf("Temp is %f\n", temp);
+//	seven_segments_set_display_float_smart(temp);
+//	temperature_sensor_alarm(temp);
+}
+
+
+osThreadId thrdID1;
+void thread1(void const* arg) {
+	while (1) {
+		// just_do_it();
+		printf("AAA\n");
+		printf("BBB\n");
+		osDelay(100);
+	}
+}
+osThreadDef(thread1, osPriorityNormal, 1, 0);
 
 int main() {
-
-/*	system_init() method will initialize generic_init(), led_init(), seven_segment_init(), seven_segments_sm_init(), keypad_init(), accelerometer_init()
-*	SysTick_Config method will set ticks by dividing systemCoreClock with systick frequency (168MHz/100Hz)
-*	led_rotation_set_mode method will rotate single/double/triple LEDs or race all the LEDs or simply blink all LEDs 
-*	@param		LED_ROTATION_MODE_ROTATE_RACE		defined as 3, which will call method led_rotation_rotate_leds_race() and display race of LED rotations to show initialization
-*	print_instruction() method will display instruction in terms of pressing * to start the game
-*/
-
 	printf("Begin\n");
-	system_init();
+	// system_init();
 	printf("Done system init\n");
+	// led_rotation_set_mode(LED_ROTATION_MODE_ROTATE_RACE);
 	
-	SysTick_Config(SystemCoreClock / SYSTICK_FREQUENCY);
-	led_rotation_set_mode(LED_ROTATION_MODE_ROTATE_RACE);
-
-/*	running while loop to control the frequency measurement
-*	waits for interrupt handler 
-*/	
-	seven_segment_set_display_mode(SEVEN_SEGMENT_DISPLAY_MODE_BLINK);
-	while (1) {
-		while (!system_ticks);
-
-		led_rotation_rotate_leds();
-		seven_segment_set_display_int(8, SEVEN_SEGMENT_BASE_10);
-		
-		system_ticks = 0;
-	}
 	
+	osKernelInitialize();
+	thrdID1 = osThreadCreate(osThread(thread1), NULL);
+	osKernelStart();
+	while (1);
 	
 	return 0;
 }
 
 
-/*interrupt handler
-*/
 
-void SysTick_Handler() {
-	system_ticks = 1;
-}
+
+///*interrupt handler
+//*/
+
+//void SysTick_Handler() {
+//	system_ticks = 1;
+//}

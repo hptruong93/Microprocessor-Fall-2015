@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include "modules/accelerometer_sm.h"
 #include "interfaces/accelerometer_interface.h"
 

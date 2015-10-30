@@ -1,6 +1,7 @@
 #include "system_config.h"
 #include "stm32f4xx_conf.h"
 
+#include "interfaces/temperature_sensor_interface.h"
 #include "interfaces/accelerometer_interface.h"
 #include "interfaces/led_interface.h"
 #include "interfaces/seven_segments_interface.h"
@@ -37,9 +38,14 @@ static void generic_init(void) {
 
 void system_init(void) {
 	generic_init();
+	
 	led_init();
+
+	temperature_sensor_init();
+	
 	seven_segment_init();
 	seven_segments_sm_init();
+	
 	keypad_init();
 	accelerometer_init();
 }

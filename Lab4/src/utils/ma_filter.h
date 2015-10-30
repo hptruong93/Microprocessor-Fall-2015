@@ -4,7 +4,7 @@
 #include "stm32f4xx.h"
 #include "circular_buffer.h"
 
-#define MA_FILTER_TYPE CIRCULAR_BUFFER_TYPE
+typedef CIRCULAR_BUFFER_TYPE MA_FILTER_TYPE;
 #define MA_FILTER_DEPTH 14
 
 typedef struct ma_filter {

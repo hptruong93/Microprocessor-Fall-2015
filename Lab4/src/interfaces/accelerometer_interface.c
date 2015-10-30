@@ -132,7 +132,7 @@ static void accelerometer_read_raw(void) {
 void accelerometer_read(float* x, float *y, float *z) {
 	float x_norm = (float) x_raw;
 	float y_norm = (float) y_raw;
-	float z_norm = (float) z_norm;
+	float z_norm = (float) z_raw;
 	accelerometer_normalize(&x_norm, &y_norm, &z_norm);
 
 	*x = ma_filter_add(&filter_x, x_norm);
