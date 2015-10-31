@@ -12,7 +12,7 @@ typedef struct ma_filter {
 	float average;
 } ma_filter;
 
-void ma_filter_initialize(ma_filter* empty, circular_buffer* cb_data, int16_t* buffer);
-float ma_filter_add(ma_filter* filter, int16_t input);
+void ma_filter_initialize(ma_filter* empty, circular_buffer* cb_data, float* buffer);
+float ma_filter_add(ma_filter* filter, float input);
 
 #endif

@@ -9,13 +9,13 @@
 *	@param	circular_buffer_remove_first	will remove the first element in the circular buffer
 */
 
-void ma_filter_initialize(ma_filter* empty, circular_buffer* cb_data, int16_t* buffer) {
+void ma_filter_initialize(ma_filter* empty, circular_buffer* cb_data, float* buffer) {
 	circular_buffer_init(cb_data, buffer, MA_FILTER_DEPTH);
 	empty->cb = cb_data;
 	empty->average = 0;
 }
 
-float ma_filter_add(ma_filter* filter, int16_t input) {
+float ma_filter_add(ma_filter* filter, float input) {
 	uint16_t size = 0;
 	circular_buffer_size(filter->cb, &size);
 	//if size is less than depth, then only size of the circular buffer will be used to calculate the average
@@ -26,7 +26,7 @@ float ma_filter_add(ma_filter* filter, int16_t input) {
 		return filter->average;
 	} else {									//if size is greater than depth, then depth will be used to calculate the moving average
 		float sum = (filter->average) * MA_FILTER_DEPTH;
-		int16_t removing = 1;
+		float removing = 1;
 		circular_buffer_remove_first(filter->cb, &removing);
 		circular_buffer_append(filter->cb, &input);
 		sum -= removing;

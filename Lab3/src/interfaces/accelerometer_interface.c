@@ -13,9 +13,9 @@
 *	@param		x_raw, y_raw, z_raw				raw values obtained from the accelerometer sensor before converting it to degrees, normalization and filtering
 */
 
-static int16_t x_buffer[MA_FILTER_DEPTH + 2];
-static int16_t y_buffer[MA_FILTER_DEPTH + 2];
-static int16_t z_buffer[MA_FILTER_DEPTH + 2];
+static float x_buffer[MA_FILTER_DEPTH + 2];
+static float y_buffer[MA_FILTER_DEPTH + 2];
+static float z_buffer[MA_FILTER_DEPTH + 2];
 static circular_buffer cb_x, cb_y, cb_z;
 static ma_filter filter_x, filter_y, filter_z;
 
@@ -24,24 +24,30 @@ static int16_t x_raw, y_raw, z_raw;
 /*	accelerometer_normalize method is used to calibrate the axis readings by using the lease square approximation
 */
 
-static void accelerometer_normalize(int16_t* x, int16_t* y, int16_t* z) {
+static void accelerometer_normalize(float* x, float* y, float* z) {
 	static const float normalizing_matrix[3][3] = {
-		{1,0,0},
-		{0,1,0},
-		{0,0,1}
+		{1.05980676,  0.02639947, -0.00279462},
+		{-0.03077862,  1.1679603,  -0.01424515},
+		{-0.01497205,  0.05370348,  1.22005476}
 	};
+	
+	static const float cx = -163.44321229;
+	static const float cy = -142.16213624;
+	static const float cz = -112.6033728;
 
-	//	{1,-0.2257,0.075366},
-	//	{0.39690, 1, 0.14680},
-	//	{0.70232, -0.03689, 1}
+//Tranposed of the matrix
+//[[ 1.05980676  0.02639947 -0.00279462]
+// [-0.03077862  1.1679603  -0.01424515]
+// [-0.01497205  0.05370348  1.22005476]]
+//[-163.44321229 -142.16213624 -112.6033728 ]
 	float normalized_values[3];
 	for (uint8_t i = 0; i < 3; i++) {
 		normalized_values[i] = normalizing_matrix[i][0] * (*x) + normalizing_matrix[i][1] * (*y) + normalizing_matrix[i][2] * (*z);
 	}
 
-	*x = (int16_t) (normalized_values[0]);
-	*y = (int16_t) (normalized_values[1]);
-	*z = (int16_t) (normalized_values[2]);
+	*x = (normalized_values[0]) + cx;
+	*y = (normalized_values[1]) + cy;
+	*z = (normalized_values[2]) + cz;
 }
 
 /*	accelerometer_init method will do the following:
@@ -130,12 +136,15 @@ static void accelerometer_read_raw(void) {
 */
 
 void accelerometer_read(float* x, float *y, float *z) {
-	printf("x, y, z = (%d, %d, %d)", x_raw, y_raw, z_raw);
-	accelerometer_normalize(&x_raw, &y_raw, &z_raw);
+	float x_norm = (float) x_raw;
+	float y_norm = (float) y_raw;
+	float z_norm = (float) z_raw;
+	
+	accelerometer_normalize(&x_norm, &y_norm, &z_norm);
 
-	*x = ma_filter_add(&filter_x, x_raw);
-	*y = ma_filter_add(&filter_y, y_raw);
-	*z = ma_filter_add(&filter_z, z_raw);
+	*x = ma_filter_add(&filter_x, x_norm);
+	*y = ma_filter_add(&filter_y, y_norm);
+	*z = ma_filter_add(&filter_z, z_norm);
 }
 
 /*	accelerometer_calculate_rotation method will do the following calculations:
