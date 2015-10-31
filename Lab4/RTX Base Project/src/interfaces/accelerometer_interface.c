@@ -25,11 +25,27 @@ static int16_t x_raw, y_raw, z_raw;
 */
 
 static void accelerometer_normalize(float* x, float* y, float* z) {
+//	static const float normalizing_matrix[3][3] = {
+//		{1,0,0},
+//		{0,1,0},
+//		{0,0,1}
+//	};
+//	
+//	static const float cx = 0;
+//	static const float cy = 0;
+//	static const float cz = 0;
+	
 	static const float normalizing_matrix[3][3] = {
-		{1,0,0},
-		{0,1,0},
-		{0,0,1}
+		{1.05980676,  0.02639947, -0.00279462},
+		{-0.03077862,  1.1679603,  -0.01424515},
+		{-0.01497205,  0.05370348,  1.22005476}
 	};
+	
+	static const float cx = -163.44321229;
+	static const float cy = -142.16213624;
+	static const float cz = -112.6033728;
+
+
 
 	//	{1,-0.2257,0.075366},
 	//	{0.39690, 1, 0.14680},
@@ -39,9 +55,9 @@ static void accelerometer_normalize(float* x, float* y, float* z) {
 		normalized_values[i] = normalizing_matrix[i][0] * (*x) + normalizing_matrix[i][1] * (*y) + normalizing_matrix[i][2] * (*z);
 	}
 
-	*x = (normalized_values[0]);
-	*y = (normalized_values[1]);
-	*z = (normalized_values[2]);
+	*x = (normalized_values[0]) + cx;
+	*y = (normalized_values[1]) + cy;
+	*z = (normalized_values[2]) + cz;
 }
 
 /*	accelerometer_init method will do the following:

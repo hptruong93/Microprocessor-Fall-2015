@@ -106,9 +106,9 @@ void thread_accelerometer(void const* args) {
 		seven_segment_set_display_degree(FALSE);
 		uint8_t display_mode = get_accelerometer_display_mode();
 		if (display_mode == ACCELEROMETER_DISPLAY_ROLL) {
-			seven_segments_set_display_float_smart(angles.roll);
+			seven_segments_set_display_float_smart(angles.roll < 0 ? -angles.roll : angles.roll);
 		} else if (display_mode == ACCELEROMETER_DISPLAY_PITCH) {
-			seven_segments_set_display_float_smart(angles.pitch);
+			seven_segments_set_display_float_smart(angles.pitch < 0 ? -angles.pitch : angles.pitch);
 		}
 	}
 	osDelay(20);
