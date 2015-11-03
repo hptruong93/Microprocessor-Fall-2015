@@ -10,7 +10,7 @@
 static uint8_t digits[4];
 static uint8_t dots[4];
 static uint8_t display_mode = SEVEN_SEGMENT_DISPLAY_MODE_NORMAL;
-static uint8_t display_degree = TRUE;
+static uint8_t display_degree = FALSE;
 
 /*	seven_segments_sm_init method will initialize the TIM2 hardware timer for the seven_segment display for each digit
 *	TIM2 is passed on as a hardware interrupt request to the NVIC of the processor
@@ -44,7 +44,7 @@ void seven_segment_set_display_mode(uint8_t mode) {
 }
 
 void seven_segment_set_display_degree(uint8_t is_on) {
-
+	display_degree = is_on;
 }
 
 /*	to display seven_segment as an integer 

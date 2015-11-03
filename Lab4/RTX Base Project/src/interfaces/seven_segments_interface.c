@@ -64,7 +64,7 @@ static void clear_segments(void) {
 /*	seven_segments_clear_segments_at_digit will call the method choose_digit and clear_segments to clear all the 7 segments for 1 digit
 */
 
-void seven_segments_clear_segments_at_digit(uint8_t digit) {
+static void seven_segments_clear_segments_at_digit(uint16_t digit) {
 	choose_digit(digit);
 	clear_segments();
 }
@@ -80,7 +80,7 @@ void seven_segment_display(uint16_t digit, uint8_t value, uint8_t dot_on) {
 	if (digit == SEVEN_SEGMENT_NO_DIGIT) {
 		return;
 	}
-	
+
 	if (digit == SEVEN_SEGMENT_DIGIT_DEGREE_SYMBOL) {
 		GPIO_SetBits(SEVEN_SEGMENT_SEGMENT_GPIO, SEVEN_SEGMENT_SEGMENT_DEGREE_SYMBOL);
 		return;

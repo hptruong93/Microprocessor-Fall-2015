@@ -118,7 +118,7 @@ void thread_accelerometer(void const* args) {
 	accelerometer_calculate_angle(&angles);
 
 	if (get_display_module() == DISPLAY_MODULE_ACCELEROMETER) {
-		seven_segment_set_display_degree(FALSE);
+		seven_segment_set_display_degree(TRUE);
 		uint8_t display_mode = get_accelerometer_display_mode();
 		if (display_mode == ACCELEROMETER_DISPLAY_ROLL) {
 			seven_segments_set_display_float_smart(angles.roll < 0 ? -angles.roll : angles.roll);
