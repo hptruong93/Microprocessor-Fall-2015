@@ -35,3 +35,7 @@ float ma_filter_add(ma_filter* filter, MA_FILTER_TYPE input) {
 		return filter->average;
 	}
 }
+
+float ma_filter_get(ma_filter* filter) {
+	return filter->average;
+}

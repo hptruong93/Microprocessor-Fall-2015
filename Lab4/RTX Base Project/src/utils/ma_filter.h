@@ -15,5 +15,6 @@ typedef struct ma_filter {
 
 void ma_filter_initialize(ma_filter* empty, circular_buffer* cb_data, MA_FILTER_TYPE* buffer);
 float ma_filter_add(ma_filter* filter, MA_FILTER_TYPE input);
+float ma_filter_get(ma_filter* filter);
 
 #endif

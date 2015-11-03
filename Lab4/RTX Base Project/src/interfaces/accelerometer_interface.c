@@ -20,6 +20,7 @@ static circular_buffer cb_x, cb_y, cb_z;
 static ma_filter filter_x, filter_y, filter_z;
 
 static int16_t x_raw, y_raw, z_raw;
+static osSemaphoreId semaphore = NULL;
 
 /*	accelerometer_normalize method is used to calibrate the axis readings by using the lease square approximation
 */
@@ -121,13 +122,17 @@ void accelerometer_init(void) {
 	ma_filter_initialize(&filter_z, &cb_z, z_buffer);
 }
 
+void accelerometer_set_semaphore(osSemaphoreId data_semaphore) {
+	semaphore = data_semaphore;
+}
+
 /*	accelerometer_read_raw method will read 6 types of measurements: MSB (H) and LSB (L) of the acceleration signals acting on X, Y and Z axes respectively
 *	@param 		x_raw		will store the LSB measurement of X and add MSB of X (which is shifted by 8 bits)
 *	@param 		y_raw		will store the LSB measurement of Y and add MSB of Y (which is shifted by 8 bits)
 *	@param 		z_raw		will store the LSB measurement of Z and add MSB of Z (which is shifted by 8 bits)
 */
 
-static void accelerometer_read_raw(void) {
+void accelerometer_read_raw(void) {
 	uint8_t Buffer[6];
 	LIS3DSH_Read(&Buffer[0], LIS3DSH_OUT_X_L, 1);
 	LIS3DSH_Read(&Buffer[1], LIS3DSH_OUT_X_H, 1);
@@ -181,10 +186,11 @@ void accelerometer_calculate_rotation(accelerometer_info* accelerometer_angles, 
 /*	EXTI0_IRQHandler method will check the status of the external interrupt generated if it's not reset to clear EXTI Line0
 *	accelerometer_read_raw method will be called to read the raw value generated from the accelerometer sensor
 */
-
 void EXTI0_IRQHandler(void) {
 	if (EXTI_GetITStatus(EXTI_Line0) != RESET) {	
 		EXTI_ClearITPendingBit(EXTI_Line0);
-		accelerometer_read_raw();
+		if (semaphore != NULL) {
+			osSemaphoreRelease(semaphore);
+		}
 	}
 }

@@ -96,7 +96,7 @@ void keypad_init(void) {
 	TIM_TimeBaseInit(TIM3, &TIM_TimeBaseStructure);
 	/* TIM IT enable */
 	TIM_ITConfig(TIM3, TIM_IT_Update, ENABLE);
-	/* TIM2 enable counter */
+	/* TIM3 enable counter */
 	TIM_Cmd(TIM3, ENABLE);
 
 

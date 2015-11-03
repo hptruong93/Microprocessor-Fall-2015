@@ -1,4 +1,6 @@
 #include "stm32f4xx_conf.h"
+
+#include "system_config.h"
 #include "interfaces/temperature_sensor_interface.h"
 #include "utils/ma_filter.h"
 
@@ -7,6 +9,7 @@ static circular_buffer cb;
 static ma_filter filter;
 
 static float raw_reading;
+static osSemaphoreId semaphore = NULL;
 
 void temperature_sensor_init(void) {
 	ADC_InitTypeDef adc_init_s;  // Structure to initialize definitions of ADC
@@ -32,7 +35,33 @@ void temperature_sensor_init(void) {
 	ADC_RegularChannelConfig(ADC1, ADC_Channel_16, 1, ADC_SampleTime_480Cycles); // Configures for the selected ADC a regular channel, rank in the sequencer and its sample time. Channel is 16 for temperature sensor. 
 	ADC_Init(ADC1, &adc_init_s);
 
+
+	/* Time base configuration */
+	TIM_TimeBaseInitTypeDef TIM_TimeBaseStructure;
+	TIM_TimeBaseStructure.TIM_Period = TEMPERATURE_SENSOR_POLL_PERIOD_MS - 1;
+	TIM_TimeBaseStructure.TIM_Prescaler = TIM3_PRESCALER - 1;
+	TIM_TimeBaseStructure.TIM_ClockDivision = 0;
+	TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;
+	TIM_TimeBaseInit(TIM4, &TIM_TimeBaseStructure);
+	/* TIM IT enable */
+	TIM_ITConfig(TIM4, TIM_IT_Update, ENABLE);
+	/* TIM4 enable counter */
+	TIM_Cmd(TIM4, ENABLE);
+
+
+	NVIC_InitTypeDef NVIC_InitStructure;
+	/* Enable the TIM3 gloabal Interrupt */
+	NVIC_InitStructure.NVIC_IRQChannel = TIM4_IRQn;
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0x02;
+	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0x00;
+	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+	NVIC_Init(&NVIC_InitStructure);
+
 	ma_filter_initialize(&filter, &cb, buffer);
+}
+
+void temperature_sensor_set_semaphore(osSemaphoreId data_semaphore) {
+	semaphore = data_semaphore;
 }
 
 void temperature_sensor_read_temperature_raw(void) {
@@ -49,3 +78,13 @@ void temperature_sensor_read_temperature_raw(void) {
 void temperature_sensor_read(float* temperature) {
 	*temperature = ma_filter_add(&filter, raw_reading);
 }
+
+void TIM4_IRQHandler(void) {
+	if (TIM_GetITStatus(TIM4, TIM_IT_Update) != RESET) {
+		TIM_ClearITPendingBit(TIM4, TIM_IT_Update);
+		if (semaphore != NULL) {
+			osSemaphoreRelease(semaphore);
+		}
+	}
+}
+

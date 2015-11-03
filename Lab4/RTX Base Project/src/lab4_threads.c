@@ -4,6 +4,7 @@
 #include "lab4_threads.h"
 
 #include "interfaces/temperature_sensor_interface.h"
+#include "interfaces/accelerometer_interface.h"
 
 #include "modules/led_rotation_sm.h"
 #include "modules/accelerometer_sm.h"
@@ -26,8 +27,12 @@ static uint8_t accelerometer_display_mode = ACCELEROMETER_DISPLAY_ROLL;
 
 /*******************************************************************************************************/
 static osSemaphoreId lock_display_module, lock_accelerator_display_mode;
+static osSemaphoreId lock_temperature_data, lock_accelerometer_data;
+
 osSemaphoreDef(lock_display_module);
 osSemaphoreDef(lock_accelerator_display_mode);
+osSemaphoreDef(lock_temperature_data);
+osSemaphoreDef(lock_accelerometer_data);
 
 static uint8_t get_display_module(void) {
 	uint8_t result;
@@ -62,6 +67,12 @@ static void set_accelerometer_display_mode(uint8_t value) {
 void lab4_os_init(void) {
 	lock_display_module = osSemaphoreCreate(osSemaphore(lock_display_module), 1);
 	lock_accelerator_display_mode = osSemaphoreCreate(osSemaphore(lock_accelerator_display_mode), 1);
+
+	lock_temperature_data = osSemaphoreCreate(osSemaphore(lock_temperature_data), 1);
+	temperature_sensor_set_semaphore(lock_temperature_data);
+
+	lock_accelerometer_data = osSemaphoreCreate(osSemaphore(lock_accelerometer_data), 1);
+	accelerometer_set_semaphore(lock_accelerometer_data);
 }
 
 void thread_leds(void const* args) {
@@ -70,6 +81,8 @@ void thread_leds(void const* args) {
 }
 
 void thread_temperature(void const* args) {
+	osSemaphoreWait(lock_temperature_data, osWaitForever);
+
 	temperature_sensor_read_temperature_raw();
 	static float temp = 1;
 	temperature_sensor_read(&temp);
@@ -80,7 +93,6 @@ void thread_temperature(void const* args) {
 	}
 
 	temperature_sensor_alarm(temp);
-	osDelay(20);
 }
 
 void thread_keypad(void const* args) {
@@ -99,6 +111,9 @@ void thread_keypad(void const* args) {
 }
 
 void thread_accelerometer(void const* args) {
+	osSemaphoreWait(lock_accelerometer_data, osWaitForever);
+
+	accelerometer_read_raw();
 	static accelerometer_info angles;
 	accelerometer_calculate_angle(&angles);
 
@@ -111,5 +126,4 @@ void thread_accelerometer(void const* args) {
 			seven_segments_set_display_float_smart(angles.pitch < 0 ? -angles.pitch : angles.pitch);
 		}
 	}
-	osDelay(20);
 }
