@@ -1,8 +1,13 @@
 #include <math.h>
-#include "lis3dsh.h"
-#include "misc.h"
 
 #include "interfaces/accelerometer_interface.h"
+#ifdef LSM9DS1
+#include "interfaces/lsm9ds1.h"
+#else
+#include "lis3dsh.h"
+#endif
+#include "misc.h"
+
 #include "utils/ma_filter.h"
 #include "utils/utils.h"
 #include "my_types.h"
@@ -70,6 +75,23 @@ static void accelerometer_normalize(float* x, float* y, float* z) {
 */
 
 void accelerometer_init(void) {
+
+#ifdef LSM9DS1
+	LSM9DS1_InitTypeDef  LSM9DS1_InitStruct;
+	
+	/* Set configuration of LIS302DL*/
+	LSM9DS1_InitStruct.Output_DataRate = LSM9DS1_DATARATE_100;
+	LSM9DS1_InitStruct.Axes_Enable = LSM9DS1_X_ENABLE | LSM9DS1_Y_ENABLE | LSM9DS1_Z_ENABLE;
+	LSM9DS1_InitStruct.Full_Scale = LSM9DS1_FULLSCALE_2G;
+	LSM9DS1_InitStruct.Bandwidth = LSM9DS1_BANDWIDTH_ODR_BASED;
+	LSM9DS1_InitStruct.AntiAliasingBandwidth = LSM9DS1_ANTI_ALIASING_BANDWIDTH_408_HZ;
+	LSM9DS1_Init(&LSM9DS1_InitStruct);
+	
+	/* Enable interrupt when data is ready */	
+	LSM9DS1_InterruptConfigTypeDef DRYInterruptConfig;
+	DRYInterruptConfig.DataReadyInterrupt = LSM9DS1_INTERRUPT_DATA_READY_ON;
+	LSM9DS1_InterruptConfig(&DRYInterruptConfig);
+#else
 	LIS3DSH_InitTypeDef  LIS3DSH_InitStruct;
 
 	/* Set configuration of LIS302DL*/
@@ -87,7 +109,7 @@ void accelerometer_init(void) {
 	DRYInterruptConfig.Interrupt_signal = LIS3DSH_ACTIVE_HIGH_INTERRUPT_SIGNAL;
 	DRYInterruptConfig.Interrupt_type = LIS3DSH_INTERRUPT_REQUEST_PULSED;
 	LIS3DSH_DataReadyInterruptConfig(&DRYInterruptConfig);
-	
+#endif
 	/* Set pin as input */
 	GPIO_InitTypeDef GPIO_InitStruct;
 	GPIO_StructInit(&GPIO_InitStruct);
@@ -134,12 +156,19 @@ void accelerometer_set_semaphore(osSemaphoreId data_semaphore) {
 
 void accelerometer_read_raw(void) {
 	uint8_t Buffer[6];
+	
+#ifdef LSM9DS1
+	for (uint8_t i = 0; i < 6; i++) {
+		LSM9DS1_Read(Buffer + i, LSM9DS1_OUT_X_ADDR + i, 1);
+	}
+#else
 	LIS3DSH_Read(&Buffer[0], LIS3DSH_OUT_X_L, 1);
 	LIS3DSH_Read(&Buffer[1], LIS3DSH_OUT_X_H, 1);
 	LIS3DSH_Read(&Buffer[2], LIS3DSH_OUT_Y_L, 1);
 	LIS3DSH_Read(&Buffer[3], LIS3DSH_OUT_Y_H, 1);
 	LIS3DSH_Read(&Buffer[4], LIS3DSH_OUT_Z_L, 1);
 	LIS3DSH_Read(&Buffer[5], LIS3DSH_OUT_Z_H, 1);
+#endif
 	
 	x_raw = Buffer[0] + (int16_t)(Buffer[1] << 8);
 	y_raw = Buffer[2] + (int16_t)(Buffer[3] << 8);

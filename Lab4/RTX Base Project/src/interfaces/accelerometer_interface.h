@@ -4,6 +4,8 @@
 #include "stm32f4xx.h"
 #include "cmsis_os.h" // ARM::CMSIS:RTOS:Keil RTX
 
+#define LSM9DS1
+
 /*
 * Using NVIC with priority (0,0)
 */

@@ -12,8 +12,7 @@
 #include "modules/keypad_input_sm.h"
 #include "modules/temperature_sensor_sm.h"
 
-static const uint8_t KEYPAD_DISPLAY_TEMPERATURE = 4;
-static const uint8_t KEYPAD_DISPLAY_ACCELEROMETER = 5;
+static const uint8_t KEYPAD_DISPLAY_MODULE_SWITCH = 4;
 static const uint8_t KEYPAD_ACCELEROMETER_ROLL = 1;
 static const uint8_t KEYPAD_ACCELEROMETER_PITCH = 2;
 
@@ -101,10 +100,12 @@ void thread_keypad(void const* args) {
 		set_accelerometer_display_mode(ACCELEROMETER_DISPLAY_ROLL);
 	} else if (key_pressed == KEYPAD_ACCELEROMETER_PITCH) {
 		set_accelerometer_display_mode(ACCELEROMETER_DISPLAY_PITCH);
-	} else if (key_pressed == KEYPAD_DISPLAY_TEMPERATURE) {
-		set_display_module(DISPLAY_MODULE_TEMPERATURE);
-	} else if (key_pressed == KEYPAD_DISPLAY_ACCELEROMETER) {
-		set_display_module(DISPLAY_MODULE_ACCELEROMETER);
+	} else if (key_pressed == KEYPAD_DISPLAY_MODULE_SWITCH) {
+		if (get_display_module() == DISPLAY_MODULE_TEMPERATURE) {
+			set_display_module(DISPLAY_MODULE_ACCELEROMETER);
+		} else {
+			set_display_module(DISPLAY_MODULE_TEMPERATURE);
+		}
 	}
 
 	osDelay(20);
