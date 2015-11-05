@@ -37,10 +37,10 @@ static void generic_init(void) {
 
 void system_init(void) {
 	generic_init();
-	led_init();
-	seven_segment_init();
-	seven_segments_sm_init();
-	keypad_init();
+//	led_init();
+//	seven_segment_init();
+//	seven_segments_sm_init();
+//	keypad_init();
 	accelerometer_init();
 }
 

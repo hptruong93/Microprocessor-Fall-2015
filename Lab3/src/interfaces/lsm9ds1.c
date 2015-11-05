@@ -1,12 +1,23 @@
 /**
   ******************************************************************************
   * @file    stm32f4_discovery_LSM9DS1.c
-  * @author  Ashraf Suyyagh based on the MCD Application Team implementation of the LSM9DS1 driver
-  * @version V1.0.0
-  * @date    12-February-2014
+  * @author  MCD Application Team
+  * @version V1.1.0
+  * @date    28-October-2011
   * @brief   This file provides a set of functions needed to manage the LSM9DS1
   *          MEMS accelerometer available on STM32F4-Discovery Kit.
-  ****************************************************************************** 
+  ******************************************************************************
+  * @attention
+  *
+  * THE PRESENT FIRMWARE WHICH IS FOR GUIDANCE ONLY AIMS AT PROVIDING CUSTOMERS
+  * WITH CODING INFORMATION REGARDING THEIR PRODUCTS IN ORDER FOR THEM TO SAVE
+  * TIME. AS A RESULT, STMICROELECTRONICS SHALL NOT BE HELD LIABLE FOR ANY
+  * DIRECT, INDIRECT OR CONSEQUENTIAL DAMAGES WITH RESPECT TO ANY CLAIMS ARISING
+  * FROM THE CONTENT OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE
+  * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
+  *
+  * <h2><center>&copy; COPYRIGHT 2011 STMicroelectronics</center></h2>
+  ******************************************************************************  
   */
 
 /* Includes ------------------------------------------------------------------*/
@@ -44,8 +55,6 @@ __IO uint32_t  LSM9DS1Timeout = LSM9DS1_FLAG_TIMEOUT;
 #define MULTIPLEBYTE_CMD           ((uint8_t)0x40)
 /* Dummy Byte Send by the SPI Master device in order to generate the Clock to the Slave device */
 #define DUMMY_BYTE                 ((uint8_t)0x00)
-
-#define USE_DEFAULT_TIMEOUT_CALLBACK
 
 /**
   * @}
@@ -90,26 +99,45 @@ void LSM9DS1_LowLevel_Init(void);
 void LSM9DS1_Init(LSM9DS1_InitTypeDef *LSM9DS1_InitStruct)
 {
   uint8_t ctrl = 0x00;
- 
+  
   /* Configure the low level interface ---------------------------------------*/
   LSM9DS1_LowLevel_Init();
   
-  /* Configure MEMS: data rate, update mode and axes */
-  // ctrl = (uint8_t) (LSM9DS1_InitStruct->Power_Mode_Output_DataRate | \
-		// 								LSM9DS1_InitStruct->Continous_Update           | \
-		// 								LSM9DS1_InitStruct->Axes_Enable);
-                    
+  /* Configure MEMS: data rate, full scale*/
+  ctrl = (uint8_t) (LSM9DS1_InitStruct->Output_DataRate | LSM9DS1_InitStruct->Full_Scale | \
+                    LSM9DS1_InitStruct->Bandwidth | LSM9DS1_InitStruct->AntiAliasingBandwidth);
   
-  /* Write value to MEMS CTRL_REG4 regsister */
-  // LSM9DS1_Write(&ctrl, LSM9DS1_CTRL_REG4, 1);
+  LSM9DS1_Write(&ctrl, LSM9DS1_CTRL_REG6_XL_ADDR, 1);
 	
-	/* Configure MEMS: Anti-aliasing filter, full scale, self test  */
-	// ctrl = (uint8_t) (LSM9DS1_InitStruct->AA_Filter_BW | \
-	// 									LSM9DS1_InitStruct->Full_Scale   | \
-	// 									LSM9DS1_InitStruct->Self_Test);
-	
-	/* Write value to MEMS CTRL_REG5 regsister */
-	// LSM9DS1_Write(&ctrl, LSM9DS1_CTRL_REG5, 1);
+	ctrl = 0x00;
+	ctrl = (uint8_t) (LSM9DS1_InitStruct->Axes_Enable);
+	LSM9DS1_Write(&ctrl, LSM9DS1_CTRL_REG5_XL_ADDR, 1);
+}
+
+/**
+  * @brief  Set LSM9DS1 Internal High Pass Filter configuration.
+  * @param  LSM9DS1_Filter_ConfigTypeDef: pointer to a LSM9DS1_FilterConfig_TypeDef 
+  *         structure that contains the configuration setting for the LSM9DS1 Filter.
+  * @retval None
+  */
+void LSM9DS1_FilterConfig(LSM9DS1_FilterConfigTypeDef *LSM9DS1_FilterConfigStruct)
+{
+  uint8_t ctrl = 0x00;
+  
+  /* Read CTRL_REG2 register */
+  LSM9DS1_Read(&ctrl, LSM9DS1_CTRL_REG2_ADDR, 1);
+  
+  /* Clear high pass filter cut-off level, interrupt and data selection bits*/
+  ctrl &= (uint8_t)~(LSM9DS1_FILTEREDDATASELECTION_OUTPUTREGISTER | \
+                     LSM9DS1_HIGHPASSFILTER_LEVEL_3 | \
+                     LSM9DS1_HIGHPASSFILTERINTERRUPT_1_2);
+  /* Configure MEMS high pass filter cut-off level, interrupt and data selection bits */                     
+  ctrl |= (uint8_t)(LSM9DS1_FilterConfigStruct->HighPassFilter_Data_Selection | \
+                    LSM9DS1_FilterConfigStruct->HighPassFilter_CutOff_Frequency | \
+                    LSM9DS1_FilterConfigStruct->HighPassFilter_Interrupt);
+  
+  /* Write value to MEMS CTRL_REG2 register */
+  LSM9DS1_Write(&ctrl, LSM9DS1_CTRL_REG2_ADDR, 1);
 }
 
 /**
@@ -118,56 +146,49 @@ void LSM9DS1_Init(LSM9DS1_InitTypeDef *LSM9DS1_InitStruct)
   *         structure that contains the configuration setting for the LSM9DS1 Interrupt.
   * @retval None
   */
-void LSM9DS1_DataReadyInterruptConfig(LSM9DS1_DRYInterruptConfigTypeDef *LSM9DS1_IntConfigStruct)
+void LSM9DS1_InterruptConfig(LSM9DS1_InterruptConfigTypeDef *LSM9DS1_IntConfigStruct)
 {
   uint8_t ctrl = 0x00;
   
   /* Read CLICK_CFG register */
-  LSM9DS1_Read(&ctrl, LSM9DS1_CTRL_REG3, 1);
+  LSM9DS1_Read(&ctrl, LSM9DS1_CLICK_CFG_REG_ADDR, 1);
   
   /* Configure latch Interrupt request, click interrupts and double click interrupts */                   
-  ctrl = (uint8_t)(LSM9DS1_IntConfigStruct->Dataready_Interrupt| \
-                   LSM9DS1_IntConfigStruct->Interrupt_signal | \
-                   LSM9DS1_IntConfigStruct->Interrupt_type);
+  ctrl = (uint8_t)(LSM9DS1_IntConfigStruct->DataReadyInterrupt);
   
   /* Write value to MEMS CLICK_CFG register */
-  LSM9DS1_Write(&ctrl, LSM9DS1_CTRL_REG3, 1);
+  LSM9DS1_Write(&ctrl, LSM9DS1_INT1_CTRL_REG_ADDR, 1);
 }
 
 /**
-  * @brief  Change to lowpower mode for LSM9DS1
+  * @brief  Change the lowpower mode for LSM9DS1
+  * @param  LowPowerMode: new state for the lowpower mode.
+  *   This parameter can be one of the following values:
+  *     @arg LSM9DS1_LOWPOWERMODE_POWERDOWN: Power down mode
+  *     @arg LSM9DS1_LOWPOWERMODE_ACTIVE: Active mode  
   * @retval None
   */
-void LSM9DS1_LowpowerCmd(void)
+void LSM9DS1_LowpowerCmd(uint8_t LowPowerMode)
 {
   uint8_t tmpreg;
   
   /* Read CTRL_REG1 register */
-  LSM9DS1_Read(&tmpreg, LSM9DS1_CTRL_REG4, 1);
+  LSM9DS1_Read(&tmpreg, LSM9DS1_CTRL_REG1_ADDR, 1);
   
   /* Set new low power mode configuration */
-  tmpreg &= (uint8_t)0x0F;
-  tmpreg |= LSM9DS1_PWRDWN;
+  tmpreg &= (uint8_t)~LSM9DS1_LOWPOWERMODE_ACTIVE;
+  tmpreg |= LowPowerMode;
   
   /* Write value to MEMS CTRL_REG1 regsister */
-  LSM9DS1_Write(&tmpreg, LSM9DS1_CTRL_REG4, 1);
+  LSM9DS1_Write(&tmpreg, LSM9DS1_CTRL_REG1_ADDR, 1);
 }
 
 /**
   * @brief  Data Rate command 
   * @param  DataRateValue: Data rate value
   *   This parameter can be one of the following values:
-  *     @arg LSM9DS1_DATARATE_3_125	: 3.125 Hz output data rate 
-  *     @arg LSM9DS1_DATARATE_6_25	: 6.25 	Hz output data rate
-  *     @arg LSM9DS1_DATARATE_12_5	: 12.5	Hz output data rate
-  *     @arg LSM9DS1_DATARATE_25		: 25 		Hz output data rate
-  *     @arg LSM9DS1_DATARATE_50		: 50 		Hz output data rate
-  *     @arg LSM9DS1_DATARATE_100		: 100 	Hz output data rate
-  *     @arg LSM9DS1_DATARATE_400		: 400 	Hz output data rate
-  *     @arg LSM9DS1_DATARATE_800		: 800 	Hz output data rate
-  *     @arg LSM9DS1_DATARATE_1600	: 1600 	Hz output data rate
-
-
+  *     @arg LSM9DS1_DATARATE_100: 100 Hz output data rate 
+  *     @arg LSM9DS1_DATARATE_400: 400 Hz output data rate    
   * @retval None
   */
 void LSM9DS1_DataRateCmd(uint8_t DataRateValue)
@@ -175,40 +196,32 @@ void LSM9DS1_DataRateCmd(uint8_t DataRateValue)
   uint8_t tmpreg;
   
   /* Read CTRL_REG1 register */
-  LSM9DS1_Read(&tmpreg, LSM9DS1_CTRL_REG4, 1);
+  LSM9DS1_Read(&tmpreg, LSM9DS1_CTRL_REG1_ADDR, 1);
   
   /* Set new Data rate configuration */
-  tmpreg &= (uint8_t)0x0F;
+  tmpreg &= (uint8_t)~LSM9DS1_DATARATE_400;
   tmpreg |= DataRateValue;
   
   /* Write value to MEMS CTRL_REG1 regsister */
-  LSM9DS1_Write(&tmpreg, LSM9DS1_CTRL_REG4, 1);
+  LSM9DS1_Write(&tmpreg, LSM9DS1_CTRL_REG1_ADDR, 1);
 }
 
 /**
-  * @brief  Change the Full Scale of LSM9DS1
-  * @param  FS_value: new full scale value. 
-  *   This parameter can be one of the following values:
-  *     @arg LSM9DS1_FULLSCALE_2	: +-2g
-  *     @arg LSM9DS1_FULLSCALE_4	: +-4g
-  *     @arg LSM9DS1_FULLSCALE_6	: +-6g
-  *     @arg LSM9DS1_FULLSCALE_8	: +-8g
-  *     @arg LSM9DS1_FULLSCALE_16	: +-16g
+  * @brief  Reboot memory content of LSM9DS1
+  * @param  None
   * @retval None
   */
-void LSM9DS1_FullScaleCmd(uint8_t FS_value)
+void LSM9DS1_RebootCmd(void)
 {
   uint8_t tmpreg;
+  /* Read CTRL_REG2 register */
+  LSM9DS1_Read(&tmpreg, LSM9DS1_CTRL_REG2_ADDR, 1);
   
-  /* Read CTRL_REG1 register */
-  LSM9DS1_Read(&tmpreg, LSM9DS1_CTRL_REG5, 1);
+  /* Enable or Disable the reboot memory */
+  tmpreg |= LSM9DS1_BOOT_REBOOTMEMORY;
   
-  /* Set new full scale configuration */
-  tmpreg &= (uint8_t)0xC7;
-  tmpreg |= FS_value;
-  
-  /* Write value to MEMS CTRL_REG1 regsister */
-  LSM9DS1_Write(&tmpreg, LSM9DS1_CTRL_REG5, 1);
+  /* Write value to MEMS CTRL_REG2 regsister */
+  LSM9DS1_Write(&tmpreg, LSM9DS1_CTRL_REG2_ADDR, 1);
 }
 
 /**
@@ -253,8 +266,8 @@ void LSM9DS1_Write(uint8_t* pBuffer, uint8_t WriteAddr, uint16_t NumByteToWrite)
   * @retval None
   */
 void LSM9DS1_Read(uint8_t* pBuffer, uint8_t ReadAddr, uint16_t NumByteToRead)
-{  
-  if(NumByteToRead > 0x01)
+{
+	if(NumByteToRead > 0x01)
   {
     ReadAddr |= (uint8_t)(READWRITE_CMD | MULTIPLEBYTE_CMD);
   }
@@ -287,79 +300,32 @@ void LSM9DS1_Read(uint8_t* pBuffer, uint8_t ReadAddr, uint16_t NumByteToRead)
   * @param  s16 buffer to store data
   * @retval None
   */
-void LSM9DS1_ReadACC(float* out)
+void LSM9DS1_ReadACC(int32_t* out)
 {
   uint8_t buffer[6];
-  uint8_t ctrl, i = 0x00;
-	uint8_t offsetX, offsetY, offsetZ;
-	int16_t aggregateResult = 0;
+  uint8_t crtl, i = 0x00;
+   
+  LSM9DS1_Read(&crtl, LSM9DS1_CTRL_REG1_ADDR, 1);  
+  LSM9DS1_Read(buffer, LSM9DS1_OUT_X_ADDR, 6);
   
-  LSM9DS1_Read(&offsetX, LSM9DS1_OFF_X, 1);
-  LSM9DS1_Read(&offsetY, LSM9DS1_OFF_Y, 1);
-  LSM9DS1_Read(&offsetZ, LSM9DS1_OFF_Z, 1);
-	
-  LSM9DS1_Read(&ctrl, LSM9DS1_CTRL_REG5, 1);  
-	LSM9DS1_Read(&buffer[0], LSM9DS1_OUT_X_L, 1);
-	LSM9DS1_Read(&buffer[1], LSM9DS1_OUT_X_H, 1);
-	LSM9DS1_Read(&buffer[2], LSM9DS1_OUT_Y_L, 1);
-	LSM9DS1_Read(&buffer[3], LSM9DS1_OUT_Y_H, 1);
-	LSM9DS1_Read(&buffer[4], LSM9DS1_OUT_Z_L, 1);
-	LSM9DS1_Read(&buffer[5], LSM9DS1_OUT_Z_H, 1);
-  
-	ctrl = (ctrl & 0x38) >> 3;
-	
-  switch(ctrl)
+  switch(crtl & 0x20) 
     {
-    /* FS bits = 000 ==> Sensitivity typical value = 0.061 milligals/digit*/ 
+    /* FS bit = 0 ==> Sensitivity typical value = 18milligals/digit*/ 
     case 0x00:
-      for(i=0; i<0x06; i=i+2)
+      for(i=0; i<0x03; i++)
       {
-				aggregateResult = (int32_t)(buffer[i] | buffer[i+1] << 8);
-        *out =(float)(LSM9DS1_SENSITIVITY_2G * (float)aggregateResult);
+        *out =(int32_t)(LSM9DS1_SENSITIVITY_2_3G *  (int8_t)buffer[2*i]);
         out++;
       }
       break;
-			
-    /* FS bit = 001 ==> Sensitivity typical value = 0.122 milligals/digit*/ 
-    case 0x01:
-      for(i=0; i<0x06; i=i+2)
+    /* FS bit = 1 ==> Sensitivity typical value = 72milligals/digit*/ 
+    case 0x20:
+      for(i=0; i<0x03; i++)
       {
-				aggregateResult = (int32_t)(buffer[i] | buffer[i+1] << 8);
-        *out =(float)(LSM9DS1_SENSITIVITY_4G * (float)aggregateResult);
+        *out =(int32_t)(LSM9DS1_SENSITIVITY_9_2G * (int8_t)buffer[2*i]);
         out++;
       }         
       break;
-			
-		/* FS bit = 010 ==> Sensitivity typical value = 0.183 milligals/digit*/ 
-    case 0x02:
-      for(i=0; i<0x06; i=i+2)
-      {
-				aggregateResult = (int32_t)(buffer[i] | buffer[i+1] << 8);
-        *out =(float)(LSM9DS1_SENSITIVITY_6G * (float)aggregateResult);
-        out++;
-      }         
-      break;
-			
-		 /* FS bit = 011 ==> Sensitivity typical value = 0.244 milligals/digit*/ 
-    case 0x03:
-      for(i=0; i<0x06; i=i+2)
-      {
-				aggregateResult = (int32_t)(buffer[i] | buffer[i+1] << 8);
-        *out =(float)(LSM9DS1_SENSITIVITY_8G * (float)aggregateResult);
-        out++;
-      }         
-      break;
-			
-		/* FS bit = 100 ==> Sensitivity typical value = 0.488 milligals/digit*/ 
-    case 0x04:
-      for(i=0; i<0x06; i=i+2)
-      {
-				aggregateResult = (int32_t)(buffer[i] | buffer[i+1] << 8);
-        *out =(float)(LSM9DS1_SENSITIVITY_16G * (float)aggregateResult);
-        out++;
-      }         
-      break;
-			
     default:
       break;
     }
@@ -378,7 +344,7 @@ void LSM9DS1_LowLevel_Init(void)
   /* Enable the SPI periph */
   RCC_APB2PeriphClockCmd(LSM9DS1_SPI_CLK, ENABLE);
 
-  /* Enable SCK, MOSI and MISO GPIO c[plocks */
+  /* Enable SCK, MOSI and MISO GPIO clocks */
   RCC_AHB1PeriphClockCmd(LSM9DS1_SPI_SCK_GPIO_CLK | LSM9DS1_SPI_MISO_GPIO_CLK | LSM9DS1_SPI_MOSI_GPIO_CLK, ENABLE);
 
   /* Enable CS  GPIO clock */
@@ -447,6 +413,17 @@ void LSM9DS1_LowLevel_Init(void)
   
   GPIO_InitStructure.GPIO_Pin = LSM9DS1_SPI_INT2_PIN;
   GPIO_Init(LSM9DS1_SPI_INT2_GPIO_PORT, &GPIO_InitStructure);
+	
+	GPIO_InitTypeDef gpio_init_s; // Structure to initilize definitions of GPIO
+	GPIO_StructInit(&gpio_init_s); // Fills each GPIO_InitStruct member with its default value
+	gpio_init_s.GPIO_Pin = GPIO_Pin_3; // Select the following pins to initialise
+	gpio_init_s.GPIO_Mode = GPIO_Mode_OUT; // Operating mode = output for the selected pins
+	gpio_init_s.GPIO_Speed = GPIO_Speed_100MHz; // Don't limit slew rate, allow values to change as fast as they are set
+	gpio_init_s.GPIO_OType = GPIO_OType_PP; // Operating output type (push-pull) for selected pins
+	gpio_init_s.GPIO_PuPd = GPIO_PuPd_NOPULL; // If there is no input, don't pull.
+	GPIO_Init(GPIOE, &gpio_init_s); // Initializes the GPIOD peripheral.
+	
+	GPIO_SetBits(GPIOE, GPIO_Pin_3);
 }
 
 /**
@@ -478,8 +455,7 @@ static uint8_t LSM9DS1_SendByte(uint8_t byte)
   return (uint8_t)SPI_I2S_ReceiveData(LSM9DS1_SPI);
 }
 
-
-#ifdef USE_DEFAULT_TIMEOUT_CALLBACK
+//#ifdef USE_DEFAULT_TIMEOUT_CALLBACK
 /**
   * @brief  Basic management of the timeout situation.
   * @param  None.
@@ -488,12 +464,11 @@ static uint8_t LSM9DS1_SendByte(uint8_t byte)
 uint32_t LSM9DS1_TIMEOUT_UserCallback(void)
 {
   /* Block communication and all processes */
-//  while (1)
- // {   
-  //}
-	return 0;
+  while (1)
+  {   
+  }
 }
-#endif /* USE_DEFAULT_TIMEOUT_CALLBACK */
+//#endif /* USE_DEFAULT_TIMEOUT_CALLBACK */
 
 /**
   * @}
@@ -510,4 +485,6 @@ uint32_t LSM9DS1_TIMEOUT_UserCallback(void)
 /**
   * @}
   */ 
+  
 
+/******************* (C) COPYRIGHT 2011 STMicroelectronics *****END OF FILE****/

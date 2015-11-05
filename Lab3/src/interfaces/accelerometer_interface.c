@@ -173,9 +173,9 @@ void accelerometer_calculate_rotation(float x, float y, float z) {
 *	accelerometer_read_raw method will be called to read the raw value generated from the accelerometer sensor
 */
 
-void EXTI0_IRQHandler(void) {
-	if (EXTI_GetITStatus(EXTI_Line0) != RESET) {	
-		EXTI_ClearITPendingBit(EXTI_Line0);
-		accelerometer_read_raw();
-	}
-}
+//void EXTI0_IRQHandler(void) {
+//	if (EXTI_GetITStatus(EXTI_Line0) != RESET) {	
+//		EXTI_ClearITPendingBit(EXTI_Line0);
+//		accelerometer_read_raw();
+//	}
+//}
