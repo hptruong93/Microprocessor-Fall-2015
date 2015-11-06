@@ -41,6 +41,17 @@ static void accelerometer_normalize(float* x, float* y, float* z) {
 //	static const float cy = 0;
 //	static const float cz = 0;
 	
+#ifdef LSM9DS1
+	static const float normalizing_matrix[3][3] = {
+		{1.01025618,  0.01006384,  0.02401493},
+		{-0.00904249,  1.00515987, -0.01296093},
+		{0.03992654,  0.00910658,  1.0367582}
+	};
+
+	static const float cx = -28.44255082;
+	static const float cy = -217.47119435;
+	static const float cz = -1548.73592871;
+#else
 	static const float normalizing_matrix[3][3] = {
 		{1.05980676,  0.02639947, -0.00279462},
 		{-0.03077862,  1.1679603,  -0.01424515},
@@ -50,12 +61,8 @@ static void accelerometer_normalize(float* x, float* y, float* z) {
 	static const float cx = -163.44321229;
 	static const float cy = -142.16213624;
 	static const float cz = -112.6033728;
+#endif
 
-
-
-	//	{1,-0.2257,0.075366},
-	//	{0.39690, 1, 0.14680},
-	//	{0.70232, -0.03689, 1}
 	float normalized_values[3];
 	for (uint8_t i = 0; i < 3; i++) {
 		normalized_values[i] = normalizing_matrix[i][0] * (*x) + normalizing_matrix[i][1] * (*y) + normalizing_matrix[i][2] * (*z);

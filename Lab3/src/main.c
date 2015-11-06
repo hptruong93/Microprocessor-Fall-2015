@@ -1,5 +1,7 @@
 #include <stdio.h>
+#include <math.h>
 #include "system_config.h"
+#include "utils/utils.h"
 #include "interfaces/lsm9ds1.h"
 #include "interfaces/accelerometer_interface.h"
 
@@ -15,6 +17,29 @@ void print_buffer(uint8_t* buffer, uint8_t num) {
 		printf("%d - ", buffer[i]);
 	}
 	printf("\n");
+}
+
+void accelerometer_normalize(float* x, float* y, float* z) {
+
+static const float normalizing_matrix[3][3] = {
+	{1.01025618,  0.01006384,  0.02401493},
+	{-0.00904249,  1.00515987, -0.01296093},
+	{0.03992654,  0.00910658,  1.0367582}
+};
+
+static const float cx = -28.44255082;
+static const float cy = -217.47119435;
+static const float cz = -1548.73592871;
+
+
+float normalized_values[3];
+for (uint8_t i = 0; i < 3; i++) {
+	normalized_values[i] = normalizing_matrix[i][0] * (*x) + normalizing_matrix[i][1] * (*y) + normalizing_matrix[i][2] * (*z);
+}
+
+*x = (normalized_values[0]) + cx;
+*y = (normalized_values[1]) + cy;
+*z = (normalized_values[2]) + cz;
 }
 
 int main() {
@@ -98,7 +123,6 @@ int main() {
 		
 
 		if (test_flag == 1) {
-			printf("Interrupted\n");
 			for (uint8_t i = 0; i < 6; i++) {
 				LSM9DS1_Read(buffer + i, LSM9DS1_OUT_X_ADDR + i, 1);
 			}
@@ -107,7 +131,17 @@ int main() {
 			int16_t y_raw = buffer[2] + (int16_t)(buffer[3] << 8);
 			int16_t z_raw = buffer[4] + (int16_t)(buffer[5] << 8);
 			
-			printf("X, Y ,Z = (%d, %d ,%d)\n", x_raw, y_raw, z_raw);
+			float x = (float) x_raw;
+			float y = (float) y_raw;
+			float z = (float) z_raw;
+			printf("%d, %d, %d;\n", x_raw, y_raw, z_raw);
+			accelerometer_normalize(&x, &y, &z);
+//			printf("--> %f, %f, %f;\n", x, y, z);
+			
+			float pitch = radian_to_degree(atan(x / sqrt(y*y + z*z)));
+			float roll = radian_to_degree(atan(y / sqrt(x*x + z*z)));
+			printf("Angle = (%f, %f)\n", pitch, roll);
+			
 			test_flag = 0;
 		}
 		
