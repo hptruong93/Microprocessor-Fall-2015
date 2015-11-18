@@ -101,6 +101,24 @@ void example_1b(void const *argument){
 	}
 }
 
+void draw_points(uint16_t scale_x, uint16_t scale_y, uint16_t* xs, uint16_t* ys, uint16_t length) {
+
+	float prev_pixels_x = (float)xs[0] / scale_x;
+	float prev_pixels_y = (float)ys[0] / scale_y;
+	float pixels_x;
+	float pixels_y;
+
+	for (int i = 1; i < length; ++i) {
+		pixels_x = (float)xs[i] / scale_x;
+		pixels_y = (float)ys[i] / scale_y;
+
+		LCD_DrawUniLine(prev_pixels_x, prev_pixels_y, pixels_x, pixels_y);
+
+		prev_pixels_x = pixels_x;
+		prev_pixels_y = pixels_y;
+	}
+}
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /**
@@ -116,63 +134,80 @@ void example_1c(void const *argument){
 	while(1){
 			/* Clear the LCD */ 
 		LCD_Clear(LCD_COLOR_WHITE);
-		LCD_SetFont(&Font8x8);
-		LCD_DisplayStringLine(LINE(1), (uint8_t*)"  Radar Scanning for Object  ");
+		// LCD_SetFont(&Font8x8);
+		// LCD_DisplayStringLine(LINE(1), (uint8_t*)"  Radar Scanning for Object  ");
 		
-		LCD_SetTextColor(LCD_COLOR_BLUE2);
-		LCD_DrawLine(10, 160, 220, LCD_DIR_HORIZONTAL);
-		LCD_DrawLine(120, 50, 220, LCD_DIR_VERTICAL );
+		// LCD_SetTextColor(LCD_COLOR_BLUE2);
+		// LCD_DrawLine(10, 160, 220, LCD_DIR_HORIZONTAL);
+		// LCD_DrawLine(120, 50, 220, LCD_DIR_VERTICAL );
 		
-		LCD_SetTextColor(LCD_COLOR_BLUE2);
-		LCD_DrawCircle(120, 160, 10);	
-		delay(35);
-		LCD_DrawCircle(120, 160, 20);	
-		delay(35);
-		LCD_DrawCircle(120, 160, 30);	
-		delay(35);
-		LCD_DrawCircle(120, 160, 40);	
-		delay(35);
-		LCD_DrawCircle(120, 160, 50);	
-		delay(35);
-		LCD_DrawCircle(120, 160, 60);	
-		delay(35);
-		LCD_DrawCircle(120, 160, 70);	
-		delay(35);
-		LCD_DrawCircle(120, 160, 80);	
-		delay(35);
-		LCD_DrawCircle(120, 160, 90);	
-		delay(35);
-		LCD_DrawCircle(120, 160, 100);	
-		delay(35);
-		LCD_SetTextColor(LCD_COLOR_RED);
-		LCD_DisplayStringLine(LINE(36), (uint8_t*)"        Object Located    ");
-		LCD_DrawFullRect(90,130,10,10);
-		delay(25);
-		LCD_SetTextColor(LCD_COLOR_WHITE);
-		LCD_DrawFullRect(90,130,10,10);
-		delay(25);
-		LCD_SetTextColor(LCD_COLOR_RED);
-		LCD_DrawFullRect(90,130,10,10);
-		delay(25);
-		LCD_SetTextColor(LCD_COLOR_WHITE);
-		LCD_DrawFullRect(90,130,10,10);
-		delay(25);
-		LCD_SetTextColor(LCD_COLOR_RED);
-		LCD_DrawFullRect(90,130,10,10);
-		delay(25);
-		LCD_SetTextColor(LCD_COLOR_WHITE);
-		LCD_DrawFullRect(90,130,10,10);
-		delay(25);
-		LCD_SetTextColor(LCD_COLOR_RED);
-		LCD_DrawFullRect(90,130,10,10);
-		delay(25);
-		LCD_SetTextColor(LCD_COLOR_WHITE);
-		LCD_DrawFullRect(90,130,10,10);
-		delay(25);
-		LCD_SetTextColor(LCD_COLOR_RED);
-		LCD_DrawFullRect(90,130,10,10);
-		delay(25);
-		
+		// LCD_SetTextColor(LCD_COLOR_BLUE2);
+		// LCD_DrawCircle(120, 160, 10);	
+		// delay(35);
+		// LCD_DrawCircle(120, 160, 20);	
+		// delay(35);
+		// LCD_DrawCircle(120, 160, 30);	
+		// delay(35);
+		// LCD_DrawCircle(120, 160, 40);	
+		// delay(35);
+		// LCD_DrawCircle(120, 160, 50);	
+		// delay(35);
+		// LCD_DrawCircle(120, 160, 60);	
+		// delay(35);
+		// LCD_DrawCircle(120, 160, 70);	
+		// delay(35);
+		// LCD_DrawCircle(120, 160, 80);	
+		// delay(35);
+		// LCD_DrawCircle(120, 160, 90);	
+		// delay(35);
+		// LCD_DrawCircle(120, 160, 100);	
+		// delay(35);
+		// LCD_SetTextColor(LCD_COLOR_RED);
+		// LCD_DisplayStringLine(LINE(36), (uint8_t*)"        Object Located    ");
+		// LCD_DrawFullRect(90,130,10,10);
+		// delay(25);
+		// LCD_SetTextColor(LCD_COLOR_WHITE);
+		// LCD_DrawFullRect(90,130,10,10);
+		// delay(25);
+		// LCD_SetTextColor(LCD_COLOR_RED);
+		// LCD_DrawFullRect(90,130,10,10);
+		// delay(25);
+		// LCD_SetTextColor(LCD_COLOR_WHITE);
+		// LCD_DrawFullRect(90,130,10,10);
+		// delay(25);
+		// LCD_SetTextColor(LCD_COLOR_RED);
+		// LCD_DrawFullRect(90,130,10,10);
+		// delay(25);
+		// LCD_SetTextColor(LCD_COLOR_WHITE);
+		// LCD_DrawFullRect(90,130,10,10);
+		// delay(25);
+		// LCD_SetTextColor(LCD_COLOR_RED);
+		// LCD_DrawFullRect(90,130,10,10);
+		// delay(25);
+		// LCD_SetTextColor(LCD_COLOR_WHITE);
+		// LCD_DrawFullRect(90,130,10,10);
+		// delay(25);
+		// LCD_SetTextColor(LCD_COLOR_RED);
+		// LCD_DrawFullRect(90,130,10,10);
+		// delay(25);
+
+		Point start = {0,0};
+		Point mid = {100,100};
+		Point end = {200, 150};
+
+
+		// Point points[3] = {&start, &mid, &end};
+
+		// LCD_PolyLine(points, 3);
+
+		// LCD_DrawUniLine(0, 0, 100, 100);
+		// LCD_DrawUniLine(100, 100, 200, 150);
+
+		uint16_t xs[] = {0, 100, 200, 150, 240, 30};
+		uint16_t ys[] = {10, 100, 200, 120, 320, 78};
+
+		draw_points(3, 3, xs, ys, 6);
+
 		osDelay(250);
 	}
 }
@@ -218,8 +253,8 @@ int main (void) {
 	********************************************************/
 	
 	//example_1a_thread = osThreadCreate(osThread(example_1a), NULL);
-	example_1b_thread = osThreadCreate(osThread(example_1b), NULL);
-	//example_1c_thread = osThreadCreate(osThread(example_1c), NULL);
+	//example_1b_thread = osThreadCreate(osThread(example_1b), NULL);
+	example_1c_thread = osThreadCreate(osThread(example_1c), NULL);
 	
 	osKernelStart ();                         // start thread execution 
 }
