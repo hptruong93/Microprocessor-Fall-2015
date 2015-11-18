@@ -1,24 +1,24 @@
 /**
-  ******************************************************************************
-  * @file    stm32f4_discovery_CC2500.h
-  * @author  MCD Application Team
-  * @version V1.1.0
-  * @date    28-October-2011
-  * @brief   This file contains all the functions prototypes for the stm32f4_discovery_CC2500.c
-  *          firmware driver.
-  ******************************************************************************
-  * @attention
-  *
-  * THE PRESENT FIRMWARE WHICH IS FOR GUIDANCE ONLY AIMS AT PROVIDING CUSTOMERS
-  * WITH CODING INFORMATION REGARDING THEIR PRODUCTS IN ORDER FOR THEM TO SAVE
-  * TIME. AS A RESULT, STMICROELECTRONICS SHALL NOT BE HELD LIABLE FOR ANY
-  * DIRECT, INDIRECT OR CONSEQUENTIAL DAMAGES WITH RESPECT TO ANY CLAIMS ARISING
-  * FROM THE CONTENT OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE
-  * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
-  *
-  * <h2><center>&copy; COPYRIGHT 2011 STMicroelectronics</center></h2>
-  ******************************************************************************  
-  */ 
+	******************************************************************************
+	* @file    stm32f4_discovery_CC2500.h
+	* @author  MCD Application Team
+	* @version V1.1.0
+	* @date    28-October-2011
+	* @brief   This file contains all the functions prototypes for the stm32f4_discovery_CC2500.c
+	*          firmware driver.
+	******************************************************************************
+	* @attention
+	*
+	* THE PRESENT FIRMWARE WHICH IS FOR GUIDANCE ONLY AIMS AT PROVIDING CUSTOMERS
+	* WITH CODING INFORMATION REGARDING THEIR PRODUCTS IN ORDER FOR THEM TO SAVE
+	* TIME. AS A RESULT, STMICROELECTRONICS SHALL NOT BE HELD LIABLE FOR ANY
+	* DIRECT, INDIRECT OR CONSEQUENTIAL DAMAGES WITH RESPECT TO ANY CLAIMS ARISING
+	* FROM THE CONTENT OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE
+	* CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
+	*
+	* <h2><center>&copy; COPYRIGHT 2011 STMicroelectronics</center></h2>
+	******************************************************************************  
+	*/ 
 
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef __STM32F4_DISCOVERY_CC2500_H
@@ -33,73 +33,73 @@
  #include "stm32f4xx_conf.h"
 
 /** @addtogroup Utilities
-  * @{
-  */
-  
+	* @{
+	*/
+	
 /** @addtogroup STM32F4_DISCOVERY
-  * @{
-  */ 
+	* @{
+	*/ 
 
 /** @addtogroup STM32F4_DISCOVERY_CC2500
-  * @{
-  */
-  
+	* @{
+	*/
+	
 
 /** @defgroup STM32F4_DISCOVERY_CC2500_Exported_Types
-  * @{
-  */
-   
+	* @{
+	*/
+	 
 /* CC2500 struct */
 typedef struct
 {
-  uint8_t Power_Mode;                         /* Power-down/Active Mode */
-  uint8_t Output_DataRate;                    /* OUT data rate 100 Hz / 400 Hz */
+	uint8_t Power_Mode;                         /* Power-down/Active Mode */
+	uint8_t Output_DataRate;                    /* OUT data rate 100 Hz / 400 Hz */
 	uint8_t Bandwidth;
 	uint8_t AntiAliasingBandwidth;
-  uint8_t Axes_Enable;                        /* Axes enable */
-  uint8_t Full_Scale;                         /* Full scale */
-  uint8_t Self_Test;                          /* Self test */
+	uint8_t Axes_Enable;                        /* Axes enable */
+	uint8_t Full_Scale;                         /* Full scale */
+	uint8_t Self_Test;                          /* Self test */
 }CC2500_InitTypeDef;
 
 /* CC2500 High Pass Filter struct */
 typedef struct
 {
-  uint8_t HighPassFilter_Data_Selection;      /* Internal filter bypassed or data from internal filter send to output register*/
-  uint8_t HighPassFilter_CutOff_Frequency;    /* High pass filter cut-off frequency */
-  uint8_t HighPassFilter_Interrupt;           /* High pass filter enabled for Freefall/WakeUp #1 or #2 */ 
+	uint8_t HighPassFilter_Data_Selection;      /* Internal filter bypassed or data from internal filter send to output register*/
+	uint8_t HighPassFilter_CutOff_Frequency;    /* High pass filter cut-off frequency */
+	uint8_t HighPassFilter_Interrupt;           /* High pass filter enabled for Freefall/WakeUp #1 or #2 */ 
 }CC2500_FilterConfigTypeDef;  
 
 /* CC2500 Interrupt struct */
 typedef struct
 {
-  uint8_t DataReadyInterrupt;
+	uint8_t DataReadyInterrupt;
 }CC2500_InterruptConfigTypeDef;  
 
 /**
-  * @}
-  */
-  
+	* @}
+	*/
+	
 /** @defgroup STM32F4_DISCOVERY_CC2500_Exported_Constants
-  * @{
-  */
+	* @{
+	*/
 
 /* Uncomment the following line to use the default CC2500_TIMEOUT_UserCallback() 
-   function implemented in stm32f4_discovery_CC2500.c file.
-   CC2500_TIMEOUT_UserCallback() function is called whenever a timeout condition 
-   occure during communication (waiting transmit data register empty flag(TXE)
-   or waiting receive data register is not empty flag (RXNE)). */   
+	 function implemented in stm32f4_discovery_CC2500.c file.
+	 CC2500_TIMEOUT_UserCallback() function is called whenever a timeout condition 
+	 occure during communication (waiting transmit data register empty flag(TXE)
+	 or waiting receive data register is not empty flag (RXNE)). */   
 /* #define USE_DEFAULT_TIMEOUT_CALLBACK */
 
 /* Maximum Timeout values for flags waiting loops. These timeouts are not based
-   on accurate values, they just guarantee that the application will not remain
-   stuck if the SPI communication is corrupted.
-   You may modify these timeout values depending on CPU frequency and application
-   conditions (interrupts routines ...). */   
+	 on accurate values, they just guarantee that the application will not remain
+	 stuck if the SPI communication is corrupted.
+	 You may modify these timeout values depending on CPU frequency and application
+	 conditions (interrupts routines ...). */   
 #define CC2500_FLAG_TIMEOUT         ((uint32_t)0x1000)
 
 /**
-  * @brief  CC2500 SPI Interface pins
-  */
+	* @brief  CC2500 SPI Interface pins
+	*/
 #define CC2500_SPI                       SPI1
 #define CC2500_SPI_CLK                   RCC_APB2Periph_SPI1
 
@@ -146,52 +146,11 @@ typedef struct
 /*************************** START REGISTER MAPPING  **************************/
 /******************************************************************************/
 
-/*******************************************************************************
-*  WHO_AM_I Register: Device Identification Register
-*  Read only register
-*  Default value: 0x3B
-*******************************************************************************/
 #define CC2500_WHO_AM_I_ADDR                  0x0F
-
-/*******************************************************************************
-*  CTRL_REG1 Register: Control Register 1
-*  Read Write register
-*  Default value: 0x07
-*  7 DR: Data Rate selection.
-*        0 - 100 Hz output data rate
-*        1 - 400 Hz output data rate
-*  6 PD: Power Down control.
-*        0 - power down mode
-*        1 - active mode
-*  5 FS: Full Scale selection.
-*        0 - Typical measurement range 2.3
-*        1 - Typical measurement range 9.2
-*  4:3 STP-STM Self Test Enable:
-*              STP |  STM |   mode
-*            ----------------------------
-*               0  |  0   |   Normal mode
-*               0  |  1   |   Self Test M
-*               1  |  0   |   Self Test P
-*  2 Zen: Z axis enable.
-*         0 - Z axis disabled
-*         1- Z axis enabled
-*  1 Yen: Y axis enable.
-*         0 - Y axis disabled
-*         1- Y axis enabled
-*  0 Xen: X axis enable.
-*         0 - X axis disabled
-*         1- X axis enabled
-********************************************************************************/
 #define CC2500_CTRL_REG1_ADDR                 0x10
-
-
 #define CC2500_CTRL_REG2_ADDR              0x11
 #define CC2500_CTRL_REG3_ADDR              0x12
-
-//Enabling X, Y or Z
 #define CC2500_CTRL_REG5_XL_ADDR              0x1F
-
-//Data rate, full scale, band width and anti aliasing
 #define CC2500_CTRL_REG6_XL_ADDR              0x20
 
 
@@ -199,29 +158,10 @@ typedef struct
 
 
 #define CC2500_STATUS_REG_ADDR             0x27
-
-/*******************************************************************************
-*  OUT_X Register: X-axis output Data
-*  Read only register
-*  Default value: output
-*  7:0 XD7-XD0: X-axis output Data
-*******************************************************************************/
 #define CC2500_OUT_X_ADDR                  0x28
 
-/*******************************************************************************
-*  OUT_Y Register: Y-axis output Data
-*  Read only register
-*  Default value: output
-*  7:0 YD7-YD0: Y-axis output Data
-*******************************************************************************/
 #define CC2500_OUT_Y_ADDR                  0x2A
 
-/*******************************************************************************
-*  OUT_Z Register: Z-axis output Data
-*  Read only register
-*  Default value: output
-*  7:0 ZD7-ZD0: Z-axis output Data
-*******************************************************************************/
 #define CC2500_OUT_Z_ADDR                  0x2C
 
 #define CC2500_FF_WU_CFG1_REG_ADDR         0x30
@@ -236,15 +176,6 @@ typedef struct
 
 #define CC2500_FF_WU_SRC2_REG_ADDR           0x35
 
-/*******************************************************************************
-*  FF_WU_THS_2 Register: Threshold register
-*  Read Write register
-*  Default value: 0x00
-*  7 DCRM: Reset mode selection.
-*          0 - counter resetted
-*          1 - counter decremented
-*  6 THS6-THS0: Free-fall/wake-up threshold value.
-*******************************************************************************/
 #define CC2500_FF_WU_THS2_REG_ADDR          0x36
 
 /*******************************************************************************
@@ -366,188 +297,235 @@ typedef struct
 #define CC2500_SENSITIVITY_9_2G                         72  /* 72 mg/digit*/
 
 /** @defgroup Data_Rate_selection                 
-  * @{
-  */
+	* @{
+	*/
 #define CC2500_DATARATE_100                             ((uint8_t)(3 << 5))
 #define CC2500_DATARATE_400                             ((uint8_t)(5 << 5))
 /**
-  * @}
-  */
-  
+	* @}
+	*/
+	
 /** @defgroup Power_Mode_selection 
-  * @{
-  */
+	* @{
+	*/
 #define CC2500_LOWPOWERMODE_POWERDOWN                   ((uint8_t)0x00)
 #define CC2500_LOWPOWERMODE_ACTIVE                      ((uint8_t)0x40)
 /**
-  * @}
-  */
-  
+	* @}
+	*/
+	
 /** @defgroup Full_Scale_selection 
-  * @{
-  */
+	* @{
+	*/
 #define CC2500_FULLSCALE_2G                             ((uint8_t)(0 << 3))
 #define CC2500_FULLSCALE_4G                             ((uint8_t)(2 << 3))
 #define CC2500_FULLSCALE_8G                             ((uint8_t)(3 << 3))
 #define CC2500_FULLSCALE_16G                            ((uint8_t)(1 << 3))
 
 /**
-  * @}
-  */
+	* @}
+	*/
 	
 /** @defgroup Bandwidth_selection 
-  * @{
-  */
+	* @{
+	*/
 #define CC2500_BANDWIDTH_ODR_BASED                             ((uint8_t)(0 << 2))
 #define CC2500_BANDWIDTH_ANTI_ALIASING_BASED                   ((uint8_t)(1 << 2))
 
 /**
-  * @}
-  */
+	* @}
+	*/
 	
 /**
-  * @}
-  */
+	* @}
+	*/
 	
 /** @defgroup AntiAliasing_Bandwidth_selection 
-  * @{
-  */
+	* @{
+	*/
 #define CC2500_ANTI_ALIASING_BANDWIDTH_408_HZ                  ((uint8_t)(0))
 #define CC2500_ANTI_ALIASING_BANDWIDTH_211_HZ                  ((uint8_t)(1))
 #define CC2500_ANTI_ALIASING_BANDWIDTH_105_HZ                  ((uint8_t)(2))
 #define CC2500_ANTI_ALIASING_BANDWIDTH_050_HZ                  ((uint8_t)(3))
 
 /**
-  * @}
-  */
-  
+	* @}
+	*/
+	
 /** @defgroup Self_Test_selection 
-  * @{
-  */
+	* @{
+	*/
 #define CC2500_SELFTEST_NORMAL                          ((uint8_t)0x00)
 #define CC2500_SELFTEST_P                               ((uint8_t)0x10)
 #define CC2500_SELFTEST_M                               ((uint8_t)0x08)
 /**
-  * @}
-  */  
+	* @}
+	*/  
 
 /** @defgroup Direction_XYZ_selection 
-  * @{
-  */
+	* @{
+	*/
 #define CC2500_X_ENABLE                                 ((uint8_t)(1 << 3))
 #define CC2500_Y_ENABLE                                 ((uint8_t)(1 << 4))
 #define CC2500_Z_ENABLE                                 ((uint8_t)(1 << 5))
 #define CC2500_XYZ_ENABLE                               ((uint8_t)(7 << 3))
 /**
-  * @}
-  */
+	* @}
+	*/
  
  /** @defgroup SPI_Serial_Interface_Mode_selection 
-  * @{
-  */
+	* @{
+	*/
 #define CC2500_SERIALINTERFACE_4WIRE                    ((uint8_t)0x00)
 #define CC2500_SERIALINTERFACE_3WIRE                    ((uint8_t)0x80)
 /**
-  * @}
-  */ 
+	* @}
+	*/ 
 
  /** @defgroup Boot_Mode_selection 
-  * @{
-  */
+	* @{
+	*/
 #define CC2500_BOOT_NORMALMODE                          ((uint8_t)0x00)
 #define CC2500_BOOT_REBOOTMEMORY                        ((uint8_t)0x40)
 /**
-  * @}
-  */   
+	* @}
+	*/   
 
  /** @defgroup Filtered_Data_Selection_Mode_selection 
-  * @{
-  */
+	* @{
+	*/
 #define CC2500_FILTEREDDATASELECTION_BYPASSED           ((uint8_t)0x00)
 #define CC2500_FILTEREDDATASELECTION_OUTPUTREGISTER     ((uint8_t)0x20)
 /**
-  * @}
-  */ 
-  
+	* @}
+	*/ 
+	
  /** @defgroup High_Pass_Filter_Interrupt_selection 
-  * @{
-  */  
+	* @{
+	*/  
 #define CC2500_HIGHPASSFILTERINTERRUPT_OFF              ((uint8_t)0x00)
 #define CC2500_HIGHPASSFILTERINTERRUPT_1                ((uint8_t)0x04)
 #define CC2500_HIGHPASSFILTERINTERRUPT_2                ((uint8_t)0x08)
 #define CC2500_HIGHPASSFILTERINTERRUPT_1_2              ((uint8_t)0x0C)
 /**
-  * @}
-  */ 
-  
+	* @}
+	*/ 
+	
  /** @defgroup High_Pass_Filter_selection 
-  * @{
-  */
+	* @{
+	*/
 #define CC2500_HIGHPASSFILTER_LEVEL_0                   ((uint8_t)0x00)
 #define CC2500_HIGHPASSFILTER_LEVEL_1                   ((uint8_t)0x01)
 #define CC2500_HIGHPASSFILTER_LEVEL_2                   ((uint8_t)0x02)
 #define CC2500_HIGHPASSFILTER_LEVEL_3                   ((uint8_t)0x03)
 /**
-  * @}
-  */
+	* @}
+	*/
 
 /** @defgroup Data_Ready_Interrupt_selection 
-  * @{
-  */
+	* @{
+	*/
 #define CC2500_INTERRUPT_DATA_READY_OFF                ((uint8_t)0x00)
 #define CC2500_INTERRUPT_DATA_READY_ON                 ((uint8_t)0x01)
 /**
-  * @}
-  */
+	* @}
+	*/
 
 /** @defgroup latch_Interrupt_Request_selection 
-  * @{
-  */
+	* @{
+	*/
 #define CC2500_INTERRUPTREQUEST_NOTLATCHED              ((uint8_t)0x00)
 #define CC2500_INTERRUPTREQUEST_LATCHED                 ((uint8_t)0x40)
 /**
-  * @}
-  */
+	* @}
+	*/
 
 /** @defgroup Click_Interrupt_XYZ_selection 
-  * @{
-  */
+	* @{
+	*/
 #define CC2500_CLICKINTERRUPT_XYZ_DISABLE               ((uint8_t)0x00)
 #define CC2500_CLICKINTERRUPT_X_ENABLE                  ((uint8_t)0x01)
 #define CC2500_CLICKINTERRUPT_Y_ENABLE                  ((uint8_t)0x04)
 #define CC2500_CLICKINTERRUPT_Z_ENABLE                  ((uint8_t)0x10)
 #define CC2500_CLICKINTERRUPT_XYZ_ENABLE                ((uint8_t)0x15)
 /**
-  * @}
-  */
+	* @}
+	*/
 
 /** @defgroup Double_Click_Interrupt_XYZ_selection 
-  * @{
-  */
+	* @{
+	*/
 #define CC2500_DOUBLECLICKINTERRUPT_XYZ_DISABLE         ((uint8_t)0x00)
 #define CC2500_DOUBLECLICKINTERRUPT_X_ENABLE            ((uint8_t)0x02)
 #define CC2500_DOUBLECLICKINTERRUPT_Y_ENABLE            ((uint8_t)0x08)
 #define CC2500_DOUBLECLICKINTERRUPT_Z_ENABLE            ((uint8_t)0x20)
 #define CC2500_DOUBLECLICKINTERRUPT_XYZ_ENABLE          ((uint8_t)0x2A)
 /**
-  * @}
-  */
+	* @}
+	*/
 /**
-  * @}
-  */ 
-  
-/** @defgroup STM32F4_DISCOVERY_CC2500_Exported_Macros
-  * @{
-  */
+	* @}
+	*/ 
+
+/**********************************************************************************************************/
+#define CC2500_IOCFG2_REG_ADDR 0x00
+#define CC2500_IOCFG1_REG_ADDR 0x01
+#define CC2500_IOCFG0_REG_ADDR 0x02
+#define CC2500_FIFOTHR_REG_ADDR 0x03
+#define CC2500_SYNC1_REG_ADDR 0x04
+#define CC2500_SYNC0_REG_ADDR 0x05
+#define CC2500_PKTLEN_REG_ADDR 0x06
+#define CC2500_PKTCTRL1_REG_ADDR 0x07
+#define CC2500_PKTCTRL0_REG_ADDR 0x08
+#define CC2500_ADDR_REG_ADDR 0x09
+#define CC2500_CHANNR_REG_ADDR 0x0A
+#define CC2500_FSCTRL1_REG_ADDR 0x0B
+#define CC2500_FSCTRL0_REG_ADDR 0x0C
+#define CC2500_FREQ2_REG_ADDR 0x0D
+#define CC2500_FREQ1_REG_ADDR 0x0E
+#define CC2500_FREQ0_REG_ADDR 0x0F
+#define CC2500_MDMCFG4_REG_ADDR 0x10
+#define CC2500_MDMCFG3_REG_ADDR 0x11
+#define CC2500_MDMCFG2_REG_ADDR 0x12
+#define CC2500_MDMCFG1_REG_ADDR 0x13
+#define CC2500_MDMCFG0_REG_ADDR 0x14
+#define CC2500_DEVIATN_REG_ADDR 0x15
+#define CC2500_MCSM2_REG_ADDR 0x16
+#define CC2500_MCSM1_REG_ADDR 0x17
+#define CC2500_MCSM0_REG_ADDR 0x18
+#define CC2500_FOCCFG_REG_ADDR 0x19
+#define CC2500_BSCFG_REG_ADDR 0x1A
+#define CC2500_AGCCTRL2_REG_ADDR 0x1B
+#define CC2500_AGCCTRL1_REG_ADDR 0x1C
+#define CC2500_AGCCTRL0_REG_ADDR 0x1D
+#define CC2500_WOREVT1_REG_ADDR 0x1E
+#define CC2500_WOREVT0_REG_ADDR 0x1F
+#define CC2500_WORCTRL_REG_ADDR 0x20
+#define CC2500_FREND1_REG_ADDR 0x21
+#define CC2500_FREND0_REG_ADDR 0x22
+#define CC2500_FSCAL3_REG_ADDR 0x23
+#define CC2500_FSCAL2_REG_ADDR 0x24
+#define CC2500_FSCAL1_REG_ADDR 0x25
+#define CC2500_FSCAL0_REG_ADDR 0x26
+#define CC2500_RCCTRL1_REG_ADDR 0x27
+#define CC2500_RCCTRL0_REG_ADDR 0x28
+#define CC2500_FSTEST_REG_ADDR 0x29
+#define CC2500_PTEST_REG_ADDR 0x2A
+#define CC2500_AGCTEST_REG_ADDR 0x2B
+#define CC2500_TEST2_REG_ADDR 0x2C
+#define CC2500_TEST1_REG_ADDR 0x2D
+#define CC2500_TEST0_REG_ADDR 0x2E
+/**********************************************************************************************************/
+
+
+
+	
 #define CC2500_CS_LOW()       GPIO_ResetBits(CC2500_SPI_CS_GPIO_PORT, CC2500_SPI_CS_PIN)
 #define CC2500_CS_HIGH()      GPIO_SetBits(CC2500_SPI_CS_GPIO_PORT, CC2500_SPI_CS_PIN)
-/**
-  * @}
-  */ 
 
 /** @defgroup STM32F4_DISCOVERY_CC2500_Exported_Functions
-  * @{
-  */ 
+	* @{
+	*/ 
 void CC2500_LowLevel_Init(void);
 void CC2500_Init(CC2500_InitTypeDef *CC2500_InitStruct);
 void CC2500_InterruptConfig(CC2500_InterruptConfigTypeDef *CC2500_InterruptConfigStruct);
@@ -561,14 +539,14 @@ void CC2500_Write(uint8_t* pBuffer, uint8_t WriteAddr, uint16_t NumByteToWrite);
 void CC2500_Read(uint8_t* pBuffer, uint8_t ReadAddr, uint16_t NumByteToRead);
 
 /* USER Callbacks: This is function for which prototype only is declared in
-   MEMS accelerometre driver and that should be implemented into user applicaiton. */  
+	 MEMS accelerometre driver and that should be implemented into user applicaiton. */  
 /* CC2500_TIMEOUT_UserCallback() function is called whenever a timeout condition 
-   occure during communication (waiting transmit data register empty flag(TXE)
-   or waiting receive data register is not empty flag (RXNE)).
-   You can use the default timeout callback implementation by uncommenting the 
-   define USE_DEFAULT_TIMEOUT_CALLBACK in stm32f4_discovery_CC2500.h file.
-   Typically the user implementation of this callback should reset MEMS peripheral
-   and re-initialize communication or in worst case reset all the application. */
+	 occure during communication (waiting transmit data register empty flag(TXE)
+	 or waiting receive data register is not empty flag (RXNE)).
+	 You can use the default timeout callback implementation by uncommenting the 
+	 define USE_DEFAULT_TIMEOUT_CALLBACK in stm32f4_discovery_CC2500.h file.
+	 Typically the user implementation of this callback should reset MEMS peripheral
+	 and re-initialize communication or in worst case reset all the application. */
 uint32_t CC2500_TIMEOUT_UserCallback(void);
 
 #ifdef __cplusplus
@@ -577,20 +555,20 @@ uint32_t CC2500_TIMEOUT_UserCallback(void);
 
 #endif /* __STM32F4_DISCOVERY_CC2500_H */
 /**
-  * @}
-  */
+	* @}
+	*/
 
 /**
-  * @}
-  */
+	* @}
+	*/
 
 /**
-  * @}
-  */
+	* @}
+	*/
 
 /**
-  * @}
-  */ 
+	* @}
+	*/ 
 
 
 /******************* (C) COPYRIGHT 2011 STMicroelectronics *****END OF FILE****/
