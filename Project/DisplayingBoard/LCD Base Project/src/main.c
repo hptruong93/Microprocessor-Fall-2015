@@ -39,6 +39,12 @@ void itoa(int n, char* s)
 	if (sign < 0)
 	 s[i++] = '-';
 	s[i] = '\0';
+
+	for (int j = 0; j < i / 2; j++) {
+		char temp = s[j];
+		s[j] = s[i - 1 - j];
+		s[i - 1 - j] = temp;
+	}
 }
 
 void print_messages(void) {
@@ -234,6 +240,8 @@ osThreadId example_1a_thread;
 osThreadId example_1b_thread;
 osThreadId example_1c_thread;
 
+
+uint8_t yyy;
 /*
  * main: initialize and start the system
  */
@@ -243,12 +251,15 @@ int main (void) {
 
 	CC2500_Read(test, 0x30, 1);
 	CC2500_Read(test + 1, 0x30, 2);
+	yyy = test[0];
 	test[3] = 123;
-	print_buffer(test, 4);
+	//print_buffer(test, 4);
 
 	write_config();
-	set_message(0, "Done");
-
+	//set_message(0, "Done");
+	CC2500_Read(test + 1, 0x30, 2);
+	print_buffer(test, 4);
+	
 	osKernelInitialize ();                    // initialize CMSIS-RTOS
 	
 	// initialize peripherals here
