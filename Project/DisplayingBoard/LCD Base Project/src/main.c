@@ -10,7 +10,7 @@
 #include "stm32f429i_discovery.h"
 #include "stm32f429i_discovery_lcd.h"
 #include "stm32f429i_discovery_l3gd20.h"
-#include "background16bpp.h"
+//#include "background16bpp.h"
 
 #include "interfaces/cc2500.h"
 #include "interfaces/cc2500_settings.h"
@@ -21,7 +21,7 @@
 #include "my_types.h"
 
 #define message_size 10
-#define num_messages 5
+#define num_messages 10
 static char messages[num_messages][message_size];
 static uint8_t has_msg[num_messages];
 static uint8_t test[100];
@@ -39,6 +39,12 @@ void itoa(int n, char* s)
 	if (sign < 0)
 	 s[i++] = '-';
 	s[i] = '\0';
+
+	for (int j = 0; j < i / 2; j++) {
+		char temp = s[j];
+		s[j] = s[i - 1 - j];
+		s[i - 1 - j] = temp;
+	}
 }
 
 void print_messages(void) {
@@ -115,28 +121,28 @@ void example_1a(void const *argument){
 	  //ellipses, and polygons. You can draw strings or characters, change background/foreground 
 	  //colours.
 	
-	  LCD_DrawLine(0, 32, 240, LCD_DIR_HORIZONTAL);
-	  LCD_DrawLine(0, 34, 240, LCD_DIR_HORIZONTAL);
-	  LCD_SetTextColor(LCD_COLOR_BLUE2); 
-	  LCD_DrawFullCircle(120, 160, 100);
-	  LCD_SetTextColor(LCD_COLOR_CYAN); 
-	  LCD_DrawFullCircle(120, 160, 90);
-	  LCD_SetTextColor(LCD_COLOR_YELLOW); 
-	  LCD_DrawFullCircle(120, 160, 80);
-	  LCD_SetTextColor(LCD_COLOR_RED); 
-	  LCD_DrawFullCircle(120, 160, 70);
-	  LCD_SetTextColor(LCD_COLOR_BLUE); 
-	  LCD_DrawFullCircle(120, 160, 60);
-	  LCD_SetTextColor(LCD_COLOR_GREEN); 
-	  LCD_DrawFullCircle(120, 160, 50);
-	  LCD_SetTextColor(LCD_COLOR_BLACK); 
-	  LCD_DrawFullCircle(120, 160, 40);
-		LCD_SetTextColor(LCD_COLOR_WHITE);
-		LCD_DrawRect(90,130,60,60);
-		LCD_SetTextColor(LCD_COLOR_MAGENTA);
-		LCD_FillTriangle(90, 120, 150, 130, 180, 130);
-		LCD_SetFont(&Font12x12);
-		LCD_DisplayStringLine(LINE(15), (uint8_t*)"      Success!    ");
+	LCD_DrawLine(0, 32, 240, LCD_DIR_HORIZONTAL);
+	LCD_DrawLine(0, 34, 240, LCD_DIR_HORIZONTAL);
+	LCD_SetTextColor(LCD_COLOR_BLUE2); 
+	LCD_DrawFullCircle(120, 160, 100);
+	LCD_SetTextColor(LCD_COLOR_CYAN); 
+	LCD_DrawFullCircle(120, 160, 90);
+	LCD_SetTextColor(LCD_COLOR_YELLOW); 
+	LCD_DrawFullCircle(120, 160, 80);
+	LCD_SetTextColor(LCD_COLOR_RED); 
+	LCD_DrawFullCircle(120, 160, 70);
+	LCD_SetTextColor(LCD_COLOR_BLUE); 
+	LCD_DrawFullCircle(120, 160, 60);
+	LCD_SetTextColor(LCD_COLOR_GREEN); 
+	LCD_DrawFullCircle(120, 160, 50);
+	LCD_SetTextColor(LCD_COLOR_BLACK); 
+	LCD_DrawFullCircle(120, 160, 40);
+	LCD_SetTextColor(LCD_COLOR_WHITE);
+	LCD_DrawRect(90,130,60,60);
+	LCD_SetTextColor(LCD_COLOR_MAGENTA);
+	LCD_FillTriangle(90, 120, 150, 130, 180, 130);
+	LCD_SetFont(&Font12x12);
+	LCD_DisplayStringLine(LINE(15), (uint8_t*)"      Success!    ");
 		
 		osDelay(250);
 	}
@@ -155,27 +161,33 @@ in flash memory into the active buffer in SDRAM. The SDRAM has two layer buffer:
   * @param    None
   * @retval   None
   */
-
+uint8_t tett, tett1, tett2;
 void example_1b(void const *argument) {
-	set_message(1, "CCC");
+	static char testing[5];
+	testing[0] = 'X';
+	testing[1] = 'Y';
+	testing[2] = '\0';
 
 	while (1) {
-		static uint8_t count = 0;
-		static char testing[2];
-		testing[1] = '\0';
+		CC2500_Read(test, 0x34, 1); //SRX --> 1ps
+		CC2500_Read(test + 1, 0x35 | 0xC0, 1); //MARCSTATE --> 1/250ms
+		CC2500_Read(test + 2, 0x3b | 0xC0, 1); //Rx bytes
 
-		CC2500_Read(test, 0x34, 1); //SRX
-		CC2500_Read(test + 1, 0x35, 2); //MARCSTATE
-		CC2500_Read(test + 3, 0x3b, 2); //Rx bytes
-		
-		if (*(test + 3) > 0) {
-			CC2500_Read(test + 5, 0x3f, 1); //Read rx fifo
-			print_buffer(test, 7);
-		} else {
-			count = (count + 1) % 10;
+		if (test[2] > 0) {
+			CC2500_Read(test + 3, 0x3f | 0xC0, 1); //Read rx fifo
 			print_buffer(test, 5);
-			testing[0] = count + '0';
-			set_message(8, testing);
+			
+			static char other_testing[10];
+			static uint8_t internal_count = 0;
+			internal_count = (internal_count + 1) % 100;
+			itoa(internal_count, other_testing);
+			set_message(8, other_testing);		
+		} else {
+			static uint8_t count = 0;
+			count = (count + 1) % 100;
+			print_buffer(test, 3);
+			itoa(count, testing);
+			set_message(7, testing);
 		}
 
 		osDelay(50);
@@ -234,21 +246,25 @@ osThreadId example_1a_thread;
 osThreadId example_1b_thread;
 osThreadId example_1c_thread;
 
+
 /*
  * main: initialize and start the system
  */
 int main (void) {
 	CC2500_LowLevel_Init();
-	// system_init();
+	for (uint32_t i = 0; i < 18641351; i++);
 
-	CC2500_Read(test, 0x30, 1);
-	CC2500_Read(test + 1, 0x30, 2);
-	test[3] = 123;
-	print_buffer(test, 4);
+	// system_init();
+	CC2500_Read(test, 0x30, 1); //Reset
+	CC2500_Read(test + 1, 0x30 | 0xC0, 1);
 
 	write_config();
-	set_message(0, "Done");
+	CC2500_Read(test + 1, 0x30 | 0xC0, 1);
 
+	CC2500_Read(test, 0x34, 1); //SRX
+
+	print_buffer(test, 4);
+	
 	osKernelInitialize ();                    // initialize CMSIS-RTOS
 	
 	// initialize peripherals here
@@ -277,7 +293,7 @@ int main (void) {
 	********************************************************/
 
 	//example_1a_thread = osThreadCreate(osThread(example_1a), NULL);
-	// example_1b_thread = osThreadCreate(osThread(example_1b), NULL);
+	example_1b_thread = osThreadCreate(osThread(example_1b), NULL);
 	example_1c_thread = osThreadCreate(osThread(example_1c), NULL);
 
 	osKernelStart ();                         // start thread execution 

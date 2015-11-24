@@ -10,7 +10,7 @@ __IO uint32_t  CC2500Timeout = CC2500_FLAG_TIMEOUT;
 /* Dummy Byte Send by the SPI Master device in order to generate the Clock to the Slave device */
 #define DUMMY_BYTE                 ((uint8_t)0x00)
 
-static uint8_t CC2500_SendByte(uint8_t byte);
+uint8_t CC2500_SendByte(uint8_t byte);
 void CC2500_LowLevel_Init(void);
 
 
@@ -167,16 +167,16 @@ void CC2500_LowLevel_Init(void)
   GPIO_InitStructure.GPIO_Pin = CC2500_SPI_INT2_PIN;
   GPIO_Init(CC2500_SPI_INT2_GPIO_PORT, &GPIO_InitStructure);
 	
-	GPIO_InitTypeDef gpio_init_s; // Structure to initilize definitions of GPIO
-	GPIO_StructInit(&gpio_init_s); // Fills each GPIO_InitStruct member with its default value
-	gpio_init_s.GPIO_Pin = GPIO_Pin_3; // Select the following pins to initialise
-	gpio_init_s.GPIO_Mode = GPIO_Mode_OUT; // Operating mode = output for the selected pins
-	gpio_init_s.GPIO_Speed = GPIO_Speed_100MHz; // Don't limit slew rate, allow values to change as fast as they are set
-	gpio_init_s.GPIO_OType = GPIO_OType_PP; // Operating output type (push-pull) for selected pins
-	gpio_init_s.GPIO_PuPd = GPIO_PuPd_NOPULL; // If there is no input, don't pull.
-	GPIO_Init(GPIOE, &gpio_init_s); // Initializes the GPIOD peripheral.
+	// GPIO_InitTypeDef gpio_init_s; // Structure to initilize definitions of GPIO
+	// GPIO_StructInit(&gpio_init_s); // Fills each GPIO_InitStruct member with its default value
+	// gpio_init_s.GPIO_Pin = GPIO_Pin_3; // Select the following pins to initialise
+	// gpio_init_s.GPIO_Mode = GPIO_Mode_OUT; // Operating mode = output for the selected pins
+	// gpio_init_s.GPIO_Speed = GPIO_Speed_100MHz; // Don't limit slew rate, allow values to change as fast as they are set
+	// gpio_init_s.GPIO_OType = GPIO_OType_PP; // Operating output type (push-pull) for selected pins
+	// gpio_init_s.GPIO_PuPd = GPIO_PuPd_NOPULL; // If there is no input, don't pull.
+	// GPIO_Init(GPIOE, &gpio_init_s); // Initializes the GPIOD peripheral.
 	
-	GPIO_SetBits(GPIOE, GPIO_Pin_3);
+	// GPIO_SetBits(GPIOE, GPIO_Pin_3);
 }
 
 /**
@@ -185,7 +185,7 @@ void CC2500_LowLevel_Init(void)
   * @param  Byte : Byte send.
   * @retval The received byte value
   */
-static uint8_t CC2500_SendByte(uint8_t byte)
+uint8_t CC2500_SendByte(uint8_t byte)
 {
   /* Loop while DR register in not emplty */
   CC2500Timeout = CC2500_FLAG_TIMEOUT;

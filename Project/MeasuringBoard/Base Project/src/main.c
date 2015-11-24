@@ -30,41 +30,47 @@ void write_config() {
 }
 
 int main() {
-	printf("Here\n");
 	SysTick_Config(SystemCoreClock / SYSTICK_FREQUENCY);
 	CC2500_LowLevel_Init();
 	system_init();
 	
 	printf("Done init\n");
 	CC2500_Read(test, 0x30, 1);
-	CC2500_Read(test + 1, 0x30, 2);
-	printf("Read the thing\n");
+	CC2500_Read(test + 1, 0x30 | 0xC0, 1);
 	print_buffer(test, 3);
 	
 	write_config();
+	CC2500_Read(test + 1, 0x30 | 0xC0, 1);
+	printf("Read the thing\n");
+	print_buffer(test, 3);
 	
 	CC2500_Read(test, 0x34, 1); //SRX
 	print_buffer(test, 1);
 	
-	while(1){
-		while (!system_ticks);
-		led_rotation_rotate_leds();
+	 while(1) {
+	 	while (!system_ticks);
+	 	led_rotation_rotate_leds();
 		
-		CC2500_Read(test, 0x34, 1); //SRX
-		CC2500_Read(test + 1, 0x35, 2); //MARCSTATE
-		CC2500_Read(test + 3, 0x3b, 2); //Rx bytes
+	 	CC2500_Read(test, 0x34, 1); //SRX
+	 	CC2500_Read(test + 1, 0x35 | 0xC0, 1); //MARCSTATE
+	 	CC2500_Read(test + 3, 0x3b | 0xC0, 1); //Rx bytes
 		
-		if (*(test + 3) > 0) {
-			CC2500_Read(test + 5, 0x3f, 1); //Read rx fifo
-			print_buffer(test, 7);
-		} else {
-			//print_buffer(test, 5);
-		}
+	 	if (*(test + 3) > 0) {
+	 		CC2500_Read(test + 5, 0x3f, 1); //Read rx fifo
+	 		print_buffer(test, 7);
+	 	} else {
+			static uint8_t previous_rx = 0, previous_state = 0;
+			if (test[3] != previous_rx || test[1] != previous_state) {
+				previous_rx = test[3];
+				previous_state = test[1];
+				print_buffer(test, 5);
+			}
+	 	}
 
 		
 		
-		system_ticks = 0;
-	}
+	 	system_ticks = 0;
+	 }
 	
 	return 0;
 }

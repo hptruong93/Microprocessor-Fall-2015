@@ -1,52 +1,6 @@
-/**
-  ******************************************************************************
-  * @file    stm32f4_discovery_CC2500.c
-  * @author  MCD Application Team
-  * @version V1.1.0
-  * @date    28-October-2011
-  * @brief   This file provides a set of functions needed to manage the CC2500
-  *          MEMS accelerometer available on STM32F4-Discovery Kit.
-  ******************************************************************************
-  * @attention
-  *
-  * THE PRESENT FIRMWARE WHICH IS FOR GUIDANCE ONLY AIMS AT PROVIDING CUSTOMERS
-  * WITH CODING INFORMATION REGARDING THEIR PRODUCTS IN ORDER FOR THEM TO SAVE
-  * TIME. AS A RESULT, STMICROELECTRONICS SHALL NOT BE HELD LIABLE FOR ANY
-  * DIRECT, INDIRECT OR CONSEQUENTIAL DAMAGES WITH RESPECT TO ANY CLAIMS ARISING
-  * FROM THE CONTENT OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE
-  * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
-  *
-  * <h2><center>&copy; COPYRIGHT 2011 STMicroelectronics</center></h2>
-  ******************************************************************************  
-  */
-
-/* Includes ------------------------------------------------------------------*/
 #include "cc2500.h"
 
-/** @addtogroup Utilities
-  * @{
-  */ 
 
-/** @addtogroup STM32F4_DISCOVERY
-  * @{
-  */ 
-
-/** @addtogroup STM32F4_DISCOVERY_CC2500
-  * @{
-  */
-
-
-/** @defgroup STM32F4_DISCOVERY_CC2500_Private_TypesDefinitions
-  * @{
-  */
-
-/**
-  * @}
-  */
-
-/** @defgroup STM32F4_DISCOVERY_CC2500_Private_Defines
-  * @{
-  */
 __IO uint32_t  CC2500Timeout = CC2500_FLAG_TIMEOUT;   
 
 /* Read/Write command */
@@ -56,173 +10,9 @@ __IO uint32_t  CC2500Timeout = CC2500_FLAG_TIMEOUT;
 /* Dummy Byte Send by the SPI Master device in order to generate the Clock to the Slave device */
 #define DUMMY_BYTE                 ((uint8_t)0x00)
 
-/**
-  * @}
-  */
-
-/** @defgroup STM32F4_DISCOVERY_CC2500_Private_Macros
-  * @{
-  */
-
-/**
-  * @}
-  */ 
-  
-/** @defgroup STM32F4_DISCOVERY_CC2500_Private_Variables
-  * @{
-  */ 
-
-/**
-  * @}
-  */
-
-/** @defgroup STM32F4_DISCOVERY_CC2500_Private_FunctionPrototypes
-  * @{
-  */
 static uint8_t CC2500_SendByte(uint8_t byte);
 void CC2500_LowLevel_Init(void);
-/**
-  * @}
-  */
 
-/** @defgroup STM32F4_DISCOVERY_CC2500_Private_Functions
-  * @{
-  */
-
-
-/**
-  * @brief  Set CC2500 Initialization.
-  * @param  CC2500_Config_Struct: pointer to a CC2500_Config_TypeDef structure 
-  *         that contains the configuration setting for the CC2500.
-  * @retval None
-  */
-void CC2500_Init(CC2500_InitTypeDef *CC2500_InitStruct)
-{
-  uint8_t ctrl = 0x00;
-  
-  /* Configure the low level interface ---------------------------------------*/
-  CC2500_LowLevel_Init();
-  
-  /* Configure MEMS: data rate, full scale*/
-  ctrl = (uint8_t) (CC2500_InitStruct->Output_DataRate | CC2500_InitStruct->Full_Scale | \
-                    CC2500_InitStruct->Bandwidth | CC2500_InitStruct->AntiAliasingBandwidth);
-  
-  CC2500_Write(&ctrl, CC2500_CTRL_REG6_XL_ADDR, 1);
-	
-	ctrl = 0x00;
-	ctrl = (uint8_t) (CC2500_InitStruct->Axes_Enable);
-	CC2500_Write(&ctrl, CC2500_CTRL_REG5_XL_ADDR, 1);
-}
-
-/**
-  * @brief  Set CC2500 Internal High Pass Filter configuration.
-  * @param  CC2500_Filter_ConfigTypeDef: pointer to a CC2500_FilterConfig_TypeDef 
-  *         structure that contains the configuration setting for the CC2500 Filter.
-  * @retval None
-  */
-void CC2500_FilterConfig(CC2500_FilterConfigTypeDef *CC2500_FilterConfigStruct)
-{
-  uint8_t ctrl = 0x00;
-  
-  /* Read CTRL_REG2 register */
-  CC2500_Read(&ctrl, CC2500_CTRL_REG2_ADDR, 1);
-  
-  /* Clear high pass filter cut-off level, interrupt and data selection bits*/
-  ctrl &= (uint8_t)~(CC2500_FILTEREDDATASELECTION_OUTPUTREGISTER | \
-                     CC2500_HIGHPASSFILTER_LEVEL_3 | \
-                     CC2500_HIGHPASSFILTERINTERRUPT_1_2);
-  /* Configure MEMS high pass filter cut-off level, interrupt and data selection bits */                     
-  ctrl |= (uint8_t)(CC2500_FilterConfigStruct->HighPassFilter_Data_Selection | \
-                    CC2500_FilterConfigStruct->HighPassFilter_CutOff_Frequency | \
-                    CC2500_FilterConfigStruct->HighPassFilter_Interrupt);
-  
-  /* Write value to MEMS CTRL_REG2 register */
-  CC2500_Write(&ctrl, CC2500_CTRL_REG2_ADDR, 1);
-}
-
-/**
-  * @brief Set CC2500 Interrupt configuration
-  * @param  CC2500_InterruptConfig_TypeDef: pointer to a CC2500_InterruptConfig_TypeDef 
-  *         structure that contains the configuration setting for the CC2500 Interrupt.
-  * @retval None
-  */
-void CC2500_InterruptConfig(CC2500_InterruptConfigTypeDef *CC2500_IntConfigStruct)
-{
-  uint8_t ctrl = 0x00;
-  
-  /* Read CLICK_CFG register */
-  CC2500_Read(&ctrl, CC2500_CLICK_CFG_REG_ADDR, 1);
-  
-  /* Configure latch Interrupt request, click interrupts and double click interrupts */                   
-  ctrl = (uint8_t)(CC2500_IntConfigStruct->DataReadyInterrupt);
-  
-  /* Write value to MEMS CLICK_CFG register */
-  CC2500_Write(&ctrl, CC2500_INT1_CTRL_REG_ADDR, 1);
-}
-
-/**
-  * @brief  Change the lowpower mode for CC2500
-  * @param  LowPowerMode: new state for the lowpower mode.
-  *   This parameter can be one of the following values:
-  *     @arg CC2500_LOWPOWERMODE_POWERDOWN: Power down mode
-  *     @arg CC2500_LOWPOWERMODE_ACTIVE: Active mode  
-  * @retval None
-  */
-void CC2500_LowpowerCmd(uint8_t LowPowerMode)
-{
-  uint8_t tmpreg;
-  
-  /* Read CTRL_REG1 register */
-  CC2500_Read(&tmpreg, CC2500_CTRL_REG1_ADDR, 1);
-  
-  /* Set new low power mode configuration */
-  tmpreg &= (uint8_t)~CC2500_LOWPOWERMODE_ACTIVE;
-  tmpreg |= LowPowerMode;
-  
-  /* Write value to MEMS CTRL_REG1 regsister */
-  CC2500_Write(&tmpreg, CC2500_CTRL_REG1_ADDR, 1);
-}
-
-/**
-  * @brief  Data Rate command 
-  * @param  DataRateValue: Data rate value
-  *   This parameter can be one of the following values:
-  *     @arg CC2500_DATARATE_100: 100 Hz output data rate 
-  *     @arg CC2500_DATARATE_400: 400 Hz output data rate    
-  * @retval None
-  */
-void CC2500_DataRateCmd(uint8_t DataRateValue)
-{
-  uint8_t tmpreg;
-  
-  /* Read CTRL_REG1 register */
-  CC2500_Read(&tmpreg, CC2500_CTRL_REG1_ADDR, 1);
-  
-  /* Set new Data rate configuration */
-  tmpreg &= (uint8_t)~CC2500_DATARATE_400;
-  tmpreg |= DataRateValue;
-  
-  /* Write value to MEMS CTRL_REG1 regsister */
-  CC2500_Write(&tmpreg, CC2500_CTRL_REG1_ADDR, 1);
-}
-
-/**
-  * @brief  Reboot memory content of CC2500
-  * @param  None
-  * @retval None
-  */
-void CC2500_RebootCmd(void)
-{
-  uint8_t tmpreg;
-  /* Read CTRL_REG2 register */
-  CC2500_Read(&tmpreg, CC2500_CTRL_REG2_ADDR, 1);
-  
-  /* Enable or Disable the reboot memory */
-  tmpreg |= CC2500_BOOT_REBOOTMEMORY;
-  
-  /* Write value to MEMS CTRL_REG2 regsister */
-  CC2500_Write(&tmpreg, CC2500_CTRL_REG2_ADDR, 1);
-}
 
 /**
   * @brief  Writes one byte to the CC2500.
@@ -293,43 +83,6 @@ void CC2500_Read(uint8_t* pBuffer, uint8_t ReadAddr, uint16_t NumByteToRead)
   /* Set chip select High at the end of the transmission */ 
   CC2500_CS_HIGH();
 }
-
-/**
-  * @brief  Read CC2500 output register, and calculate the acceleration 
-  *         ACC[mg]=SENSITIVITY* (out_h*256+out_l)/16 (12 bit rappresentation)
-  * @param  s16 buffer to store data
-  * @retval None
-  */
-void CC2500_ReadACC(int32_t* out)
-{
-  uint8_t buffer[6];
-  uint8_t crtl, i = 0x00;
-   
-  CC2500_Read(&crtl, CC2500_CTRL_REG1_ADDR, 1);  
-  CC2500_Read(buffer, CC2500_OUT_X_ADDR, 6);
-  
-  switch(crtl & 0x20) 
-    {
-    /* FS bit = 0 ==> Sensitivity typical value = 18milligals/digit*/ 
-    case 0x00:
-      for(i=0; i<0x03; i++)
-      {
-        *out =(int32_t)(CC2500_SENSITIVITY_2_3G *  (int8_t)buffer[2*i]);
-        out++;
-      }
-      break;
-    /* FS bit = 1 ==> Sensitivity typical value = 72milligals/digit*/ 
-    case 0x20:
-      for(i=0; i<0x03; i++)
-      {
-        *out =(int32_t)(CC2500_SENSITIVITY_9_2G * (int8_t)buffer[2*i]);
-        out++;
-      }         
-      break;
-    default:
-      break;
-    }
- }
 
 /**
   * @brief  Initializes the low level interface used to drive the CC2500
@@ -470,21 +223,5 @@ uint32_t CC2500_TIMEOUT_UserCallback(void)
 }
 //#endif /* USE_DEFAULT_TIMEOUT_CALLBACK */
 
-/**
-  * @}
-  */ 
-
-/**
-  * @}
-  */ 
-  
-/**
-  * @}
-  */ 
-
-/**
-  * @}
-  */ 
-  
 
 /******************* (C) COPYRIGHT 2011 STMicroelectronics *****END OF FILE****/
