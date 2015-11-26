@@ -22,6 +22,7 @@
 
 #define message_size 10
 #define num_messages 14
+
 static char messages[num_messages][message_size];
 static uint8_t has_msg[num_messages];
 static uint8_t test[100];

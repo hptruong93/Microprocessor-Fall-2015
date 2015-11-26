@@ -11,6 +11,7 @@ __IO uint32_t  CC2500Timeout = CC2500_FLAG_TIMEOUT;
 /* Dummy Byte Send by the SPI Master device in order to generate the Clock to the Slave device */
 #define DUMMY_BYTE                 ((uint8_t)0x00)
 
+
 /////////////////////////////////////////////////////////////////////////////////////////////////
 static const uint8_t CC2500_SRES = 0x30;
 static const uint8_t CC2500_SNOP = 0x3D;
@@ -126,6 +127,7 @@ __inline uint8_t CC2500_get_txbytes(void) {
 	return CC2500_read_one(CC2500_TXBYTES);
 }
 
+<<<<<<< HEAD
 __inline uint8_t CC2500_flush_rx(void) {
 	return CC2500_read_one(CC2500_SFRX);
 }

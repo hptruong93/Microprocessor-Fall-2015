@@ -87,6 +87,7 @@
 // #define CC2500_SPI_INT2_EXTI_PIN_SOURCE  EXTI_PinSource1
 // #define CC2500_SPI_INT2_EXTI_IRQn        EXTI1_IRQn 
 
+
 /**********************************************************************************************************/
 #define CC2500_STATE_IDLE 1
 #define CC2500_STATE_RX 13
@@ -94,8 +95,6 @@
 
 #define CC2500_STATE_TX 19
 #define CC2500_STATE_TX_UNDERFLOW 22
-
-
 /******************************************************************************/
 /*************************** START REGISTER MAPPING  **************************/
 /******************************************************************************/
@@ -166,6 +165,7 @@
 	*/ 
 void CC2500_LowLevel_Init(void);
 void CC2500_Reset(void);
+
 void CC2500_Write(uint8_t* pBuffer, uint8_t WriteAddr, uint16_t NumByteToWrite);
 void CC2500_Read(uint8_t* pBuffer, uint8_t ReadAddr, uint16_t NumByteToRead);
 extern __inline uint8_t CC2500_read_one(uint8_t ReadAddr);

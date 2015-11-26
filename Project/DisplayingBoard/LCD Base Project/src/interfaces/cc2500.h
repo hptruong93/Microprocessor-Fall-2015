@@ -175,6 +175,8 @@ void CC2500_LowLevel_Init(void);
 void CC2500_Write(uint8_t* pBuffer, uint8_t WriteAddr, uint16_t NumByteToWrite);
 void CC2500_Read(uint8_t* pBuffer, uint8_t ReadAddr, uint16_t NumByteToRead);
 
+uint8_t CC2500_SendByte(uint8_t byte);
+
 /* USER Callbacks: This is function for which prototype only is declared in
 	 MEMS accelerometre driver and that should be implemented into user applicaiton. */  
 /* CC2500_TIMEOUT_UserCallback() function is called whenever a timeout condition 
