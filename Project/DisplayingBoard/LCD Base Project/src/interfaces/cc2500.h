@@ -94,7 +94,6 @@
 #define CC2500_STATE_TX_UNDERFLOW 22
 
 
-
 /******************************************************************************/
 /*************************** START REGISTER MAPPING  **************************/
 /******************************************************************************/
@@ -147,19 +146,13 @@
 #define CC2500_TEST1_REG_ADDR 0x2D
 #define CC2500_TEST0_REG_ADDR 0x2E
 /**********************************************************************************************************/
-#define CC2500_SRES 0x30
 #define CC2500_SRX 0x34
 #define CC2500_STX 0x35
-#define CC2500_SFRX 0x3A
-#define CC2500_SFTX 0x3B
 
-#define CC2500_SNOP 0x3D
-#define CC2500_PARTNUM 0x30 | 0xC0
-#define CC2500_MARCSTATE 0x35 | 0xC0
-#define CC2500_TXBYTES 0x3A | 0xC0
-#define CC2500_RXBYTES 0x3B | 0xC0
 #define CC2500_RX_FIFO 0x3F
+#define CC2500_RX_FIFO_BURST 0x3F | 0xC0
 #define CC2500_TX_FIFO 0x3F
+#define CC2500_TX_FIFO_BURST 0x3F | 0x40
 /**********************************************************************************************************/
 
 
@@ -172,10 +165,24 @@
 	* @{
 	*/ 
 void CC2500_LowLevel_Init(void);
+void CC2500_Reset(void);
+
 void CC2500_Write(uint8_t* pBuffer, uint8_t WriteAddr, uint16_t NumByteToWrite);
 void CC2500_Read(uint8_t* pBuffer, uint8_t ReadAddr, uint16_t NumByteToRead);
+extern __inline uint8_t CC2500_read_one(uint8_t ReadAddr);
+extern __inline void CC2500_write_one(uint8_t* value, uint8_t WriteAddr);
 
-uint8_t CC2500_SendByte(uint8_t byte);
+extern __inline uint8_t CC2500_get_state(void);
+extern __inline uint8_t CC2500_get_part_num(void);
+extern __inline uint8_t CC2500_get_rxbytes(void);
+extern __inline uint8_t CC2500_get_txbytes(void);
+extern __inline uint8_t CC2500_flush_rx(void);
+extern __inline uint8_t CC2500_flush_tx(void);
+
+extern __inline uint8_t CC2500_read_rx_one(void);
+extern __inline void CC2500_read_rx(uint8_t* buffer, uint8_t NumByteToRead);
+extern __inline void CC2500_write_tx_one(uint8_t value);
+extern __inline void CC2500_write_tx(uint8_t* buffer, uint8_t NumByteToWrite);
 
 /* USER Callbacks: This is function for which prototype only is declared in
 	 MEMS accelerometre driver and that should be implemented into user applicaiton. */  

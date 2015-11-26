@@ -1,4 +1,5 @@
 #include <math.h>
+#include <stdio.h>
 #include "my_types.h"
 #include "utils/utils.h"
 
@@ -23,4 +24,12 @@ inline uint16_t array_or(uint16_t* array, uint16_t length) {
 		result |= array[i];
 	}
 	return result;
+}
+
+__inline void print_buffer(uint8_t* buffer, uint8_t num) {
+	printf("Buffer is: ");
+	for (uint8_t i = 0; i < num; i++) {
+		printf("%d - ", buffer[i]);
+	}
+	printf("\n");
 }

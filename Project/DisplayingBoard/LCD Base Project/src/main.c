@@ -13,7 +13,7 @@
 //#include "background16bpp.h"
 
 #include "interfaces/cc2500.h"
-#include "interfaces/cc2500_settings.h"
+#include "modules/wireless_transmission_sm.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -23,6 +23,7 @@
 #define message_size 10
 #define num_messages 14
 
+extern uint8_t receive_buffer[WIRELESS_TRANSMISSION_PACKET_SIZE];
 static char messages[num_messages][message_size];
 static uint8_t has_msg[num_messages];
 static uint8_t test[100];
@@ -67,6 +68,14 @@ void set_message(uint8_t msg_index, char* new_message) {
 	has_msg[msg_index] = TRUE;
 }
 
+void print_bufferr(uint8_t* buffer, uint8_t num) {
+	for (uint8_t i = 0; i < num; i++) {
+		static char temp[10];
+		itoa(buffer[i], temp);
+		set_message(i, temp);		
+	}
+}
+
 static void delay(__IO uint32_t nCount)
 {
   __IO uint32_t index = 0; 
@@ -75,163 +84,82 @@ static void delay(__IO uint32_t nCount)
   }
 }
 
-void write_config() {
-	uint8_t value, address;
-	for (uint8_t i = 0; i < CC2500_CONFIG_COUNT; i++) {
-		value = cc2500_config[i][0];
-		address = cc2500_config[i][1];
-		CC2500_Write(&value, address, 1);
-	}
-}
-
-void print_buffer(uint8_t* buffer, uint8_t num) {
-	for (uint8_t i = 0; i < num; i++) {
-		static char temp[10];
-		itoa(buffer[i], temp);
-		set_message(i, temp);		
-	}
-}
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void example_1a(void const *argument){
 	while(1){
-		/* Clear the LCD */ 
-	LCD_Clear(LCD_COLOR_WHITE);
-	
-	  //The files source and header files implement drawing characters (drawing strings)
-	  //using different font sizes, see the file font.h for the four sizes
-	LCD_SetFont(&Font8x8);
-	  //The number of string lines avaialble is dependant on the font height:
-	  //A font height of 8 will result in 320 / 8 = 40 lines
-	LCD_DisplayStringLine(LINE(1), (uint8_t*)"      Welcome to uP lab     ");
-	LCD_DisplayStringLine(LINE(2), (uint8_t*)"          Good Luck         ");
-	  
-	  //The stm32f429i_discovery_lcd.h file offers functions which allows to draw various shapes
-	  //in either border or filled with colour. You can draw circles, rectangles, triangles, lines,
-	  //ellipses, and polygons. You can draw strings or characters, change background/foreground 
-	  //colours.
-	
-	LCD_DrawLine(0, 32, 240, LCD_DIR_HORIZONTAL);
-	LCD_DrawLine(0, 34, 240, LCD_DIR_HORIZONTAL);
-	LCD_SetTextColor(LCD_COLOR_BLUE2); 
-	LCD_DrawFullCircle(120, 160, 100);
-	LCD_SetTextColor(LCD_COLOR_CYAN); 
-	LCD_DrawFullCircle(120, 160, 90);
-	LCD_SetTextColor(LCD_COLOR_YELLOW); 
-	LCD_DrawFullCircle(120, 160, 80);
-	LCD_SetTextColor(LCD_COLOR_RED); 
-	LCD_DrawFullCircle(120, 160, 70);
-	LCD_SetTextColor(LCD_COLOR_BLUE); 
-	LCD_DrawFullCircle(120, 160, 60);
-	LCD_SetTextColor(LCD_COLOR_GREEN); 
-	LCD_DrawFullCircle(120, 160, 50);
-	LCD_SetTextColor(LCD_COLOR_BLACK); 
-	LCD_DrawFullCircle(120, 160, 40);
-	LCD_SetTextColor(LCD_COLOR_WHITE);
-	LCD_DrawRect(90,130,60,60);
-	LCD_SetTextColor(LCD_COLOR_MAGENTA);
-	LCD_FillTriangle(90, 120, 150, 130, 180, 130);
-	LCD_SetFont(&Font12x12);
-	LCD_DisplayStringLine(LINE(15), (uint8_t*)"      Success!    ");
-		
+//		/* Clear the LCD */ 
+//	LCD_Clear(LCD_COLOR_WHITE);
+//	
+//	  //The files source and header files implement drawing characters (drawing strings)
+//	  //using different font sizes, see the file font.h for the four sizes
+//	LCD_SetFont(&Font8x8);
+//	  //The number of string lines avaialble is dependant on the font height:
+//	  //A font height of 8 will result in 320 / 8 = 40 lines
+//	LCD_DisplayStringLine(LINE(1), (uint8_t*)"      Welcome to uP lab     ");
+//	LCD_DisplayStringLine(LINE(2), (uint8_t*)"          Good Luck         ");
+//	  
+//	  //The stm32f429i_discovery_lcd.h file offers functions which allows to draw various shapes
+//	  //in either border or filled with colour. You can draw circles, rectangles, triangles, lines,
+//	  //ellipses, and polygons. You can draw strings or characters, change background/foreground 
+//	  //colours.
+//	
+//	LCD_DrawLine(0, 32, 240, LCD_DIR_HORIZONTAL);
+//	LCD_DrawLine(0, 34, 240, LCD_DIR_HORIZONTAL);
+//	LCD_SetTextColor(LCD_COLOR_BLUE2); 
+//	LCD_DrawFullCircle(120, 160, 100);
+//	LCD_SetTextColor(LCD_COLOR_CYAN); 
+//	LCD_DrawFullCircle(120, 160, 90);
+//	LCD_SetTextColor(LCD_COLOR_YELLOW); 
+//	LCD_DrawFullCircle(120, 160, 80);
+//	LCD_SetTextColor(LCD_COLOR_RED); 
+//	LCD_DrawFullCircle(120, 160, 70);
+//	LCD_SetTextColor(LCD_COLOR_BLUE); 
+//	LCD_DrawFullCircle(120, 160, 60);
+//	LCD_SetTextColor(LCD_COLOR_GREEN); 
+//	LCD_DrawFullCircle(120, 160, 50);
+//	LCD_SetTextColor(LCD_COLOR_BLACK); 
+//	LCD_DrawFullCircle(120, 160, 40);
+//	LCD_SetTextColor(LCD_COLOR_WHITE);
+//	LCD_DrawRect(90,130,60,60);
+//	LCD_SetTextColor(LCD_COLOR_MAGENTA);
+//	LCD_FillTriangle(90, 120, 150, 130, 180, 130);
+//	LCD_SetFont(&Font12x12);
+//	LCD_DisplayStringLine(LINE(15), (uint8_t*)"      Success!    ");
+
 	osDelay(250);
 	}
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-uint8_t tett, tett1, tett2;
-void example_1bb(void const *argument) {
-	static char testing[5];
+static uint8_t temp;
+static wireless_received_packet received_test;
 
-	while (1) {
-		test[0] = 0;
-		test[1] = 0;
-		test[2] = 0;
-		test[3] = 0;
-
-		CC2500_Read(test + 1, CC2500_MARCSTATE, 1); //MARCSTATE
-		
-		static uint8_t sent = 0;
-		if (sent == 1 && test[1] != 19 && test[1] != 22) {
-			CC2500_Read(test, CC2500_STX, 1);
-		}
-
-		// if (test[1] == 13) {
-		// 	CC2500_Read(test + 2, CC2500_RXBYTES, 1); //Rx bytes
-		// 	if (test[2] > 0) {
-		// 		CC2500_Read(test + 3, CC2500_RX_FIFO, 1); //Read rx fifo
-		// 		set_message(8, "Kkk");
-		// 	} else {
-		// 		set_message(9, "Nope");
-		// 	}
-		// }
-		if (test[1] != 19 && sent != 1) {
-			static uint8_t sending = 0;
-			sending = (sending + 1) % 10;
-			uint8_t to_send = sending + 'A';
-			tett = to_send;
-			CC2500_Write(&to_send, CC2500_TX_FIFO, 1);
-			sent = 1;
-		} else {
-			static uint8_t count = 0;
-			count = (count + 1) % 100;
-			
-			itoa(count, testing);
-			set_message(7, testing);
-			set_message(8, "But why");
-		}
-
-		print_buffer(test, 5);
-		osDelay(1000);
-	}
-}
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-#define STATE(x) ((x & (7 << 4)) >> 4)
-#define LEN_MASK(x) (x & 15)
 void example_1b(void const *argument) {
-	static char testing[5];
-	CC2500_Read(test, CC2500_SRX, 1);
-
+	wireless_transmission_init();
+	uint8_t go = 0;
+	
 	while (1) {
-		for (uint8_t i = 0; i < 10; i++) {
-			if (i != 3) {
-				test[i] = 0;
-			}
-		}
-		clear_message(7);
-		clear_message(8);
-
-		CC2500_Read(test + 5, 0x34 | 0xC0, 1); //MARCSTATE
-		CC2500_Read(test + 1, CC2500_MARCSTATE, 1);
-
-		if (test[1] == CC2500_STATE_RX_OVERFLOW) {
-			CC2500_Read(test, CC2500_SFRX, 1);
-			continue;
-		} else if (test[1] != CC2500_STATE_RX) {
-			CC2500_Read(test, CC2500_SRX, 1);
-			CC2500_Read(test + 1, CC2500_MARCSTATE, 1);
-			continue;
-		}
-
-		if (test[1] == CC2500_STATE_RX) {
-			CC2500_Read(test + 2, CC2500_RXBYTES, 1);
-
-			if (test[2] > 0) {
-				CC2500_Read(test + 3, CC2500_RX_FIFO, 1); //Read rx fifo
-				set_message(9, "kkk");
-			} else {
-				set_message(8, "Nope");
-			}
-		} else {
-			static uint8_t count = 0;
-			count = (count + 1) % 100;
+		memset(test, 0, 20);
+		received_test.buffer = test;
+		wireless_transmission_periodic(&temp);
+		
+		uint8_t state = wireless_transmission_get_state();
+		if (state == WIRELESS_TRANSMISSION_STATE_IDLE) {
+			static char ttt[10];
+			set_message(8, "AAA");
+			itoa(received_test.status, ttt);
+			set_message(9, ttt);
+			itoa(received_test.len, ttt);
+			set_message(10, ttt);
+			itoa(received_test.id, ttt);
+			set_message(11, ttt);
 			
-			itoa(count, testing);
-			set_message(7, testing);
+			wireless_transmission_receive_packet();
 		}
-
-		print_buffer(test, 7);
-		osDelay(500);
+		
+		wireless_transmission_get_received_packet(&received_test);
+		
+		osDelay(300);
 	}
 }
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -282,32 +210,9 @@ osThreadId example_1c_thread;
  * main: initialize and start the system
  */
 int main (void) {
-	// printf("Start..");
-	
 	CC2500_LowLevel_Init();
-	// system_init();
-	
-	CC2500_Read(test, CC2500_SRES, 1);
-	CC2500_Read(test + 1, CC2500_PARTNUM, 1);
-	
-	do {
-		test[0] = 0;
-		CC2500_Read(test, CC2500_MARCSTATE, 1);
-	} while (test[0] != CC2500_STATE_IDLE);
+	CC2500_Reset();
 
-///////////////////////////////////////////////////////////
-	write_config();
-	// uint8_t value[2] = {0, 0};
-	// value[0] = 0;
-	// CC2500_Read(value, CC2500_FREQ2_REG_ADDR, 1);
-///////////////////////////////////////////////////////////
-	CC2500_Read(test + 1, CC2500_PARTNUM, 1);
-	
-	print_buffer(test, 3);
-
-	CC2500_Read(test, CC2500_SFRX, 1);
-	CC2500_Read(test, CC2500_SFTX, 1);
-	
 	osKernelInitialize ();                    // initialize CMSIS-RTOS
 	
 	// initialize peripherals here

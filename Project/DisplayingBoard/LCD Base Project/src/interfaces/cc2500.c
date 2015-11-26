@@ -1,4 +1,5 @@
 #include "cc2500.h"
+#include "interfaces/cc2500_settings.h"
 
 
 __IO uint32_t  CC2500Timeout = CC2500_FLAG_TIMEOUT;   
@@ -10,7 +11,23 @@ __IO uint32_t  CC2500Timeout = CC2500_FLAG_TIMEOUT;
 /* Dummy Byte Send by the SPI Master device in order to generate the Clock to the Slave device */
 #define DUMMY_BYTE                 ((uint8_t)0x00)
 
-uint8_t CC2500_SendByte(uint8_t byte);
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
+static const uint8_t CC2500_SRES = 0x30;
+static const uint8_t CC2500_SNOP = 0x3D;
+static const uint8_t CC2500_SFRX = 0x3A;
+static const uint8_t CC2500_SFTX = 0x3B;
+
+static const uint8_t CC2500_PARTNUM = 0x30 | 0xC0;
+static const uint8_t CC2500_MARCSTATE = 0x35 | 0xC0;
+static const uint8_t CC2500_TXBYTES = 0x3A | 0xC0;
+static const uint8_t CC2500_RXBYTES = 0x3B | 0xC0;
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+static uint8_t CC2500_SendByte(uint8_t byte);
 void CC2500_LowLevel_Init(void);
 
 
@@ -57,7 +74,7 @@ void CC2500_Write(uint8_t* pBuffer, uint8_t WriteAddr, uint16_t NumByteToWrite)
   */
 void CC2500_Read(uint8_t* pBuffer, uint8_t ReadAddr, uint16_t NumByteToRead)
 {
-	if(NumByteToRead > 0x01)
+  if(NumByteToRead > 0x01)
   {
     ReadAddr |= (uint8_t)(READWRITE_CMD | MULTIPLEBYTE_CMD);
   }
@@ -84,6 +101,79 @@ void CC2500_Read(uint8_t* pBuffer, uint8_t ReadAddr, uint16_t NumByteToRead)
   CC2500_CS_HIGH();
 }
 
+__inline uint8_t CC2500_read_one(uint8_t ReadAddr) {
+  uint8_t temp;
+  CC2500_Read(&temp, ReadAddr, 1);
+  return temp;
+}
+
+__inline void CC2500_write_one(uint8_t* value, uint8_t WriteAddr) {
+  CC2500_Write(value, WriteAddr, 1);
+}
+
+__inline uint8_t CC2500_get_state(void) {
+  return CC2500_read_one(CC2500_MARCSTATE);
+}
+
+__inline uint8_t CC2500_get_part_num(void) {
+  return CC2500_read_one(CC2500_PARTNUM);
+}
+
+__inline uint8_t CC2500_get_rxbytes(void) {
+  return CC2500_read_one(CC2500_RXBYTES);
+}
+
+__inline uint8_t CC2500_get_txbytes(void) {
+  return CC2500_read_one(CC2500_TXBYTES);
+}
+
+__inline uint8_t CC2500_flush_rx(void) {
+  return CC2500_read_one(CC2500_SFRX);
+}
+
+__inline uint8_t CC2500_flush_tx(void) {
+  return CC2500_read_one(CC2500_SFTX);
+}
+
+__inline uint8_t CC2500_read_rx_one(void) {
+  return CC2500_read_one(CC2500_RX_FIFO);
+}
+
+__inline void CC2500_read_rx(uint8_t* buffer, uint8_t NumByteToRead) {
+  if (NumByteToRead == 1) {
+    CC2500_Read(buffer, CC2500_RX_FIFO, NumByteToRead);
+  } else if (NumByteToRead > 1) {
+    CC2500_Read(buffer, CC2500_RX_FIFO_BURST, NumByteToRead);
+  }
+}
+
+__inline void CC2500_write_tx_one(uint8_t value) {
+  CC2500_write_one(&value, CC2500_TX_FIFO);
+}
+
+__inline void CC2500_write_tx(uint8_t* buffer, uint8_t NumByteToWrite) {
+  if (NumByteToWrite == 1) {
+    CC2500_Write(buffer, CC2500_TX_FIFO, NumByteToWrite);
+  } else if (NumByteToWrite > 1) {
+    CC2500_Write(buffer, CC2500_TX_FIFO_BURST, NumByteToWrite); 
+  }
+}
+
+void CC2500_Reset(void) {
+  static uint8_t value;
+  value = CC2500_read_one(CC2500_SRES);
+  do {
+    value = CC2500_get_state();
+  } while (value != 1);
+
+  for (uint8_t i = 0; i < CC2500_CONFIG_COUNT; i++) {
+    CC2500_write_one(&(cc2500_config[i][0]), cc2500_config[i][1]);
+  }
+
+  CC2500_flush_rx();
+  CC2500_flush_tx();
+}
+
 /**
   * @brief  Initializes the low level interface used to drive the CC2500
   * @param  None
@@ -104,10 +194,10 @@ void CC2500_LowLevel_Init(void)
   RCC_AHB1PeriphClockCmd(CC2500_SPI_CS_GPIO_CLK, ENABLE);
   
   /* Enable INT1 GPIO clock */
-  //RCC_AHB1PeriphClockCmd(CC2500_SPI_INT1_GPIO_CLK, ENABLE);
+  // RCC_AHB1PeriphClockCmd(CC2500_SPI_INT1_GPIO_CLK, ENABLE);
   
   /* Enable INT2 GPIO clock */
-  //RCC_AHB1PeriphClockCmd(CC2500_SPI_INT2_GPIO_CLK, ENABLE);
+  // RCC_AHB1PeriphClockCmd(CC2500_SPI_INT2_GPIO_CLK, ENABLE);
 
   GPIO_PinAFConfig(CC2500_SPI_SCK_GPIO_PORT, CC2500_SPI_SCK_SOURCE, CC2500_SPI_SCK_AF);
   GPIO_PinAFConfig(CC2500_SPI_MISO_GPIO_PORT, CC2500_SPI_MISO_SOURCE, CC2500_SPI_MISO_AF);
@@ -157,26 +247,26 @@ void CC2500_LowLevel_Init(void)
   GPIO_SetBits(CC2500_SPI_CS_GPIO_PORT, CC2500_SPI_CS_PIN);
   
   /* Configure GPIO PINs to detect Interrupts */
-//  GPIO_InitStructure.GPIO_Pin = CC2500_SPI_INT1_PIN;
-//  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN;
-//  GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
-//  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-//  GPIO_InitStructure.GPIO_PuPd  = GPIO_PuPd_NOPULL;
-//  GPIO_Init(CC2500_SPI_INT1_GPIO_PORT, &GPIO_InitStructure);
-//  
-//  GPIO_InitStructure.GPIO_Pin = CC2500_SPI_INT2_PIN;
-//  GPIO_Init(CC2500_SPI_INT2_GPIO_PORT, &GPIO_InitStructure);
-	
-	// GPIO_InitTypeDef gpio_init_s; // Structure to initilize definitions of GPIO
-	// GPIO_StructInit(&gpio_init_s); // Fills each GPIO_InitStruct member with its default value
-	// gpio_init_s.GPIO_Pin = GPIO_Pin_3; // Select the following pins to initialise
-	// gpio_init_s.GPIO_Mode = GPIO_Mode_OUT; // Operating mode = output for the selected pins
-	// gpio_init_s.GPIO_Speed = GPIO_Speed_100MHz; // Don't limit slew rate, allow values to change as fast as they are set
-	// gpio_init_s.GPIO_OType = GPIO_OType_PP; // Operating output type (push-pull) for selected pins
-	// gpio_init_s.GPIO_PuPd = GPIO_PuPd_NOPULL; // If there is no input, don't pull.
-	// GPIO_Init(GPIOE, &gpio_init_s); // Initializes the GPIOD peripheral.
-	
-	// GPIO_SetBits(GPIOE, GPIO_Pin_3);
+  // GPIO_InitStructure.GPIO_Pin = CC2500_SPI_INT1_PIN;
+  // GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN;
+  // GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
+  // GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+  // GPIO_InitStructure.GPIO_PuPd  = GPIO_PuPd_NOPULL;
+  // GPIO_Init(CC2500_SPI_INT1_GPIO_PORT, &GPIO_InitStructure);
+  
+  // GPIO_InitStructure.GPIO_Pin = CC2500_SPI_INT2_PIN;
+  // GPIO_Init(CC2500_SPI_INT2_GPIO_PORT, &GPIO_InitStructure);
+  
+  // GPIO_InitTypeDef gpio_init_s; // Structure to initilize definitions of GPIO
+  // GPIO_StructInit(&gpio_init_s); // Fills each GPIO_InitStruct member with its default value
+  // gpio_init_s.GPIO_Pin = GPIO_Pin_3; // Select the following pins to initialise
+  // gpio_init_s.GPIO_Mode = GPIO_Mode_OUT; // Operating mode = output for the selected pins
+  // gpio_init_s.GPIO_Speed = GPIO_Speed_100MHz; // Don't limit slew rate, allow values to change as fast as they are set
+  // gpio_init_s.GPIO_OType = GPIO_OType_PP; // Operating output type (push-pull) for selected pins
+  // gpio_init_s.GPIO_PuPd = GPIO_PuPd_NOPULL; // If there is no input, don't pull.
+  // GPIO_Init(GPIOE, &gpio_init_s); // Initializes the GPIOD peripheral.
+  
+  // GPIO_SetBits(GPIOE, GPIO_Pin_3);
 }
 
 /**
@@ -185,7 +275,7 @@ void CC2500_LowLevel_Init(void)
   * @param  Byte : Byte send.
   * @retval The received byte value
   */
-uint8_t CC2500_SendByte(uint8_t byte)
+static uint8_t CC2500_SendByte(uint8_t byte)
 {
   /* Loop while DR register in not emplty */
   CC2500Timeout = CC2500_FLAG_TIMEOUT;

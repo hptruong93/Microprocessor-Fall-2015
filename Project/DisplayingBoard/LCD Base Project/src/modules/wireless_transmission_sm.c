@@ -5,7 +5,7 @@
 #include "my_types.h"
 
 static uint8_t send_buffer[WIRELESS_TRANSMISSION_PACKET_SIZE];
-static uint8_t receive_buffer[WIRELESS_TRANSMISSION_PACKET_SIZE];
+uint8_t receive_buffer[WIRELESS_TRANSMISSION_PACKET_SIZE];
 static uint8_t receive_overload[WIRELESS_TRANSMISSION_PACKET_SIZE];
 
 static uint8_t operation_state;
@@ -115,21 +115,30 @@ uint8_t wireless_transmission_protocol_checksum(uint8_t* raw_packet, uint8_t* ch
 }
 
 void wireless_transmission_get_received_packet(wireless_received_packet* received_packet) {
+	memcpy(received_packet->buffer, receive_buffer, receiving_index);
+	return;
+
+	if (operation_state != WIRELESS_TRANSMISSION_STATE_IDLE) {
+		return;		
+	}
+
+
 	if (receiving_index <= LEN_LEN + ID_LEN + CHECKSUM_LEN) {
 		received_packet->status = WIRELESS_TRANSMISSION_VERIFY_INCORRECT_LENGTH;
+		return;
 	}
 
 	//Now verify whatever is in receive_buffer
 	uint8_t packet_len = receive_buffer[0];
 	if (packet_len == 0) {
 		received_packet->status = WIRELESS_TRANSMISSION_VERIFY_INCORRECT_LENGTH;
-	} else {
-		memcpy(received_packet->buffer, receive_buffer, packet_len);
+		return;
 	}
 
 	uint8_t packet_id = receive_buffer[1];
 	if (packet_id < id_count_base) {
 		received_packet->status = WIRELESS_TRANSMISSION_VERIFY_INVALID_ID;
+		return;
 	} else {
 		received_packet->id = packet_id;
 	}
@@ -138,11 +147,13 @@ void wireless_transmission_get_received_packet(wireless_received_packet* receive
 	uint8_t* check_sum_start_right = receive_buffer + receiving_index - CHECKSUM_LEN;
 	if (check_sum_start_left != check_sum_start_right) {
 		received_packet->status = WIRELESS_TRANSMISSION_VERIFY_INVALID_CHECK_SUM;
+		return;
 	}
 
 	uint8_t check_sum_verify = wireless_transmission_protocol_checksum(receive_buffer + LEN_LEN + ID_LEN, check_sum_start_left, packet_len);
 	if (!check_sum_verify) {
 		received_packet->status = WIRELESS_TRANSMISSION_VERIFY_INCORRECT_CHECKSUM;
+		return;
 	}
 
 	received_packet->status = WIRELESS_TRANSMISSION_VERIFY_OK;
@@ -167,8 +178,8 @@ uint8_t wireless_transmission_set_send_packet(uint8_t* packet, uint8_t len) {
 	sending_index = 0;
 	sending_len = new_len;
 
-	printf("Sending this\n");
-	print_buffer(send_buffer, 20);
+//	printf("Sending this\n");
+//	print_buffer(send_buffer, 20);
 	operation_state = WIRELESS_TRANSMISSION_STATE_TRANSMIT;
 	return TRUE;
 }
@@ -179,7 +190,7 @@ void wireless_transmission_receive_packet(void) {
 	operation_state = WIRELESS_TRANSMISSION_STATE_RECEIVE;
 }
 
-void wireless_transmission_periodic(void) {
+void wireless_transmission_periodic(uint8_t* rbyte) {
 	if (operation_state == WIRELESS_TRANSMISSION_STATE_TRANSMIT) {
 		static uint8_t pending_send = FALSE;
 
@@ -229,6 +240,8 @@ void wireless_transmission_periodic(void) {
 			uint8_t rxbytes = CC2500_get_rxbytes();
 			if (rxbytes > 0) {
 				uint8_t received = CC2500_read_rx_one();
+				*rbyte = received;
+
 				if (expecting_end == FALSE) {
 					if (received == START_PACKET) {
 						expecting_end = TRUE;

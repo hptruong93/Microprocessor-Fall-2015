@@ -127,7 +127,6 @@ __inline uint8_t CC2500_get_txbytes(void) {
 	return CC2500_read_one(CC2500_TXBYTES);
 }
 
-<<<<<<< HEAD
 __inline uint8_t CC2500_flush_rx(void) {
 	return CC2500_read_one(CC2500_SFRX);
 }
@@ -141,11 +140,23 @@ __inline uint8_t CC2500_read_rx_one(void) {
 }
 
 __inline void CC2500_read_rx(uint8_t* buffer, uint8_t NumByteToRead) {
-	CC2500_Read(buffer, CC2500_RX_FIFO, NumByteToRead);
+	if (NumByteToRead == 1) {
+		CC2500_Read(buffer, CC2500_RX_FIFO, NumByteToRead);
+	} else if (NumByteToRead > 1) {
+		CC2500_Read(buffer, CC2500_RX_FIFO_BURST, NumByteToRead);
+	}
 }
 
 __inline void CC2500_write_tx_one(uint8_t value) {
 	CC2500_write_one(&value, CC2500_TX_FIFO);
+}
+
+__inline void CC2500_write_tx(uint8_t* buffer, uint8_t NumByteToWrite) {
+	if (NumByteToWrite == 1) {
+		CC2500_Write(buffer, CC2500_TX_FIFO, NumByteToWrite);
+	} else if (NumByteToWrite > 1) {
+		CC2500_Write(buffer, CC2500_TX_FIFO_BURST, NumByteToWrite);	
+	}
 }
 
 void CC2500_Reset(void) {

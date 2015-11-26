@@ -151,7 +151,9 @@
 #define CC2500_STX 0x35
 
 #define CC2500_RX_FIFO 0x3F
+#define CC2500_RX_FIFO_BURST 0x3F | 0xC0
 #define CC2500_TX_FIFO 0x3F
+#define CC2500_TX_FIFO_BURST 0x3F | 0x40
 /**********************************************************************************************************/
 
 
@@ -181,6 +183,7 @@ extern __inline uint8_t CC2500_flush_tx(void);
 extern __inline uint8_t CC2500_read_rx_one(void);
 extern __inline void CC2500_read_rx(uint8_t* buffer, uint8_t NumByteToRead);
 extern __inline void CC2500_write_tx_one(uint8_t value);
+extern __inline void CC2500_write_tx(uint8_t* buffer, uint8_t NumByteToWrite);
 
 
 /* USER Callbacks: This is function for which prototype only is declared in
