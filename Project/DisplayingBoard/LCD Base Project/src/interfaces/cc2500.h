@@ -43,46 +43,56 @@
 /**
 	* @brief  CC2500 SPI Interface pins
 	*/
-#define CC2500_SPI                       SPI1
-#define CC2500_SPI_CLK                   RCC_APB2Periph_SPI1
+#define CC2500_SPI                       SPI4
+#define CC2500_SPI_CLK                   RCC_APB2Periph_SPI4
 
 #define CC2500_SPI_SCK_PIN               GPIO_Pin_2
-#define CC2500_SPI_SCK_GPIO_PORT         GPIOE        
+#define CC2500_SPI_SCK_GPIO_PORT         GPIOE
 #define CC2500_SPI_SCK_GPIO_CLK          RCC_AHB1Periph_GPIOE
-#define CC2500_SPI_SCK_SOURCE            GPIO_PinSource5
-#define CC2500_SPI_SCK_AF                GPIO_AF_SPI1
+#define CC2500_SPI_SCK_SOURCE            GPIO_PinSource2
+#define CC2500_SPI_SCK_AF                GPIO_AF_SPI4
 
 #define CC2500_SPI_MISO_PIN              GPIO_Pin_5
-#define CC2500_SPI_MISO_GPIO_PORT        GPIOE                      
+#define CC2500_SPI_MISO_GPIO_PORT        GPIOE
 #define CC2500_SPI_MISO_GPIO_CLK         RCC_AHB1Periph_GPIOE
-#define CC2500_SPI_MISO_SOURCE           GPIO_PinSource6
-#define CC2500_SPI_MISO_AF               GPIO_AF_SPI1
+#define CC2500_SPI_MISO_SOURCE           GPIO_PinSource5
+#define CC2500_SPI_MISO_AF               GPIO_AF_SPI4
 
 #define CC2500_SPI_MOSI_PIN              GPIO_Pin_6
 #define CC2500_SPI_MOSI_GPIO_PORT        GPIOE
 #define CC2500_SPI_MOSI_GPIO_CLK         RCC_AHB1Periph_GPIOE
-#define CC2500_SPI_MOSI_SOURCE           GPIO_PinSource7
-#define CC2500_SPI_MOSI_AF               GPIO_AF_SPI1
+#define CC2500_SPI_MOSI_SOURCE           GPIO_PinSource6
+#define CC2500_SPI_MOSI_AF               GPIO_AF_SPI4
 
-#define CC2500_SPI_CS_PIN                GPIO_Pin_13
+#define CC2500_SPI_CS_PIN                GPIO_Pin_12
 #define CC2500_SPI_CS_GPIO_PORT          GPIOC
 #define CC2500_SPI_CS_GPIO_CLK           RCC_AHB1Periph_GPIOC
 
-#define CC2500_SPI_INT1_PIN              GPIO_Pin_0
-#define CC2500_SPI_INT1_GPIO_PORT        GPIOE
-#define CC2500_SPI_INT1_GPIO_CLK         RCC_AHB1Periph_GPIOE
-#define CC2500_SPI_INT1_EXTI_LINE        EXTI_Line0
-#define CC2500_SPI_INT1_EXTI_PORT_SOURCE EXTI_PortSourceGPIOE
-#define CC2500_SPI_INT1_EXTI_PIN_SOURCE  EXTI_PinSource0
-#define CC2500_SPI_INT1_EXTI_IRQn        EXTI0_IRQn 
+// #define CC2500_SPI_INT1_PIN              GPIO_Pin_4
+// #define CC2500_SPI_INT1_GPIO_PORT        GPIOE
+// #define CC2500_SPI_INT1_GPIO_CLK         RCC_AHB1Periph_GPIOE
+// #define CC2500_SPI_INT1_EXTI_LINE        EXTI_Line4
+// #define CC2500_SPI_INT1_EXTI_PORT_SOURCE EXTI_PortSourceGPIOE
+// #define CC2500_SPI_INT1_EXTI_PIN_SOURCE  EXTI_PinSource4
+// #define CC2500_SPI_INT1_EXTI_IRQn        EXTI0_IRQn 
 
-#define CC2500_SPI_INT2_PIN              GPIO_Pin_1
-#define CC2500_SPI_INT2_GPIO_PORT        GPIOE
-#define CC2500_SPI_INT2_GPIO_CLK         RCC_AHB1Periph_GPIOE
-#define CC2500_SPI_INT2_EXTI_LINE        EXTI_Line1
-#define CC2500_SPI_INT2_EXTI_PORT_SOURCE EXTI_PortSourceGPIOE
-#define CC2500_SPI_INT2_EXTI_PIN_SOURCE  EXTI_PinSource1
-#define CC2500_SPI_INT2_EXTI_IRQn        EXTI1_IRQn 
+// #define CC2500_SPI_INT2_PIN              GPIO_Pin_1
+// #define CC2500_SPI_INT2_GPIO_PORT        GPIOE
+// #define CC2500_SPI_INT2_GPIO_CLK         RCC_AHB1Periph_GPIOE
+// #define CC2500_SPI_INT2_EXTI_LINE        EXTI_Line1
+// #define CC2500_SPI_INT2_EXTI_PORT_SOURCE EXTI_PortSourceGPIOE
+// #define CC2500_SPI_INT2_EXTI_PIN_SOURCE  EXTI_PinSource1
+// #define CC2500_SPI_INT2_EXTI_IRQn        EXTI1_IRQn 
+
+
+/**********************************************************************************************************/
+#define CC2500_STATE_IDLE 1
+#define CC2500_STATE_RX 13
+#define CC2500_STATE_RX_OVERFLOW 17
+
+#define CC2500_STATE_TX 19
+#define CC2500_STATE_TX_UNDERFLOW 22
+
 
 
 /******************************************************************************/
@@ -136,6 +146,20 @@
 #define CC2500_TEST2_REG_ADDR 0x2C
 #define CC2500_TEST1_REG_ADDR 0x2D
 #define CC2500_TEST0_REG_ADDR 0x2E
+/**********************************************************************************************************/
+#define CC2500_SRES 0x30
+#define CC2500_SRX 0x34
+#define CC2500_STX 0x35
+#define CC2500_SFRX 0x3A
+#define CC2500_SFTX 0x3B
+
+#define CC2500_SNOP 0x3D
+#define CC2500_PARTNUM 0x30 | 0xC0
+#define CC2500_MARCSTATE 0x35 | 0xC0
+#define CC2500_TXBYTES 0x3A | 0xC0
+#define CC2500_RXBYTES 0x3B | 0xC0
+#define CC2500_RX_FIFO 0x3F
+#define CC2500_TX_FIFO 0x3F
 /**********************************************************************************************************/
 
 

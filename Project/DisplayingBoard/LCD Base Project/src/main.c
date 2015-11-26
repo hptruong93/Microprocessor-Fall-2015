@@ -10,7 +10,7 @@
 #include "stm32f429i_discovery.h"
 #include "stm32f429i_discovery_lcd.h"
 #include "stm32f429i_discovery_l3gd20.h"
-#include "background16bpp.h"
+//#include "background16bpp.h"
 
 #include "interfaces/cc2500.h"
 #include "interfaces/cc2500_settings.h"
@@ -21,7 +21,7 @@
 #include "my_types.h"
 
 #define message_size 10
-#define num_messages 5
+#define num_messages 14
 static char messages[num_messages][message_size];
 static uint8_t has_msg[num_messages];
 static uint8_t test[100];
@@ -39,6 +39,12 @@ void itoa(int n, char* s)
 	if (sign < 0)
 	 s[i++] = '-';
 	s[i] = '\0';
+
+	for (int j = 0; j < i / 2; j++) {
+		char temp = s[j];
+		s[j] = s[i - 1 - j];
+		s[i - 1 - j] = temp;
+	}
 }
 
 void print_messages(void) {
@@ -68,15 +74,12 @@ static void delay(__IO uint32_t nCount)
   }
 }
 
-void write_the_value(uint8_t value, uint8_t addr) {
-	uint8_t temp = value;
-	CC2500_Write(&temp, addr, 1);
-}
-
-
 void write_config() {
+	uint8_t value, address;
 	for (uint8_t i = 0; i < CC2500_CONFIG_COUNT; i++) {
-		write_the_value(cc2500_config[i][0], cc2500_config[i][1]);
+		value = cc2500_config[i][0];
+		address = cc2500_config[i][1];
+		CC2500_Write(&value, address, 1);
 	}
 }
 
@@ -89,14 +92,6 @@ void print_buffer(uint8_t* buffer, uint8_t num) {
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/**
-  * @brief    Illustartes a simple shape draw and fill, and string dsiplay
-  * @function This function draws concentrated colour-filled circles. It also draw a square and a triangle. Some text at two
-			  different font sizes is displayed.
-  * @param    None
-  * @retval   None
-  */
-
 void example_1a(void const *argument){
 	while(1){
 		/* Clear the LCD */ 
@@ -115,72 +110,130 @@ void example_1a(void const *argument){
 	  //ellipses, and polygons. You can draw strings or characters, change background/foreground 
 	  //colours.
 	
-	  LCD_DrawLine(0, 32, 240, LCD_DIR_HORIZONTAL);
-	  LCD_DrawLine(0, 34, 240, LCD_DIR_HORIZONTAL);
-	  LCD_SetTextColor(LCD_COLOR_BLUE2); 
-	  LCD_DrawFullCircle(120, 160, 100);
-	  LCD_SetTextColor(LCD_COLOR_CYAN); 
-	  LCD_DrawFullCircle(120, 160, 90);
-	  LCD_SetTextColor(LCD_COLOR_YELLOW); 
-	  LCD_DrawFullCircle(120, 160, 80);
-	  LCD_SetTextColor(LCD_COLOR_RED); 
-	  LCD_DrawFullCircle(120, 160, 70);
-	  LCD_SetTextColor(LCD_COLOR_BLUE); 
-	  LCD_DrawFullCircle(120, 160, 60);
-	  LCD_SetTextColor(LCD_COLOR_GREEN); 
-	  LCD_DrawFullCircle(120, 160, 50);
-	  LCD_SetTextColor(LCD_COLOR_BLACK); 
-	  LCD_DrawFullCircle(120, 160, 40);
-		LCD_SetTextColor(LCD_COLOR_WHITE);
-		LCD_DrawRect(90,130,60,60);
-		LCD_SetTextColor(LCD_COLOR_MAGENTA);
-		LCD_FillTriangle(90, 120, 150, 130, 180, 130);
-		LCD_SetFont(&Font12x12);
-		LCD_DisplayStringLine(LINE(15), (uint8_t*)"      Success!    ");
+	LCD_DrawLine(0, 32, 240, LCD_DIR_HORIZONTAL);
+	LCD_DrawLine(0, 34, 240, LCD_DIR_HORIZONTAL);
+	LCD_SetTextColor(LCD_COLOR_BLUE2); 
+	LCD_DrawFullCircle(120, 160, 100);
+	LCD_SetTextColor(LCD_COLOR_CYAN); 
+	LCD_DrawFullCircle(120, 160, 90);
+	LCD_SetTextColor(LCD_COLOR_YELLOW); 
+	LCD_DrawFullCircle(120, 160, 80);
+	LCD_SetTextColor(LCD_COLOR_RED); 
+	LCD_DrawFullCircle(120, 160, 70);
+	LCD_SetTextColor(LCD_COLOR_BLUE); 
+	LCD_DrawFullCircle(120, 160, 60);
+	LCD_SetTextColor(LCD_COLOR_GREEN); 
+	LCD_DrawFullCircle(120, 160, 50);
+	LCD_SetTextColor(LCD_COLOR_BLACK); 
+	LCD_DrawFullCircle(120, 160, 40);
+	LCD_SetTextColor(LCD_COLOR_WHITE);
+	LCD_DrawRect(90,130,60,60);
+	LCD_SetTextColor(LCD_COLOR_MAGENTA);
+	LCD_FillTriangle(90, 120, 150, 130, 180, 130);
+	LCD_SetFont(&Font12x12);
+	LCD_DisplayStringLine(LINE(15), (uint8_t*)"      Success!    ");
 		
-		osDelay(250);
+	osDelay(250);
 	}
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/**
-  * @brief    Displays a bitmap image
-  * @function This function copies a bitmap image converted by STM32 Imager into an array "background16bpp.h" and stored
-in flash memory into the active buffer in SDRAM. The SDRAM has two layer buffer:
-			  ->Background layer at address LCD_FRAME_BUFFER = 0xD0000000
-			  ->Foreground layer at address LCD_FRAME_BUFFER + BUFFER_OFFSET = 0xD0000000 + 0x00050000
-			  memcpy is a processor intiated and managed transfer. A more efficient way is to use DMA2D ChromeART acccelerator
-			  Once the image is copied into the active buffer (which we set by LCD_SetLayer(LCD_FOREGROUND_LAYER) command ), the
-			  LTDC updates the display when it continously refreshes the output display
-  * @param    None
-  * @retval   None
-  */
-
-void example_1b(void const *argument) {
-	set_message(1, "CCC");
+uint8_t tett, tett1, tett2;
+void example_1bb(void const *argument) {
+	static char testing[5];
 
 	while (1) {
-		static uint8_t count = 0;
-		static char testing[2];
-		testing[1] = '\0';
+		test[0] = 0;
+		test[1] = 0;
+		test[2] = 0;
+		test[3] = 0;
 
-		CC2500_Read(test, 0x34, 1); //SRX
-		CC2500_Read(test + 1, 0x35, 2); //MARCSTATE
-		CC2500_Read(test + 3, 0x3b, 2); //Rx bytes
+		CC2500_Read(test + 1, CC2500_MARCSTATE, 1); //MARCSTATE
 		
-		if (*(test + 3) > 0) {
-			CC2500_Read(test + 5, 0x3f, 1); //Read rx fifo
-			print_buffer(test, 7);
-		} else {
-			count = (count + 1) % 10;
-			print_buffer(test, 5);
-			testing[0] = count + '0';
-			set_message(8, testing);
+		static uint8_t sent = 0;
+		if (sent == 1 && test[1] != 19 && test[1] != 22) {
+			CC2500_Read(test, CC2500_STX, 1);
 		}
 
-		osDelay(50);
+		// if (test[1] == 13) {
+		// 	CC2500_Read(test + 2, CC2500_RXBYTES, 1); //Rx bytes
+		// 	if (test[2] > 0) {
+		// 		CC2500_Read(test + 3, CC2500_RX_FIFO, 1); //Read rx fifo
+		// 		set_message(8, "Kkk");
+		// 	} else {
+		// 		set_message(9, "Nope");
+		// 	}
+		// }
+		if (test[1] != 19 && sent != 1) {
+			static uint8_t sending = 0;
+			sending = (sending + 1) % 10;
+			uint8_t to_send = sending + 'A';
+			tett = to_send;
+			CC2500_Write(&to_send, CC2500_TX_FIFO, 1);
+			sent = 1;
+		} else {
+			static uint8_t count = 0;
+			count = (count + 1) % 100;
+			
+			itoa(count, testing);
+			set_message(7, testing);
+			set_message(8, "But why");
+		}
+
+		print_buffer(test, 5);
+		osDelay(1000);
 	}
 }
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#define STATE(x) ((x & (7 << 4)) >> 4)
+#define LEN_MASK(x) (x & 15)
+void example_1b(void const *argument) {
+	static char testing[5];
+	CC2500_Read(test, CC2500_SRX, 1);
+
+	while (1) {
+		for (uint8_t i = 0; i < 10; i++) {
+			if (i != 3) {
+				test[i] = 0;
+			}
+		}
+		clear_message(7);
+		clear_message(8);
+
+		CC2500_Read(test + 5, 0x34 | 0xC0, 1); //MARCSTATE
+		CC2500_Read(test + 1, CC2500_MARCSTATE, 1);
+
+		if (test[1] == CC2500_STATE_RX_OVERFLOW) {
+			CC2500_Read(test, CC2500_SFRX, 1);
+			continue;
+		} else if (test[1] != CC2500_STATE_RX) {
+			CC2500_Read(test, CC2500_SRX, 1);
+			CC2500_Read(test + 1, CC2500_MARCSTATE, 1);
+			continue;
+		}
+
+		if (test[1] == CC2500_STATE_RX) {
+			CC2500_Read(test + 2, CC2500_RXBYTES, 1);
+
+			if (test[2] > 0) {
+				CC2500_Read(test + 3, CC2500_RX_FIFO, 1); //Read rx fifo
+				set_message(9, "kkk");
+			} else {
+				set_message(8, "Nope");
+			}
+		} else {
+			static uint8_t count = 0;
+			count = (count + 1) % 100;
+			
+			itoa(count, testing);
+			set_message(7, testing);
+		}
+
+		print_buffer(test, 7);
+		osDelay(500);
+	}
+}
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void draw_points(uint16_t scale_x, uint16_t scale_y, uint16_t* xs, uint16_t* ys, uint16_t length) {
 
@@ -202,18 +255,7 @@ void draw_points(uint16_t scale_x, uint16_t scale_y, uint16_t* xs, uint16_t* ys,
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/**
-  * @brief    Illustartes a simple animation program
-  * @function This function draws concentrated circles emanating from the center towards the LCD edge in
-			  an animated fashion. It will look as a sonar or radar display. Then it simulates locking 
-			  onto a target by flashing a small red circle and displaying the text "Object located"
-  * @param    None
-  * @retval   None
-  */
-
 void example_1c(void const *argument){
-	LCD_SetFont(&Font16x24);
-
 	while(1){
 		/* Clear the LCD */ 
 
@@ -234,21 +276,37 @@ osThreadId example_1a_thread;
 osThreadId example_1b_thread;
 osThreadId example_1c_thread;
 
+
 /*
  * main: initialize and start the system
  */
 int main (void) {
+	// printf("Start..");
+	
 	CC2500_LowLevel_Init();
 	// system_init();
+	
+	CC2500_Read(test, CC2500_SRES, 1);
+	CC2500_Read(test + 1, CC2500_PARTNUM, 1);
+	
+	do {
+		test[0] = 0;
+		CC2500_Read(test, CC2500_MARCSTATE, 1);
+	} while (test[0] != CC2500_STATE_IDLE);
 
-	CC2500_Read(test, 0x30, 1);
-	CC2500_Read(test + 1, 0x30, 2);
-	test[3] = 123;
-	print_buffer(test, 4);
-
+///////////////////////////////////////////////////////////
 	write_config();
-	set_message(0, "Done");
+	// uint8_t value[2] = {0, 0};
+	// value[0] = 0;
+	// CC2500_Read(value, CC2500_FREQ2_REG_ADDR, 1);
+///////////////////////////////////////////////////////////
+	CC2500_Read(test + 1, CC2500_PARTNUM, 1);
+	
+	print_buffer(test, 3);
 
+	CC2500_Read(test, CC2500_SFRX, 1);
+	CC2500_Read(test, CC2500_SFTX, 1);
+	
 	osKernelInitialize ();                    // initialize CMSIS-RTOS
 	
 	// initialize peripherals here
@@ -263,12 +321,9 @@ int main (void) {
 
 	/* Set LCD foreground layer as the current layer */
 	LCD_SetLayer(LCD_FOREGROUND_LAYER);
-	
-	
-	
-	// create 'thread' functions that start executing,
-	// example: tid_name = osThreadCreate (osThread(name), NULL);
 
+	LCD_SetFont(&Font16x24);
+	
 	/*******************************************************
 			 Uncomment the example you want to see
 	example_1a: Simple shape draw, fill and text display
@@ -277,10 +332,8 @@ int main (void) {
 	********************************************************/
 
 	//example_1a_thread = osThreadCreate(osThread(example_1a), NULL);
-	// example_1b_thread = osThreadCreate(osThread(example_1b), NULL);
+	example_1b_thread = osThreadCreate(osThread(example_1b), NULL);
 	example_1c_thread = osThreadCreate(osThread(example_1c), NULL);
 
 	osKernelStart ();                         // start thread execution 
 }
-
-

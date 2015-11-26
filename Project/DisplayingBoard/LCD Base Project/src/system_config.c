@@ -41,7 +41,7 @@ static void generic_init(void) {
 void system_init(void) {
 	generic_init();
 	
-	led_init();
+	//led_init();
 
 	// temperature_sensor_init();
 	
