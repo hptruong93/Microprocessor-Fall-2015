@@ -24,12 +24,12 @@ void wireless_transmission_init(void) {
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-static const uint8_t START_PACKET = 0x02;
-static const uint8_t END_PACKET = 0x03;
-static const uint8_t COLLISION_CHECKSUM_REPLACEMENT_1 = END_PACKET + 1;
-static const uint8_t COLLISION_CHECKSUM_REPLACEMENT_2 = END_PACKET + 2;
-static const uint8_t COLLISION_CHECKSUM_REPLACEMENT_3 = END_PACKET + 3;
-static const uint8_t COLLISION_CHECKSUM_REPLACEMENT_4 = END_PACKET + 4;
+static const uint8_t START_PACKET = 255;
+static const uint8_t END_PACKET = 254;
+static const uint8_t COLLISION_CHECKSUM_REPLACEMENT_1 = END_PACKET - 1;
+static const uint8_t COLLISION_CHECKSUM_REPLACEMENT_2 = END_PACKET - 2;
+static const uint8_t COLLISION_CHECKSUM_REPLACEMENT_3 = END_PACKET - 3;
+static const uint8_t COLLISION_CHECKSUM_REPLACEMENT_4 = END_PACKET - 4;
 
 static const uint8_t START_SIGNAL_LEN = 3;
 static const uint8_t LEN_LEN = 1;
@@ -108,11 +108,10 @@ void wireless_transmission_get_received_packet(wireless_received_packet* receive
 	memcpy(received_packet->buffer, receive_buffer, receiving_index);
 
 	if (operation_state != WIRELESS_TRANSMISSION_STATE_IDLE) {
-		return;		
+		return;
 	}
 
-
-	if (receiving_index <= DATA_INDEX + CHECKSUM_LEN) {
+	if (receiving_index < DATA_INDEX + CHECKSUM_LEN) {
 		received_packet->status = WIRELESS_TRANSMISSION_VERIFY_INCORRECT_LENGTH;
 		return;
 	}
@@ -159,7 +158,6 @@ uint8_t wireless_transmission_transmit(uint8_t* packet, uint8_t len) {
 	sending_index = 0;
 	sending_len = new_len;
 
-	print_buffer(send_buffer, 20);
 	operation_state = WIRELESS_TRANSMISSION_STATE_TRANSMIT;
 	return TRUE;
 }
@@ -227,7 +225,11 @@ void wireless_transmission_periodic(uint8_t* rbyte) {
 			CC2500_flush_rx();
 			operation_state = WIRELESS_TRANSMISSION_STATE_ERROR;
 		} else if (state != CC2500_STATE_RX) {
-			CC2500_read_one(CC2500_SRX);
+			do {
+				CC2500_read_one(CC2500_SRX);
+				state = CC2500_get_state();
+			} while (state != CC2500_STATE_RX && state != CC2500_STATE_RX_OVERFLOW);
+			wireless_transmission_periodic(rbyte);
 		} else {
 			uint8_t rxbytes = CC2500_get_rxbytes();
 			if (rxbytes > 0) {

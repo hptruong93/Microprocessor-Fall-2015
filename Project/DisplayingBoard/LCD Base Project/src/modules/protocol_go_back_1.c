@@ -4,9 +4,9 @@
 #include "modules/wireless_transmission_sm.h"
 #include "my_types.h"
 
-static const uint8_t MAX_TIMEOUT = 100;
-static const uint8_t MIN_ACK_COUNT = 3;
-static const uint8_t BASE_ID = 4; //This has to not cover the START_PACKET and END_PACKET signal
+static const uint8_t MAX_TIMEOUT = 20;
+static const uint8_t MIN_ACK_COUNT = 10;
+static const uint8_t BASE_ID = 1; //This has to not cover the START_PACKET and END_PACKET signal
 static const uint8_t ID_LEN = 1;
 
 static uint8_t receive_buffer[WIRELESS_TRANSMISSION_PACKET_SIZE];
@@ -15,24 +15,26 @@ static wireless_received_packet received_packet;
 static uint8_t mode;
 static uint8_t state;
 static uint8_t current_id;
-static uint8_t timeout_count = 0;
-static uint8_t ack_left = 0;
+static uint8_t timeout_count;
+static uint8_t ack_left;
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 static uint8_t next_id() {
 	static uint8_t id_count = BASE_ID;
-	id_count = (id_count + 1 == 0) ? BASE_ID : id_count + 1;
+	id_count = (id_count + 1 == 250) ? BASE_ID : id_count + 1;
+	current_id = id_count;
 	return id_count;
 }
 
-static void consider_retransmit(void) {
+static uint8_t consider_retransmit(void) {
 	timeout_count--;
 	if (timeout_count == 0) {
 		wireless_transmission_retransmit();
 		state = GO_BACK_ONE_SENDER_STATE_SEND;
 		timeout_count = MAX_TIMEOUT;
-		printf("Retransmit!!\n");
+		return TRUE;
 	}
+	return FALSE;
 }
 
 static void transmit_ack() {
@@ -87,7 +89,6 @@ void protocol_go_back_1_send(uint8_t* packet, uint8_t len) {
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 static void protocol_go_back_1_periodic_sender(uint8_t* debug) {
 	uint8_t lower_layer_state = wireless_transmission_get_state();
-	printf("State is %d. Lower state is %d\n", state, lower_layer_state);
 	if (lower_layer_state == WIRELESS_TRANSMISSION_STATE_ERROR) {
 		state = GO_BACK_ONE_STATE_ERROR;
 		return;
@@ -106,17 +107,20 @@ static void protocol_go_back_1_periodic_sender(uint8_t* debug) {
 
 		wireless_transmission_get_received_packet(&received_packet);
 		if (received_packet.status != WIRELESS_TRANSMISSION_VERIFY_OK) {
-			consider_retransmit();
+			if (consider_retransmit() == FALSE) {
+				wireless_transmission_receive_packet();	
+			}
 			return;
 		}
 
 		uint8_t id = receive_buffer[1];
 		if (id == current_id) {
-			printf("Done\n");
+			printf("KKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKK\n");
 			state = GO_BACK_ONE_SENDER_STATE_IDLE;
 		} else {
-			printf("State %d???\n", id);
-			consider_retransmit();
+			if (consider_retransmit() == FALSE) {
+				wireless_transmission_receive_packet();	
+			}
 		}
 	}
 }
