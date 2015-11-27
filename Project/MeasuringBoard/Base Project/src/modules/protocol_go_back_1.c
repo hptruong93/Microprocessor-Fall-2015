@@ -4,7 +4,7 @@
 #include "modules/wireless_transmission_sm.h"
 #include "my_types.h"
 
-static const uint8_t MAX_TIMEOUT = 50;
+static const uint8_t MAX_TIMEOUT = 40;
 static const uint8_t MIN_ACK_COUNT = 10;
 static const uint8_t BASE_ID = 4; //This has to not cover the START_PACKET and END_PACKET signal
 static const uint8_t ID_LEN = 1;
@@ -15,13 +15,14 @@ static wireless_received_packet received_packet;
 static uint8_t mode;
 static uint8_t state;
 static uint8_t current_id;
-static uint8_t timeout_count = 0;
-static uint8_t ack_left = 0;
+static uint8_t timeout_count;
+static uint8_t ack_left;
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 static uint8_t next_id() {
 	static uint8_t id_count = BASE_ID;
-	id_count = (id_count + 1 == 0) ? BASE_ID : id_count + 1;
+	id_count = (id_count + 1 == 250) ? BASE_ID : id_count + 1;
+	current_id = id_count;
 	return id_count;
 }
 
@@ -31,7 +32,6 @@ static uint8_t consider_retransmit(void) {
 		wireless_transmission_retransmit();
 		state = GO_BACK_ONE_SENDER_STATE_SEND;
 		timeout_count = MAX_TIMEOUT;
-		// printf("Retransmit!!\n");
 		return TRUE;
 	}
 	return FALSE;
@@ -89,7 +89,6 @@ void protocol_go_back_1_send(uint8_t* packet, uint8_t len) {
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 static void protocol_go_back_1_periodic_sender(uint8_t* debug) {
 	uint8_t lower_layer_state = wireless_transmission_get_state();
-	// printf("State is %d. Lower state is %d\n", state, lower_layer_state);
 	if (lower_layer_state == WIRELESS_TRANSMISSION_STATE_ERROR) {
 		state = GO_BACK_ONE_STATE_ERROR;
 		return;
@@ -107,6 +106,8 @@ static void protocol_go_back_1_periodic_sender(uint8_t* debug) {
 		}
 
 		wireless_transmission_get_received_packet(&received_packet);
+		printf("Received \n");
+		print_buffer(receive_buffer, 20);
 		if (received_packet.status != WIRELESS_TRANSMISSION_VERIFY_OK) {
 			if (consider_retransmit() == FALSE) {
 				wireless_transmission_receive_packet();	
@@ -116,6 +117,7 @@ static void protocol_go_back_1_periodic_sender(uint8_t* debug) {
 
 		uint8_t id = receive_buffer[1];
 		if (id == current_id) {
+			printf("Finished with id %d\n", id);
 			state = GO_BACK_ONE_SENDER_STATE_IDLE;
 		} else {
 			if (consider_retransmit() == FALSE) {

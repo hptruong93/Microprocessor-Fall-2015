@@ -150,37 +150,36 @@ void example_1b(void const *argument) {
 		memset(test, 0, 12);
 		received_test.buffer = test;
 		wireless_transmission_periodic(&temp);
-		uint8_t state = wireless_transmission_get_state();
-		if (state == WIRELESS_TRANSMISSION_STATE_IDLE) {
-			wireless_transmission_get_received_packet(&received_test);
-			test[12] = received_test.status;
-			test[13] = received_test.len;
-			
-			if (test[12] == 0x01) {
-				set_message(10, "Good");
-			} else {
-				set_message(10, "Bad");
-			}
-			
-			wireless_transmission_receive_packet();
-		} else {
-			wireless_transmission_get_received_packet(&received_test);
-		}
-		print_bufferr(test, 8);
-		
-//		protocol_go_back_1_periodic(&temp2);
-
-//		test[0] = protocol_go_back_1_get_state();
-//		if (test[0] == GO_BACK_ONE_RECEIVER_STATE_IDLE) {
-//			protocol_go_back_1_receive();
+//		uint8_t state = wireless_transmission_get_state();
+//		if (state == WIRELESS_TRANSMISSION_STATE_IDLE) {
+//			wireless_transmission_get_received_packet(&received_test);
+//			test[12] = received_test.status;
+//			test[13] = received_test.len;
+//			
+//			if (test[12] == 0x01) {
+//				set_message(10, "Good");
+//			} else {
+//				set_message(10, "Bad");
+//			}
+//			
+//			wireless_transmission_receive_packet();
+//		} else {
+//			wireless_transmission_get_received_packet(&received_test);
 //		}
-//		test[1] = CC2500_get_state();
-//		protocol_go_back_1_get_received_data(test + 3);
-//		test[2] = test[3];
-//		print_bufferr(test, 14);
+//		print_bufferr(test, 8);
+		
+		protocol_go_back_1_periodic(&temp2);
+
+		test[0] = protocol_go_back_1_get_state();
+		if (test[0] == GO_BACK_ONE_RECEIVER_STATE_IDLE) {
+			protocol_go_back_1_receive();
+		}
+		test[1] = CC2500_get_state();
+		protocol_go_back_1_get_received_data(test + 2);
+		print_bufferr(test, 14);
 		
 		
-		osDelay(50);
+		osDelay(100);
 	}
 }
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -225,7 +224,6 @@ osThreadDef(example_1c, osPriorityNormal, 1, 0);
 osThreadId example_1a_thread;
 osThreadId example_1b_thread;
 osThreadId example_1c_thread;
-
 
 /*
  * main: initialize and start the system
