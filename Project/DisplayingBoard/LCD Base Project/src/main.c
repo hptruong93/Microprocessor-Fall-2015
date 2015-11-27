@@ -13,7 +13,8 @@
 //#include "background16bpp.h"
 
 #include "interfaces/cc2500.h"
-#include "modules/wireless_transmission_sm.h"
+//#include "modules/wireless_transmission_sm.h"
+#include "modules/protocol_go_back_1.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -23,7 +24,6 @@
 #define message_size 10
 #define num_messages 14
 
-extern uint8_t receive_buffer[WIRELESS_TRANSMISSION_PACKET_SIZE];
 static char messages[num_messages][message_size];
 static uint8_t has_msg[num_messages];
 static uint8_t test[100];
@@ -66,6 +66,12 @@ void set_message(uint8_t msg_index, char* new_message) {
 	if (msg_index > num_messages -1) return;
 	strcpy(messages[msg_index], new_message);
 	has_msg[msg_index] = TRUE;
+}
+
+void set_int_message(uint8_t msg_index, int n) {
+	static char holder[10];
+	itoa(n, holder);
+	set_message(msg_index, holder);
 }
 
 void print_bufferr(uint8_t* buffer, uint8_t num) {
@@ -131,35 +137,50 @@ void example_1a(void const *argument){
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-static uint8_t temp;
+static uint8_t temp, temp2;
 static wireless_received_packet received_test;
 
 void example_1b(void const *argument) {
 	wireless_transmission_init();
-	uint8_t go = 0;
+	protocol_go_back_1_init(GO_BACK_ONE_MODE_RECEIVER);
+	
+	static uint8_t count = 0;
 	
 	while (1) {
-		memset(test, 0, 20);
+		memset(test, 0, 12);
 		received_test.buffer = test;
 		wireless_transmission_periodic(&temp);
-		
 		uint8_t state = wireless_transmission_get_state();
 		if (state == WIRELESS_TRANSMISSION_STATE_IDLE) {
-			static char ttt[10];
-			set_message(8, "AAA");
-			itoa(received_test.status, ttt);
-			set_message(9, ttt);
-			itoa(received_test.len, ttt);
-			set_message(10, ttt);
-			itoa(received_test.id, ttt);
-			set_message(11, ttt);
+			wireless_transmission_get_received_packet(&received_test);
+			test[12] = received_test.status;
+			test[13] = received_test.len;
+			
+			if (test[12] == 0x01) {
+				set_message(10, "Good");
+			} else {
+				set_message(10, "Bad");
+			}
 			
 			wireless_transmission_receive_packet();
+		} else {
+			wireless_transmission_get_received_packet(&received_test);
 		}
+		print_bufferr(test, 8);
 		
-		wireless_transmission_get_received_packet(&received_test);
+//		protocol_go_back_1_periodic(&temp2);
+
+//		test[0] = protocol_go_back_1_get_state();
+//		if (test[0] == GO_BACK_ONE_RECEIVER_STATE_IDLE) {
+//			protocol_go_back_1_receive();
+//		}
+//		test[1] = CC2500_get_state();
+//		protocol_go_back_1_get_received_data(test + 3);
+//		test[2] = test[3];
+//		print_bufferr(test, 14);
 		
-		osDelay(300);
+		
+		osDelay(50);
 	}
 }
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -5,8 +5,7 @@
 #include "my_types.h"
 
 static uint8_t send_buffer[WIRELESS_TRANSMISSION_PACKET_SIZE];
-uint8_t receive_buffer[WIRELESS_TRANSMISSION_PACKET_SIZE];
-static uint8_t receive_overload[WIRELESS_TRANSMISSION_PACKET_SIZE];
+static uint8_t receive_buffer[WIRELESS_TRANSMISSION_PACKET_SIZE];
 
 static uint8_t operation_state;
 static uint8_t sending_len;
@@ -27,33 +26,25 @@ void wireless_transmission_init(void) {
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 static const uint8_t START_PACKET = 0x02;
 static const uint8_t END_PACKET = 0x03;
+static const uint8_t COLLISION_CHECKSUM_REPLACEMENT_1 = END_PACKET + 1;
+static const uint8_t COLLISION_CHECKSUM_REPLACEMENT_2 = END_PACKET + 2;
+static const uint8_t COLLISION_CHECKSUM_REPLACEMENT_3 = END_PACKET + 3;
+static const uint8_t COLLISION_CHECKSUM_REPLACEMENT_4 = END_PACKET + 4;
 
 static const uint8_t START_SIGNAL_LEN = 3;
 static const uint8_t LEN_LEN = 1;
-static const uint8_t ID_LEN = 1;
-static const uint8_t FULL_HEADER_LEN = START_SIGNAL_LEN + LEN_LEN + ID_LEN;
+static const uint8_t FULL_HEADER_LEN = START_SIGNAL_LEN + LEN_LEN;
+static const uint8_t DATA_INDEX = FULL_HEADER_LEN - START_SIGNAL_LEN;
 static const uint8_t END_SIGNAL_LEN = 3;
 static const uint8_t CHECKSUM_LEN = 3;
 
 static const uint8_t MAX_DATA_SIZE = WIRELESS_TRANSMISSION_PACKET_SIZE - FULL_HEADER_LEN - CHECKSUM_LEN - END_SIGNAL_LEN;
-static const uint8_t id_count_base = 3;
-
 
 typedef struct {
   uint8_t xor_all;
   uint8_t xor2;
   uint8_t xor3;
 } my_check_sum;
-
-static uint8_t get_next_id(void) {
-	static uint8_t id_count = id_count_base;
-	if (id_count < id_count_base) {
-		id_count = id_count_base;
-	}
-	id_count++;
-
-	return id_count;
-}
 
 uint8_t wireless_transmission_protocol_sanity_check(uint8_t* full_packet, uint8_t full_len) {
 	for (uint8_t i = 0; i < START_SIGNAL_LEN; i++) {
@@ -90,9 +81,9 @@ static void calculate_check_sum(uint8_t* raw_packet, uint8_t len, my_check_sum* 
 		}
 	}
 
-	result->xor_all = xor_all;
-	result->xor2 = xor2;
-	result->xor3 = xor3;
+	result->xor_all = xor_all == START_PACKET ? COLLISION_CHECKSUM_REPLACEMENT_2 : (xor_all == END_PACKET ? COLLISION_CHECKSUM_REPLACEMENT_4 : xor_all);
+	result->xor2 = (xor2 == START_PACKET) ? COLLISION_CHECKSUM_REPLACEMENT_1 : (xor2 == END_PACKET ? COLLISION_CHECKSUM_REPLACEMENT_2 : xor2);
+	result->xor3 = (xor3 == START_PACKET) ? COLLISION_CHECKSUM_REPLACEMENT_3 : (xor3 == END_PACKET ? COLLISION_CHECKSUM_REPLACEMENT_4 : xor3);
 }
 
 uint8_t wireless_transmission_protocol_encapsulate(uint8_t* raw_packet, uint8_t len) {
@@ -100,7 +91,6 @@ uint8_t wireless_transmission_protocol_encapsulate(uint8_t* raw_packet, uint8_t 
 	memset(full_packet_start, START_PACKET, START_SIGNAL_LEN);
 
 	*(full_packet_start + START_SIGNAL_LEN) = len;
-	*(full_packet_start + START_SIGNAL_LEN + LEN_LEN) = get_next_id();
 
 	calculate_check_sum(raw_packet, len, (my_check_sum*) (raw_packet + len));
 	memset(raw_packet + len + CHECKSUM_LEN, END_PACKET, END_SIGNAL_LEN);
@@ -116,14 +106,13 @@ uint8_t wireless_transmission_protocol_checksum(uint8_t* raw_packet, uint8_t* ch
 
 void wireless_transmission_get_received_packet(wireless_received_packet* received_packet) {
 	memcpy(received_packet->buffer, receive_buffer, receiving_index);
-	return;
 
 	if (operation_state != WIRELESS_TRANSMISSION_STATE_IDLE) {
 		return;		
 	}
 
 
-	if (receiving_index <= LEN_LEN + ID_LEN + CHECKSUM_LEN) {
+	if (receiving_index <= DATA_INDEX + CHECKSUM_LEN) {
 		received_packet->status = WIRELESS_TRANSMISSION_VERIFY_INCORRECT_LENGTH;
 		return;
 	}
@@ -135,22 +124,14 @@ void wireless_transmission_get_received_packet(wireless_received_packet* receive
 		return;
 	}
 
-	uint8_t packet_id = receive_buffer[1];
-	if (packet_id < id_count_base) {
-		received_packet->status = WIRELESS_TRANSMISSION_VERIFY_INVALID_ID;
-		return;
-	} else {
-		received_packet->id = packet_id;
-	}
-
-	uint8_t* check_sum_start_left = receive_buffer + LEN_LEN + ID_LEN + packet_len;
+	uint8_t* check_sum_start_left = receive_buffer + DATA_INDEX + packet_len;
 	uint8_t* check_sum_start_right = receive_buffer + receiving_index - CHECKSUM_LEN;
 	if (check_sum_start_left != check_sum_start_right) {
 		received_packet->status = WIRELESS_TRANSMISSION_VERIFY_INVALID_CHECK_SUM;
 		return;
 	}
 
-	uint8_t check_sum_verify = wireless_transmission_protocol_checksum(receive_buffer + LEN_LEN + ID_LEN, check_sum_start_left, packet_len);
+	uint8_t check_sum_verify = wireless_transmission_protocol_checksum(receive_buffer + DATA_INDEX, check_sum_start_left, packet_len);
 	if (!check_sum_verify) {
 		received_packet->status = WIRELESS_TRANSMISSION_VERIFY_INCORRECT_CHECKSUM;
 		return;
@@ -160,7 +141,7 @@ void wireless_transmission_get_received_packet(wireless_received_packet* receive
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-uint8_t wireless_transmission_set_send_packet(uint8_t* packet, uint8_t len) {
+uint8_t wireless_transmission_transmit(uint8_t* packet, uint8_t len) {
 	if (len > WIRELESS_TRANSMISSION_PACKET_SIZE) {
 		return FALSE;
 	}
@@ -169,8 +150,8 @@ uint8_t wireless_transmission_set_send_packet(uint8_t* packet, uint8_t len) {
 		return FALSE;
 	}
 
-	memcpy(send_buffer + START_SIGNAL_LEN + ID_LEN, packet, len);
-	uint8_t new_len = wireless_transmission_protocol_encapsulate(send_buffer + START_SIGNAL_LEN + ID_LEN, len);
+	memcpy(send_buffer + FULL_HEADER_LEN, packet, len);
+	uint8_t new_len = wireless_transmission_protocol_encapsulate(send_buffer + FULL_HEADER_LEN, len);
 	if (new_len == 0) {
 		return FALSE;
 	}
@@ -178,8 +159,18 @@ uint8_t wireless_transmission_set_send_packet(uint8_t* packet, uint8_t len) {
 	sending_index = 0;
 	sending_len = new_len;
 
-//	printf("Sending this\n");
-//	print_buffer(send_buffer, 20);
+	// printf("Sending this\n");
+	// print_buffer(send_buffer, 20);
+	operation_state = WIRELESS_TRANSMISSION_STATE_TRANSMIT;
+	return TRUE;
+}
+
+uint8_t wireless_transmission_retransmit(void) {
+	if (sending_len == 0) {
+		return FALSE;
+	}
+
+	sending_index = 0;
 	operation_state = WIRELESS_TRANSMISSION_STATE_TRANSMIT;
 	return TRUE;
 }
@@ -196,6 +187,7 @@ void wireless_transmission_periodic(uint8_t* rbyte) {
 
 		uint8_t state = CC2500_get_state();
 		if (state == CC2500_STATE_TX_UNDERFLOW) {
+			CC2500_flush_rx();
 			operation_state = WIRELESS_TRANSMISSION_STATE_ERROR;
 		} else if (state != CC2500_STATE_TX) {
 			CC2500_read_one(CC2500_STX);
@@ -233,6 +225,7 @@ void wireless_transmission_periodic(uint8_t* rbyte) {
 
 		uint8_t state = CC2500_get_state();
 		if (state == CC2500_STATE_RX_OVERFLOW) {
+			CC2500_flush_tx();
 			operation_state = WIRELESS_TRANSMISSION_STATE_ERROR;
 		} else if (state != CC2500_STATE_RX) {
 			CC2500_read_one(CC2500_SRX);
@@ -240,8 +233,6 @@ void wireless_transmission_periodic(uint8_t* rbyte) {
 			uint8_t rxbytes = CC2500_get_rxbytes();
 			if (rxbytes > 0) {
 				uint8_t received = CC2500_read_rx_one();
-				*rbyte = received;
-
 				if (expecting_end == FALSE) {
 					if (received == START_PACKET) {
 						expecting_end = TRUE;

@@ -7,7 +7,9 @@
 #include "utils/utils.h"
 #include "interfaces/cc2500.h"
 #include "modules/led_rotation_sm.h"
-#include "modules/wireless_transmission_sm.h"
+#include "modules/protocol_go_back_1.h"
+// #include "modules/wireless_transmission_sm.h"
+
 
 static uint8_t system_ticks;
 static uint8_t test[1000];
@@ -15,14 +17,14 @@ static uint8_t test[1000];
 static uint8_t packet_test[7] = {65, 66, 67, 68, 69, 70, 71};
 void do_send(void) {
 	static uint8_t sent = 0;
+	static uint8_t rotate_mode = LED_ROTATION_MODE_BLINK;
 
-	wireless_transmission_periodic();
+	uint8_t temp, temp2;
+	wireless_transmission_periodic(&temp);
 	uint8_t state = wireless_transmission_get_state();
 	if (state == WIRELESS_TRANSMISSION_STATE_IDLE && sent == 0) {
-		wireless_transmission_set_send_packet(packet_test, 7);
+		wireless_transmission_transmit(packet_test, 4);
 		sent = 0;
-	} else {
-		//printf("State is %d\n", state);
 	}
 }
 
@@ -31,10 +33,11 @@ int main() {
 	CC2500_LowLevel_Init();
 	system_init();
 	
-	printf("Done init\n");
 	CC2500_Reset();
 	uint8_t part_num = CC2500_get_part_num();
 	wireless_transmission_init();
+	protocol_go_back_1_init(GO_BACK_ONE_MODE_SENDER);
+
 
 	while(1) {
 		while (!system_ticks);

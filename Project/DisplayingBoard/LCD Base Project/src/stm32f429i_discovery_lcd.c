@@ -577,7 +577,7 @@ uint32_t LCD_SetCursor(uint16_t Xpos, uint16_t Ypos)
   * @retval None
   */
 void LCD_SetColorKeying(uint32_t RGBValue)
-{  
+{
   LTDC_ColorKeying_InitTypeDef   LTDC_colorkeying_InitStruct;
   
   /* configure the color Keying */
