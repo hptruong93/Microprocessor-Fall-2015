@@ -12,7 +12,7 @@
 * I) Call protocol_go_back_1_init with appropriate mode after CC2500 initialization
 * II) Periodically call protocol_go_back_1_periodic with appropriate frequency (see frequency explanation section below)
 * III) To send a packet, follow the sequence below:
-*		1) Call protocol_go_back_1_send on sender. Immediately go to 2
+*		1) Call protocol_go_back_1_send on sender. Note that the input buffer first byte has to be empty and writable. Immediately go to 2
 *		2) Adjust frequency f[sender] < f[receiver]
 *		3) Wait until state becomes GO_BACK_ONE_SENDER_STATE_ACK
 *		4) Adjust frequency f[sender] > f[receiver]
