@@ -6,7 +6,7 @@
 
 static const uint8_t MAX_TIMEOUT = 40;
 static const uint8_t MIN_ACK_COUNT = 3;
-static const uint8_t BASE_ID = 4; //This has to not cover the START_PACKET and END_PACKET signal
+static const uint8_t BASE_ID = 1; //This has to not cover the START_PACKET and END_PACKET signal
 static const uint8_t ID_LEN = 1;
 
 static uint8_t receive_buffer[WIRELESS_TRANSMISSION_PACKET_SIZE];
