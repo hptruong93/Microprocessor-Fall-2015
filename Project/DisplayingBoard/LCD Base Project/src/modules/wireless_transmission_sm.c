@@ -232,7 +232,8 @@ void wireless_transmission_periodic(uint8_t* rbyte) {
 			wireless_transmission_periodic(rbyte);
 		} else {
 			uint8_t rxbytes = CC2500_get_rxbytes();
-			if (rxbytes > 0) {
+
+			while (rxbytes > 0) {
 				uint8_t received = CC2500_read_rx_one();
 				if (expecting_end == FALSE) {
 					if (received == START_PACKET) {
@@ -241,11 +242,13 @@ void wireless_transmission_periodic(uint8_t* rbyte) {
 				} else {//expecting_end = TRUE
 					if (received == END_PACKET || received == START_PACKET) {
 						operation_state = WIRELESS_TRANSMISSION_STATE_IDLE;
+						return;
 					} else {
 						receive_buffer[receiving_index] = received;
 						receiving_index++;
 					}
 				}
+				rxbytes--;
 			}
 		}
 	}

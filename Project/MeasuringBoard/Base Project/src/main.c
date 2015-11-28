@@ -24,7 +24,6 @@ void do_send(void) {
 	received_test.buffer = test;
 	
 	uint8_t temp, temp2;
-	wireless_transmission_periodic(&temp);
 	protocol_go_back_1_periodic(&temp2);
 	// uint8_t state = wireless_transmission_get_state();
 	// if (state == WIRELESS_TRANSMISSION_STATE_IDLE && sent == 0) {
@@ -54,11 +53,10 @@ void do_send(void) {
 int main() {
 	SysTick_Config(SystemCoreClock / SYSTICK_FREQUENCY);
 	CC2500_LowLevel_Init();
+	CC2500_Reset();
+	
 	system_init();
 	
-	CC2500_Reset();
-	uint8_t part_num = CC2500_get_part_num();
-	wireless_transmission_init();
 	protocol_go_back_1_init(GO_BACK_ONE_MODE_SENDER);
 
 	while(1) {

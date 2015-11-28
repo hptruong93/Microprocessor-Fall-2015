@@ -4,8 +4,8 @@
 #include "modules/wireless_transmission_sm.h"
 #include "my_types.h"
 
-static const uint8_t MAX_TIMEOUT = 20;
-static const uint8_t MIN_ACK_COUNT = 10;
+static const uint8_t MAX_TIMEOUT = 40;
+static const uint8_t MIN_ACK_COUNT = 3;
 static const uint8_t BASE_ID = 1; //This has to not cover the START_PACKET and END_PACKET signal
 static const uint8_t ID_LEN = 1;
 
@@ -45,6 +45,8 @@ static void transmit_ack() {
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 void protocol_go_back_1_init(uint8_t operation_mode) {
+	wireless_transmission_init();
+	
 	received_packet.buffer = receive_buffer;
 	mode = operation_mode;
 
@@ -115,7 +117,6 @@ static void protocol_go_back_1_periodic_sender(uint8_t* debug) {
 
 		uint8_t id = receive_buffer[1];
 		if (id == current_id) {
-			printf("KKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKK\n");
 			state = GO_BACK_ONE_SENDER_STATE_IDLE;
 		} else {
 			if (consider_retransmit() == FALSE) {
@@ -162,6 +163,8 @@ static void protocol_go_back_1_periodic_receiver(uint8_t* debug) {
 }
 
 void protocol_go_back_1_periodic(uint8_t* debug) {
+	wireless_transmission_periodic(debug);
+
 	if (mode == GO_BACK_ONE_MODE_SENDER) {
 		protocol_go_back_1_periodic_sender(debug);
 	} else if (mode == GO_BACK_ONE_MODE_RECEIVER) {

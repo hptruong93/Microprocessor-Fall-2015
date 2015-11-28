@@ -141,7 +141,6 @@ static uint8_t temp, temp2;
 static wireless_received_packet received_test;
 
 void example_1b(void const *argument) {
-	wireless_transmission_init();
 	protocol_go_back_1_init(GO_BACK_ONE_MODE_RECEIVER);
 	
 	static uint8_t count = 0;
@@ -149,7 +148,6 @@ void example_1b(void const *argument) {
 	while (1) {
 		memset(test, 0, 12);
 		received_test.buffer = test;
-		wireless_transmission_periodic(&temp);
 //		uint8_t state = wireless_transmission_get_state();
 //		if (state == WIRELESS_TRANSMISSION_STATE_IDLE) {
 //			wireless_transmission_get_received_packet(&received_test);
