@@ -14,7 +14,7 @@ static wireless_received_packet received_packet;
 
 static uint8_t mode;
 static uint8_t state;
-static uint8_t current_id;
+static uint8_t current_id, new_packet;
 static uint8_t timeout_count;
 static uint8_t ack_left;
 
@@ -48,7 +48,10 @@ void protocol_go_back_1_init(uint8_t operation_mode) {
 	wireless_transmission_init();
 
 	received_packet.buffer = receive_buffer;
+	received_packet.len = 0;
 	mode = operation_mode;
+
+	current_id = 255;
 
 	if (mode == GO_BACK_ONE_MODE_SENDER) {
 		state = GO_BACK_ONE_SENDER_STATE_IDLE;
@@ -62,8 +65,13 @@ uint8_t protocol_go_back_1_get_state(void) {
 }
 
 uint8_t protocol_go_back_1_get_received_data(uint8_t* dest) {
-	memcpy(dest, receive_buffer, WIRELESS_TRANSMISSION_PACKET_SIZE);
-	return received_packet.len;
+	memcpy(dest, receive_buffer + 1, WIRELESS_TRANSMISSION_PACKET_SIZE);
+
+	if (new_packet == TRUE) {
+		return received_packet.len == 0 ? 0 : received_packet.len - 1;	
+	} else {
+		return 0;
+	}
 }
 
 void protocol_go_back_1_receive(void) {
@@ -71,6 +79,7 @@ void protocol_go_back_1_receive(void) {
 		return;
 	}
 
+	new_packet = FALSE;
 	state = GO_BACK_ONE_RECEIVER_STATE_RECEIVE;
 	ack_left = MIN_ACK_COUNT;
 	memset(receive_buffer, 0, WIRELESS_TRANSMISSION_PACKET_SIZE);
@@ -83,7 +92,7 @@ void protocol_go_back_1_send(uint8_t* packet, uint8_t len) {
 	}
 
 	*(packet - ID_LEN) = next_id();
-	wireless_transmission_transmit(packet - ID_LEN, len);
+	wireless_transmission_transmit(packet - ID_LEN, len + ID_LEN);
 	timeout_count = MAX_TIMEOUT;
 	state = GO_BACK_ONE_SENDER_STATE_SEND;
 }
@@ -108,7 +117,7 @@ static void protocol_go_back_1_periodic_sender(uint8_t* debug) {
 		}
 
 		wireless_transmission_get_received_packet(&received_packet);
-		printf("Received \n");
+		printf("Received %d bytes\n", received_packet.len);
 		print_buffer(receive_buffer, 20);
 		if (received_packet.status != WIRELESS_TRANSMISSION_VERIFY_OK) {
 			if (consider_retransmit() == FALSE) {
@@ -117,7 +126,7 @@ static void protocol_go_back_1_periodic_sender(uint8_t* debug) {
 			return;
 		}
 
-		uint8_t id = receive_buffer[1];
+		uint8_t id = receive_buffer[0];
 		if (id == current_id) {
 			printf("Finished with id %d\n", id);
 			state = GO_BACK_ONE_SENDER_STATE_IDLE;
@@ -149,8 +158,12 @@ static void protocol_go_back_1_periodic_receiver(uint8_t* debug) {
 			return;
 		}
 
-		uint8_t id = receive_buffer[1];
-		current_id = id;
+		uint8_t id = receive_buffer[0];
+		if (id != current_id) {
+			current_id = id;
+			new_packet = TRUE;
+		}
+		
 		transmit_ack();
 		state = GO_BACK_ONE_RECEIVER_STATE_ACK;
 	} else if (state == GO_BACK_ONE_RECEIVER_STATE_ACK) {

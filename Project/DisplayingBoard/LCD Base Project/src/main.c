@@ -6,6 +6,9 @@
 #include "osObjects.h"                      // RTOS object definitions
 #include "stm32f4xx.h"                  // Device header
 
+#include <stdio.h>
+#include <string.h>
+
 #include "stm32f4xx_conf.h"
 #include "stm32f429i_discovery.h"
 #include "stm32f429i_discovery_lcd.h"
@@ -13,74 +16,17 @@
 //#include "background16bpp.h"
 
 #include "interfaces/cc2500.h"
+#include "modules/coordinate_db.h"
+#include "modules/lcd_writer_sm.h"
+#include "modules/commands.h"
 //#include "modules/wireless_transmission_sm.h"
 #include "modules/protocol_go_back_1.h"
 
-#include <stdio.h>
-#include <string.h>
 #include "system_config.h"
 #include "my_types.h"
 
-#define message_size 10
-#define num_messages 14
-
-static char messages[num_messages][message_size];
-static uint8_t has_msg[num_messages];
+static char long_message[40];
 static uint8_t test[100];
-
-void itoa(int n, char* s)
-{
-	int i, sign;
-
-	if ((sign = n) < 0)  /* record sign */
-	 n = -n;          /* make n positive */
-	i = 0;
-	do {       /* generate digits in reverse order */
-	 s[i++] = n % 10 + '0';   /* get next digit */
-	} while ((n /= 10) > 0);     /* delete it */
-	if (sign < 0)
-	 s[i++] = '-';
-	s[i] = '\0';
-
-	for (int j = 0; j < i / 2; j++) {
-		char temp = s[j];
-		s[j] = s[i - 1 - j];
-		s[i - 1 - j] = temp;
-	}
-}
-
-void print_messages(void) {
-	for (uint8_t i = 0; i < num_messages; ++i) {
-		if (has_msg[i] == TRUE) { 
-			LCD_DisplayStringLine(LINE(i), messages[i]);
-		}
-	}
-}
-
-void clear_message(uint8_t msg_index) {
-	if (msg_index > num_messages -1) return;
-	has_msg[msg_index] = FALSE;
-}
-
-void set_message(uint8_t msg_index, char* new_message) {
-	if (msg_index > num_messages -1) return;
-	strcpy(messages[msg_index], new_message);
-	has_msg[msg_index] = TRUE;
-}
-
-void set_int_message(uint8_t msg_index, int n) {
-	static char holder[10];
-	itoa(n, holder);
-	set_message(msg_index, holder);
-}
-
-void print_bufferr(uint8_t* buffer, uint8_t num) {
-	for (uint8_t i = 0; i < num; i++) {
-		static char temp[10];
-		itoa(buffer[i], temp);
-		set_message(i, temp);		
-	}
-}
 
 static void delay(__IO uint32_t nCount)
 {
@@ -135,54 +81,13 @@ void example_1a(void const *argument){
 	osDelay(250);
 	}
 }
-
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-static uint8_t temp, temp2;
-static wireless_received_packet received_test;
+static uint8_t temp;
+static uint8_t is_drawing;
+static uint8_t xs[10];
+static uint8_t ys[10];
 
-void example_1b(void const *argument) {
-	protocol_go_back_1_init(GO_BACK_ONE_MODE_RECEIVER);
-	
-	static uint8_t count = 0;
-	
-	while (1) {
-		memset(test, 0, 12);
-		received_test.buffer = test;
-//		uint8_t state = wireless_transmission_get_state();
-//		if (state == WIRELESS_TRANSMISSION_STATE_IDLE) {
-//			wireless_transmission_get_received_packet(&received_test);
-//			test[12] = received_test.status;
-//			test[13] = received_test.len;
-//			
-//			if (test[12] == 0x01) {
-//				set_message(10, "Good");
-//			} else {
-//				set_message(10, "Bad");
-//			}
-//			
-//			wireless_transmission_receive_packet();
-//		} else {
-//			wireless_transmission_get_received_packet(&received_test);
-//		}
-//		print_bufferr(test, 8);
-		
-		protocol_go_back_1_periodic(&temp2);
-
-		test[0] = protocol_go_back_1_get_state();
-		if (test[0] == GO_BACK_ONE_RECEIVER_STATE_IDLE) {
-			protocol_go_back_1_receive();
-		}
-		test[1] = CC2500_get_state();
-		protocol_go_back_1_get_received_data(test + 2);
-		print_bufferr(test, 14);
-		
-		
-		osDelay(100);
-	}
-}
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-void draw_points(uint16_t scale_x, uint16_t scale_y, uint16_t* xs, uint16_t* ys, uint16_t length) {
+void draw_points(uint16_t scale_x, uint16_t scale_y, uint8_t* xs, uint8_t* ys, uint16_t length) {
 
 	float prev_pixels_x = (float)xs[0] / scale_x;
 	float prev_pixels_y = (float)ys[0] / scale_y;
@@ -200,15 +105,92 @@ void draw_points(uint16_t scale_x, uint16_t scale_y, uint16_t* xs, uint16_t* ys,
 	}
 }
 
+void draw_from_db(void) {
+	LCD_Clear(LCD_COLOR_WHITE);
+	uint8_t len = coordinate_db_get_len();
+	if (len == 0) {
+		return;
+	}
+
+	static coordinate rr;
+	uint8_t count = 0;
+
+	for (uint8_t i = 0; i < len; i++) {
+		coordinate_db_get_entry(i, &rr);
+		xs[i] = rr.x;
+		ys[i] = rr.y;
+	}
+
+	draw_points(1, 1, xs, ys, len);
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+void example_1b(void const *argument) {
+	is_drawing = FALSE;
+	lcd_writer_clear();
+	//coordinate_db_init();
+	protocol_go_back_1_init(GO_BACK_ONE_MODE_RECEIVER);
+	
+	static uint8_t result = 0;
+	
+	while (1) {
+		memset(test, 0, 12);
+		protocol_go_back_1_periodic(&temp);
+
+		test[0] = protocol_go_back_1_get_state();
+		test[1] = CC2500_get_state();
+		
+		uint8_t len = protocol_go_back_1_get_received_data(test + 2);
+		lcd_writer_clear();
+		lcd_writer_print_buffer(test, 14);
+		sprintf(long_message, "%d", 4);
+		lcd_write_message(long_message);
+		sprintf(long_message, "drawing = %d", is_drawing);
+		lcd_write_message(long_message);
+		sprintf(long_message, "len is %d", coordinate_db_get_len());
+		lcd_write_message(long_message);
+		sprintf(long_message, "result is %d", result);
+		lcd_write_message(long_message);
+		
+		
+		if (test[0] == GO_BACK_ONE_RECEIVER_STATE_IDLE) {
+			if (len == COMMAND_CLEAR_LEN) {
+				if (memcmp(test + 2, CLEAR_COMMAND, len) == 0) {
+					is_drawing = FALSE;
+					coordinate_db_clear();
+					protocol_go_back_1_init(GO_BACK_ONE_MODE_RECEIVER);
+					continue;
+				}
+			}
+
+			if (len == COMMAND_PLOT_LEN) {
+				if (memcmp(test + 2, PLOT_COMMAND, len) == 0) {
+					is_drawing = TRUE;
+					draw_from_db();
+					break;
+				}
+			}
+
+			if (is_drawing == FALSE) {
+				result = coordinate_db_insert_entry(test + 2, len);
+			}
+
+			protocol_go_back_1_receive();
+		}
+		
+		osDelay(100);
+	}
+}
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void example_1c(void const *argument){
 	while(1){
-		/* Clear the LCD */ 
-
-		LCD_Clear(LCD_COLOR_WHITE);
-
-		print_messages();
+		if (is_drawing == FALSE) {
+			LCD_Clear(LCD_COLOR_WHITE);
+			lcd_writer_display();
+		} else {
+			break;
+		}
 
 		osDelay(250);
 	}

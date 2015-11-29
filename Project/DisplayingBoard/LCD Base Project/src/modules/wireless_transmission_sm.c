@@ -105,8 +105,6 @@ uint8_t wireless_transmission_protocol_checksum(uint8_t* raw_packet, uint8_t* ch
 }
 
 void wireless_transmission_get_received_packet(wireless_received_packet* received_packet) {
-	memcpy(received_packet->buffer, receive_buffer, receiving_index);
-
 	if (operation_state != WIRELESS_TRANSMISSION_STATE_IDLE) {
 		return;
 	}
@@ -122,6 +120,7 @@ void wireless_transmission_get_received_packet(wireless_received_packet* receive
 		received_packet->status = WIRELESS_TRANSMISSION_VERIFY_INCORRECT_LENGTH;
 		return;
 	}
+	received_packet->len = packet_len;
 
 	uint8_t* check_sum_start_left = receive_buffer + DATA_INDEX + packet_len;
 	uint8_t* check_sum_start_right = receive_buffer + receiving_index - CHECKSUM_LEN;
@@ -136,6 +135,7 @@ void wireless_transmission_get_received_packet(wireless_received_packet* receive
 		return;
 	}
 
+	memcpy(received_packet->buffer, receive_buffer + DATA_INDEX, receiving_index - DATA_INDEX - CHECKSUM_LEN);
 	received_packet->status = WIRELESS_TRANSMISSION_VERIFY_OK;
 }
 

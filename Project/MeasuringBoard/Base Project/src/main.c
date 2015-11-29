@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <string.h>
 #include "stm32f4xx.h"                  // Device header
 #include "stm32f4xx_conf.h"
 
@@ -7,21 +8,25 @@
 #include "utils/utils.h"
 #include "interfaces/cc2500.h"
 #include "modules/led_rotation_sm.h"
+#include "modules/commands.h"
 #include "modules/protocol_go_back_1.h"
 // #include "modules/wireless_transmission_sm.h"
 
 
 static uint8_t system_ticks;
-static uint8_t test[1000];
+static uint8_t test[100];
 static uint8_t do_wait = 30;
 
 static uint8_t packet_test[7] = {65, 66, 67, 68, 69, 70, 71};
+static uint8_t sending_coordinates[3][5] = {
+	{0x00, 10, 10, 20, 20},
+	{0x00, 40, 30, 50, 50},
+	{0x00, 75, 70, 100, 120},
+};
+
 void do_send(void) {
 	static uint8_t sent = 0;
 	static uint8_t rotate_mode = LED_ROTATION_MODE_BLINK;
-
-	static wireless_received_packet received_test;
-	received_test.buffer = test;
 	
 	uint8_t temp, temp2;
 	protocol_go_back_1_periodic(&temp2);
@@ -34,8 +39,25 @@ void do_send(void) {
 	static uint8_t prev = 0;
 	uint8_t state = protocol_go_back_1_get_state();
 	if (state == GO_BACK_ONE_SENDER_STATE_IDLE) {
-		protocol_go_back_1_send(packet_test + 1, 7);
-		printf("Initiate.....................................................\n");
+		static uint8_t sending_index = 99;
+		//protocol_go_back_1_send(packet_test + 1, 7);
+		if (sending_index == 99) {
+			memcpy(test + 1, CLEAR_COMMAND, COMMAND_CLEAR_LEN);
+			protocol_go_back_1_send(test + 1, COMMAND_CLEAR_LEN);
+			sending_index = 0;
+			printf("Sending CLEAR\n");
+		}	else if (sending_index < 3) {
+			protocol_go_back_1_send(sending_coordinates[sending_index] + 1, 4);
+			printf("Sending index = %d\n", sending_index);
+			sending_index++;
+		} else if (sending_index == 3) {
+			memcpy(test + 1, PLOT_COMMAND, COMMAND_PLOT_LEN);
+			protocol_go_back_1_send(test + 1, COMMAND_PLOT_LEN);
+			sending_index++;
+		} else {
+			sending_index = 99;
+			printf("Done\n");
+		}
 	} else {
 		if (state == GO_BACK_ONE_SENDER_STATE_SEND) {
 			do_wait = 30;
