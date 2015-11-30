@@ -84,8 +84,8 @@ void example_1a(void const *argument){
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 static uint8_t temp;
 static uint8_t is_drawing;
-static uint8_t xs[10];
-static uint8_t ys[10];
+static uint8_t xs[255];
+static uint8_t ys[255];
 
 void draw_points(uint16_t scale_x, uint16_t scale_y, uint8_t* xs, uint8_t* ys, uint16_t length) {
 
@@ -119,6 +119,7 @@ void draw_from_db(void) {
 		coordinate_db_get_entry(i, &rr);
 		xs[i] = rr.x;
 		ys[i] = rr.y;
+		count = 1;
 	}
 
 	draw_points(1, 1, xs, ys, len);
@@ -172,13 +173,15 @@ void example_1b(void const *argument) {
 			}
 
 			if (is_drawing == FALSE) {
-				result = coordinate_db_insert_entry(test + 2, len);
+				if (len > 0) {
+					result = coordinate_db_insert_entry(test + 2, len);
+				}
 			}
 
 			protocol_go_back_1_receive();
 		}
 		
-		osDelay(100);
+		osDelay(20);
 	}
 }
 
@@ -228,6 +231,21 @@ int main (void) {
 	LCD_SetLayer(LCD_FOREGROUND_LAYER);
 
 	LCD_SetFont(&Font16x24);
+//	LCD_Clear(LCD_COLOR_WHITE);
+//	static uint8_t sending_coordinates[3][11] = {
+//		{0x00, 10, 10, 20, 20, 30, 20, 30, 30, 40, 30},
+//		{0x00, 40, 40, 50, 40, 50, 50, 60, 50, 60, 60},
+//		{0x00, 75, 75, 100, 120, 120, 140, 150, 150, 160, 170},
+//	};
+//	coordinate_db_insert_entry(sending_coordinates[0] + 1, 10);
+//	uint8_t x = coordinate_db_get_len();
+//	coordinate_db_insert_entry(sending_coordinates[1] + 1, 10);
+//	x = coordinate_db_get_len();
+//	coordinate_db_insert_entry(sending_coordinates[2] + 1, 10);
+//	x = coordinate_db_get_len();
+//	draw_from_db();
+//	return 1;
+	
 	
 	/*******************************************************
 			 Uncomment the example you want to see

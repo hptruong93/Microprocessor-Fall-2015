@@ -4,7 +4,7 @@
 #include "modules/wireless_transmission_sm.h"
 #include "my_types.h"
 
-static const uint8_t MAX_TIMEOUT = 40;
+static const uint8_t MAX_TIMEOUT = 100;
 static const uint8_t MIN_ACK_COUNT = 3;
 static const uint8_t BASE_ID = 1; //This has to not cover the START_PACKET and END_PACKET signal
 static const uint8_t ID_LEN = 1;
