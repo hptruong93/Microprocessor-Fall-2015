@@ -24,8 +24,6 @@ void wireless_transmission_init(void) {
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-static const uint8_t START_PACKET = 255;
-static const uint8_t END_PACKET = 254;
 static const uint8_t COLLISION_CHECKSUM_REPLACEMENT_1 = END_PACKET - 1;
 static const uint8_t COLLISION_CHECKSUM_REPLACEMENT_2 = END_PACKET - 2;
 static const uint8_t COLLISION_CHECKSUM_REPLACEMENT_3 = END_PACKET - 3;

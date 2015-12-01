@@ -12,18 +12,51 @@
 #include "modules/commands.h"
 #include "modules/protocol_go_back_1.h"
 
-
 static uint8_t system_ticks;
 static uint8_t test[200];
 static uint8_t do_wait = 30;
 
+/**
+ *	Micro P lab has 34 floor tiles
+ *	Each floor tile is 12 inches = 1 foot
+ *		calcualted by almost 2 US dollar bills
+ *		around 1 + 1/12 sheet of US letter paper
+ *
+ *	bottom of lab is pixel 316
+ *	top of lab is pixel 253
+ *
+ *	lab is 63 pixels long and 34 feet
+ *	each pixel is then 34/63 feet
+ *
+ *	each pixel is 16.4495238 cm (0.164495238 m)
+ *	each pixel is approximately 16.45cm
+ *
+ *	Each meter is 6.0792033384px = approx. 6.08px
+ */
 #define M2PX(x) ((int16_t)roundf(6.08f * x))
+
+#define LAB_DOOR_PX_X 163
+#define LAB_DOOR_PX_Y 266
 
 void transform_array(int16_t* input, uint16_t* output, uint8_t len) {
 	uint8_t i;
 	for (i = 0; i < len; i++) {
-		output[2*i] = M2PX(input[2*i]) + 163;
-		output[2*i + 1] = 266 - M2PX(input[2 * i + 1]);
+
+		/**
+		 *	Axes are defined as positive x walking straight from the door
+		 *	and positive y heading left from the door
+		 *	Taking the pixel location of the door, we can transform the scaling system
+		 */
+		output[2*i] = M2PX(input[2*i]) + LAB_DOOR_PX_X;
+		output[2*i + 1] = LAB_DOOR_PX_Y - M2PX(input[2 * i + 1]);
+	
+		uint8_t* x = ((uint8_t*)(&output[2*i]));
+
+		for (uint8_t j = 0; j < 4; ++j) {
+			if (x[j] == START_PACKET || x[j] == END_PACKET) {
+				x[j] = END_PACKET - 1;
+			} 
+		}
 	}
 }
 
@@ -58,12 +91,6 @@ void do_send(void) {
 			sending_index = 0;
 		}	else if (sending_index < row_count) {
 			transform_array((&(sending_coordinates[sending_index][1])), (uint16_t*) test, 4);
-			for (uint8_t i = 0; i < 8 * sizeof(uint16_t); i++) {
-				if (test[i] == 255 || test[i] == 254) {
-					test[i] = 253;
-				}
-			}
-			
 			protocol_go_back_1_send(test, 8 * sizeof(uint16_t));
 			printf("Sending index = %d\n", sending_index);
 			sending_index++;

@@ -15,6 +15,9 @@
 #define WIRELESS_TRANSMISSION_VERIFY_INCORRECT_LENGTH		3
 #define WIRELESS_TRANSMISSION_VERIFY_INVALID_CHECK_SUM		4
 
+#define START_PACKET 255
+#define END_PACKET 254
+
 typedef struct {
 	uint8_t status;
 	uint8_t len;
