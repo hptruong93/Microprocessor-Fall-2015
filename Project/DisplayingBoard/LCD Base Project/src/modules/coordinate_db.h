@@ -6,14 +6,16 @@
 #define COORDINATE_DB_SIZE 100
 #define COORDINATE_SIZE    2
 
+typedef uint16_t COORDINATE_TYPE;
+
 typedef struct {
-	uint8_t x;
-	uint8_t y;
+	COORDINATE_TYPE x;
+	COORDINATE_TYPE y;
 } coordinate;
 
 void coordinate_db_init(void);
 void coordinate_db_clear(void);
-uint8_t coordinate_db_insert_entry(uint8_t* input, uint8_t input_len);
+uint8_t coordinate_db_insert_entry(COORDINATE_TYPE* input, uint8_t input_len);
 uint8_t coordinate_db_get_len(void);
 uint8_t coordinate_db_get_entry(uint8_t index, coordinate* result);
 

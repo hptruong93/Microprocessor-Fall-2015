@@ -14,6 +14,7 @@
 #include "stm32f429i_discovery_lcd.h"
 #include "stm32f429i_discovery_l3gd20.h"
 //#include "background16bpp.h"
+#include "static/trottier16.h"
 
 #include "interfaces/cc2500.h"
 #include "modules/coordinate_db.h"
@@ -84,10 +85,10 @@ void example_1a(void const *argument){
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 static uint8_t temp;
 static uint8_t is_drawing;
-static uint8_t xs[255];
-static uint8_t ys[255];
+static COORDINATE_TYPE xs[255];
+static COORDINATE_TYPE ys[255];
 
-void draw_points(uint16_t scale_x, uint16_t scale_y, uint8_t* xs, uint8_t* ys, uint16_t length) {
+void draw_points(uint16_t scale_x, uint16_t scale_y, COORDINATE_TYPE* xs, COORDINATE_TYPE* ys, uint16_t length) {
 
 	float prev_pixels_x = (float)xs[0] / scale_x;
 	float prev_pixels_y = (float)ys[0] / scale_y;
@@ -107,6 +108,9 @@ void draw_points(uint16_t scale_x, uint16_t scale_y, uint8_t* xs, uint8_t* ys, u
 
 void draw_from_db(void) {
 	LCD_Clear(LCD_COLOR_WHITE);
+	LCD_SetTextColor(LCD_COLOR_RED);
+	memcpy ( (void *)(LCD_FRAME_BUFFER + BUFFER_OFFSET), (void *) ((uint8_t*) (&background)), sizeof(background));
+	
 	uint8_t len = coordinate_db_get_len();
 	if (len == 0) {
 		return;
@@ -173,8 +177,8 @@ void example_1b(void const *argument) {
 			}
 
 			if (is_drawing == FALSE) {
-				if (len > 0) {
-					result = coordinate_db_insert_entry(test + 2, len);
+				if (len > 0 && len % sizeof(COORDINATE_TYPE) == 0) {
+					result = coordinate_db_insert_entry((COORDINATE_TYPE*) (test + 2), len / sizeof(COORDINATE_TYPE));
 				}
 			}
 
@@ -231,18 +235,13 @@ int main (void) {
 	LCD_SetLayer(LCD_FOREGROUND_LAYER);
 
 	LCD_SetFont(&Font16x24);
-//	LCD_Clear(LCD_COLOR_WHITE);
-//	static uint8_t sending_coordinates[3][11] = {
-//		{0x00, 10, 10, 20, 20, 30, 20, 30, 30, 40, 30},
-//		{0x00, 40, 40, 50, 40, 50, 50, 60, 50, 60, 60},
-//		{0x00, 75, 75, 100, 120, 120, 140, 150, 150, 160, 170},
+	LCD_Clear(LCD_COLOR_WHITE);
+	
+//	static int16_t sending_coordinatess[1][9] = {
+//		{0x00, 163, 266, 173, 266, 172, 238, 90, 238},
+//		{0x00, 0, 0, 10, 0, 10, 30, -30, 30},
 //	};
-//	coordinate_db_insert_entry(sending_coordinates[0] + 1, 10);
-//	uint8_t x = coordinate_db_get_len();
-//	coordinate_db_insert_entry(sending_coordinates[1] + 1, 10);
-//	x = coordinate_db_get_len();
-//	coordinate_db_insert_entry(sending_coordinates[2] + 1, 10);
-//	x = coordinate_db_get_len();
+//	coordinate_db_insert_entry(sending_coordinatess[0] + 1, 8);
 //	draw_from_db();
 //	return 1;
 	

@@ -150,6 +150,7 @@ uint8_t wireless_transmission_transmit(uint8_t* packet, uint8_t len) {
 	}
 
 	memcpy(send_buffer + FULL_HEADER_LEN, packet, len);
+	
 	uint8_t new_len = wireless_transmission_protocol_encapsulate(send_buffer + FULL_HEADER_LEN, len);
 	if (new_len == 0) {
 		return FALSE;

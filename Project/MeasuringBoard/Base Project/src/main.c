@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <string.h>
+#include <math.h>
 #include "stm32f4xx.h"                  // Device header
 #include "stm32f4xx_conf.h"
 
@@ -10,18 +11,28 @@
 #include "modules/led_rotation_sm.h"
 #include "modules/commands.h"
 #include "modules/protocol_go_back_1.h"
-// #include "modules/wireless_transmission_sm.h"
 
 
 static uint8_t system_ticks;
-static uint8_t test[100];
+static uint8_t test[200];
 static uint8_t do_wait = 30;
 
+#define M2PX(x) ((int16_t)roundf(6.08f * x))
+
+void transform_array(int16_t* input, uint16_t* output, uint8_t len) {
+	uint8_t i;
+	for (i = 0; i < len; i++) {
+		output[2*i] = M2PX(input[2*i]) + 163;
+		output[2*i + 1] = 266 - M2PX(input[2 * i + 1]);
+	}
+}
+
 static uint8_t packet_test[7] = {65, 66, 67, 68, 69, 70, 71};
-static uint8_t sending_coordinates[3][11] = {
-	{0x00, 10, 10, 20, 20, 30, 20, 30, 30, 40, 30},
-	{0x00, 40, 40, 50, 40, 50, 50, 60, 50, 60, 60},
-	{0x00, 75, 75, 100, 120, 120, 140, 150, 150, 160, 170},
+static const uint8_t row_count = 2;
+static const uint8_t coord_count = 4;
+static int16_t sending_coordinates[row_count][2 * coord_count + 1] = {
+	{0x00, 0, 0, 2, 0, 2, 4, -12, 4},
+	{0x00, -12, 10, 0, 10, 2, 12, 2, 16},
 };
 
 void do_send(void) {
@@ -40,17 +51,23 @@ void do_send(void) {
 	uint8_t state = protocol_go_back_1_get_state();
 	if (state == GO_BACK_ONE_SENDER_STATE_IDLE) {
 		static uint8_t sending_index = 99;
-		//protocol_go_back_1_send(packet_test + 1, 7);
 		if (sending_index == 99) {
 			printf("Sending CLEAR\n");
 			memcpy(test + 1, CLEAR_COMMAND, COMMAND_CLEAR_LEN);
 			protocol_go_back_1_send(test + 1, COMMAND_CLEAR_LEN);
 			sending_index = 0;
-		}	else if (sending_index < 3) {
-			protocol_go_back_1_send(sending_coordinates[sending_index] + 1, 10);
+		}	else if (sending_index < row_count) {
+			transform_array((&(sending_coordinates[sending_index][1])), (uint16_t*) test, 4);
+			for (uint8_t i = 0; i < 8 * sizeof(uint16_t); i++) {
+				if (test[i] == 255 || test[i] == 254) {
+					test[i] = 253;
+				}
+			}
+			
+			protocol_go_back_1_send(test, 8 * sizeof(uint16_t));
 			printf("Sending index = %d\n", sending_index);
 			sending_index++;
-		} else if (sending_index == 3) {
+		} else if (sending_index == row_count) {
 			printf("Sending PLOT\n");
 			memcpy(test + 1, PLOT_COMMAND, COMMAND_PLOT_LEN);
 			protocol_go_back_1_send(test + 1, COMMAND_PLOT_LEN);
