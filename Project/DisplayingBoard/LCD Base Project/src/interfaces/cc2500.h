@@ -1,10 +1,10 @@
 /**
 	******************************************************************************
-	* @file    stm32f4_discovery_CC2500.h
-	* @author  MCD Application Team
+	* @file    cc2500.h
+	* @author  Hoai Phuoc Truong
 	* @version V1.1.0
-	* @date    28-October-2011
-	* @brief   This file contains all the functions prototypes for the stm32f4_discovery_CC2500.c
+	* @date    01-Dec-2015
+	* @brief   This file contains all the functions prototypes for the cc2500.c
 	*          firmware driver.
 	******************************************************************************
 	* @attention
@@ -16,7 +16,7 @@
 	* FROM THE CONTENT OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE
 	* CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
 	*
-	* <h2><center>&copy; COPYRIGHT 2011 STMicroelectronics</center></h2>
+	* <h2><center>&copy; COPYRIGHT </center></h2>
 	******************************************************************************  
 	*/ 
 
@@ -43,57 +43,43 @@
 /**
 	* @brief  CC2500 SPI Interface pins
 	*/
-#define CC2500_SPI                       SPI4
-#define CC2500_SPI_CLK                   RCC_APB2Periph_SPI4
+#define CC2500_SPI                       SPI1
+#define CC2500_SPI_CLK                   RCC_APB2Periph_SPI1
 
-#define CC2500_SPI_SCK_PIN               GPIO_Pin_2
-#define CC2500_SPI_SCK_GPIO_PORT         GPIOE
-#define CC2500_SPI_SCK_GPIO_CLK          RCC_AHB1Periph_GPIOE
-#define CC2500_SPI_SCK_SOURCE            GPIO_PinSource2
-#define CC2500_SPI_SCK_AF                GPIO_AF_SPI4
+/************************************************************************************/
 
-#define CC2500_SPI_MISO_PIN              GPIO_Pin_5
-#define CC2500_SPI_MISO_GPIO_PORT        GPIOE
-#define CC2500_SPI_MISO_GPIO_CLK         RCC_AHB1Periph_GPIOE
-#define CC2500_SPI_MISO_SOURCE           GPIO_PinSource5
-#define CC2500_SPI_MISO_AF               GPIO_AF_SPI4
+#define CC2500_SPI_SCK_PIN               GPIO_Pin_5                  /* PA.05 */
+#define CC2500_SPI_SCK_GPIO_PORT         GPIOA                       /* GPIOA */
+#define CC2500_SPI_SCK_GPIO_CLK          RCC_AHB1Periph_GPIOA
+#define CC2500_SPI_SCK_SOURCE            GPIO_PinSource5
+#define CC2500_SPI_SCK_AF                GPIO_AF_SPI1
 
-#define CC2500_SPI_MOSI_PIN              GPIO_Pin_6
-#define CC2500_SPI_MOSI_GPIO_PORT        GPIOE
-#define CC2500_SPI_MOSI_GPIO_CLK         RCC_AHB1Periph_GPIOE
-#define CC2500_SPI_MOSI_SOURCE           GPIO_PinSource6
-#define CC2500_SPI_MOSI_AF               GPIO_AF_SPI4
+#define CC2500_SPI_MISO_PIN              GPIO_Pin_6                  /* PA.6 */
+#define CC2500_SPI_MISO_GPIO_PORT        GPIOA                       /* GPIOA */
+#define CC2500_SPI_MISO_GPIO_CLK         RCC_AHB1Periph_GPIOA
+#define CC2500_SPI_MISO_SOURCE           GPIO_PinSource6
+#define CC2500_SPI_MISO_AF               GPIO_AF_SPI1
 
-#define CC2500_SPI_CS_PIN                GPIO_Pin_12
-#define CC2500_SPI_CS_GPIO_PORT          GPIOC
-#define CC2500_SPI_CS_GPIO_CLK           RCC_AHB1Periph_GPIOC
+#define CC2500_SPI_MOSI_PIN              GPIO_Pin_7                  /* PA.7 */
+#define CC2500_SPI_MOSI_GPIO_PORT        GPIOA                       /* GPIOA */
+#define CC2500_SPI_MOSI_GPIO_CLK         RCC_AHB1Periph_GPIOA
+#define CC2500_SPI_MOSI_SOURCE           GPIO_PinSource7
+#define CC2500_SPI_MOSI_AF               GPIO_AF_SPI1
 
-// #define CC2500_SPI_INT1_PIN              GPIO_Pin_4
-// #define CC2500_SPI_INT1_GPIO_PORT        GPIOE
-// #define CC2500_SPI_INT1_GPIO_CLK         RCC_AHB1Periph_GPIOE
-// #define CC2500_SPI_INT1_EXTI_LINE        EXTI_Line4
-// #define CC2500_SPI_INT1_EXTI_PORT_SOURCE EXTI_PortSourceGPIOE
-// #define CC2500_SPI_INT1_EXTI_PIN_SOURCE  EXTI_PinSource4
-// #define CC2500_SPI_INT1_EXTI_IRQn        EXTI0_IRQn 
-
-// #define CC2500_SPI_INT2_PIN              GPIO_Pin_1
-// #define CC2500_SPI_INT2_GPIO_PORT        GPIOE
-// #define CC2500_SPI_INT2_GPIO_CLK         RCC_AHB1Periph_GPIOE
-// #define CC2500_SPI_INT2_EXTI_LINE        EXTI_Line1
-// #define CC2500_SPI_INT2_EXTI_PORT_SOURCE EXTI_PortSourceGPIOE
-// #define CC2500_SPI_INT2_EXTI_PIN_SOURCE  EXTI_PinSource1
-// #define CC2500_SPI_INT2_EXTI_IRQn        EXTI1_IRQn 
-
+#define CC2500_SPI_CS_PIN                GPIO_Pin_9                  /* PE.03 */
+#define CC2500_SPI_CS_GPIO_PORT          GPIOB                       /* GPIOE */
+#define CC2500_SPI_CS_GPIO_CLK           RCC_AHB1Periph_GPIOB
 
 /**********************************************************************************************************/
+/******************************************************************************/
+/*************************** START STATE LISTING ******************************/
+/******************************************************************************/
 #define CC2500_STATE_IDLE 1
 #define CC2500_STATE_RX 13
 #define CC2500_STATE_RX_OVERFLOW 17
 
 #define CC2500_STATE_TX 19
 #define CC2500_STATE_TX_UNDERFLOW 22
-
-
 /******************************************************************************/
 /*************************** START REGISTER MAPPING  **************************/
 /******************************************************************************/
@@ -157,7 +143,6 @@
 
 
 
-	
 #define CC2500_CS_LOW()       GPIO_ResetBits(CC2500_SPI_CS_GPIO_PORT, CC2500_SPI_CS_PIN)
 #define CC2500_CS_HIGH()      GPIO_SetBits(CC2500_SPI_CS_GPIO_PORT, CC2500_SPI_CS_PIN)
 
@@ -183,6 +168,7 @@ extern __inline uint8_t CC2500_read_rx_one(void);
 extern __inline void CC2500_read_rx(uint8_t* buffer, uint8_t NumByteToRead);
 extern __inline void CC2500_write_tx_one(uint8_t value);
 extern __inline void CC2500_write_tx(uint8_t* buffer, uint8_t NumByteToWrite);
+
 
 /* USER Callbacks: This is function for which prototype only is declared in
 	 MEMS accelerometre driver and that should be implemented into user applicaiton. */  
@@ -217,4 +203,4 @@ uint32_t CC2500_TIMEOUT_UserCallback(void);
 	*/ 
 
 
-/******************* (C) COPYRIGHT 2011 STMicroelectronics *****END OF FILE****/
+/******************* (C) COPYRIGHT *****END OF FILE****/

@@ -28,9 +28,7 @@
 *		6) Call protocol_go_back_1_get_received_data with a buffer pointer to retrieve the packet.
 *
 * V) Received packet:
-*		Received packet will have the following format:
-*                  1 byte                   1 byte     Variable length
-*			Length (excluding ID field)  |    ID    |       Data
+*		Received packet will only contain the data received
 *
 * VI) protocol_go_back_1_periodic call frequency:
 *		To reliably receive a packet, the packet receiver must have frequency larger than that of the packet transmitter.
@@ -48,24 +46,53 @@
 *
 */
 
+//Operational mode of the module
 #define GO_BACK_ONE_MODE_SENDER    254
 #define GO_BACK_ONE_MODE_RECEIVER  253
 
+//Common state for SFM in both operational mode
 #define GO_BACK_ONE_STATE_ERROR       255
 
+//Various states of the SFM in sender mode
 #define GO_BACK_ONE_SENDER_STATE_IDLE 0
 #define GO_BACK_ONE_SENDER_STATE_SEND 1
 #define GO_BACK_ONE_SENDER_STATE_ACK 2
 
+//Various states of the SFM in receiver mode
 #define GO_BACK_ONE_RECEIVER_STATE_IDLE 3
 #define GO_BACK_ONE_RECEIVER_STATE_RECEIVE 4
 #define GO_BACK_ONE_RECEIVER_STATE_ACK 5
 
+/**
+ * Module initialization
+ */
 void protocol_go_back_1_init(uint8_t mode);
+
+/**
+ * Retrieve current state of the internal SFM
+ */
 uint8_t protocol_go_back_1_get_state(void);
+
+/**
+ * Start SFM to receive packet from the air
+ */
 void protocol_go_back_1_receive(void);
+
+/**
+ * Retrieve information about the received packet
+ */
 uint8_t protocol_go_back_1_get_received_data(uint8_t* dest);
+
+/**
+ * Start SFM to send a packet to the air.
+ * WARNING: PACKET BUFFER MUST HAVE ID_LEN WRITABLE BYTES AT THE FRONT.
+ * NOT HAVING WRITABLE BYTES AT THE FRONT MAY LEAD TO WRITING TO UNALLOCATED REGIONS OF MEMORY
+ */
 void protocol_go_back_1_send(uint8_t* packet, uint8_t len);
-void protocol_go_back_1_periodic(uint8_t* debug);
+
+/**
+ * SFM main operation
+ */
+void protocol_go_back_1_periodic(void);
 
 #endif

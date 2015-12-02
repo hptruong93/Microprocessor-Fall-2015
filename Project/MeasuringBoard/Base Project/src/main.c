@@ -60,7 +60,6 @@ void transform_array(int16_t* input, uint16_t* output, uint8_t len) {
 	}
 }
 
-static uint8_t packet_test[7] = {65, 66, 67, 68, 69, 70, 71};
 static const uint8_t row_count = 2;
 static const uint8_t coord_count = 4;
 static int16_t sending_coordinates[row_count][2 * coord_count + 1] = {
@@ -69,11 +68,7 @@ static int16_t sending_coordinates[row_count][2 * coord_count + 1] = {
 };
 
 void do_send(void) {
-	static uint8_t sent = 0;
-	static uint8_t rotate_mode = LED_ROTATION_MODE_BLINK;
-	
-	uint8_t temp, temp2;
-	protocol_go_back_1_periodic(&temp2);
+	protocol_go_back_1_periodic();
 	// uint8_t state = wireless_transmission_get_state();
 	// if (state == WIRELESS_TRANSMISSION_STATE_IDLE && sent == 0) {
 	// 	wireless_transmission_transmit(packet_test, 7);
