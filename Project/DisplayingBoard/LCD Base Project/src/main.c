@@ -52,53 +52,6 @@ void mstep_to_pixloc(int16_t* mstep_coord, uint8_t length) {
 	}
 }
 
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-void example_1a(void const *argument){
-	while(1){
-//		/* Clear the LCD */ 
-//	LCD_Clear(LCD_COLOR_WHITE);
-//	
-//	  //The files source and header files implement drawing characters (drawing strings)
-//	  //using different font sizes, see the file font.h for the four sizes
-//	LCD_SetFont(&Font8x8);
-//	  //The number of string lines avaialble is dependant on the font height:
-//	  //A font height of 8 will result in 320 / 8 = 40 lines
-//	LCD_DisplayStringLine(LINE(1), (uint8_t*)"      Welcome to uP lab     ");
-//	LCD_DisplayStringLine(LINE(2), (uint8_t*)"          Good Luck         ");
-//	  
-//	  //The stm32f429i_discovery_lcd.h file offers functions which allows to draw various shapes
-//	  //in either border or filled with colour. You can draw circles, rectangles, triangles, lines,
-//	  //ellipses, and polygons. You can draw strings or characters, change background/foreground 
-//	  //colours.
-//	
-//	LCD_DrawLine(0, 32, 240, LCD_DIR_HORIZONTAL);
-//	LCD_DrawLine(0, 34, 240, LCD_DIR_HORIZONTAL);
-//	LCD_SetTextColor(LCD_COLOR_BLUE2); 
-//	LCD_DrawFullCircle(120, 160, 100);
-//	LCD_SetTextColor(LCD_COLOR_CYAN); 
-//	LCD_DrawFullCircle(120, 160, 90);
-//	LCD_SetTextColor(LCD_COLOR_YELLOW); 
-//	LCD_DrawFullCircle(120, 160, 80);
-//	LCD_SetTextColor(LCD_COLOR_RED); 
-//	LCD_DrawFullCircle(120, 160, 70);
-//	LCD_SetTextColor(LCD_COLOR_BLUE); 
-//	LCD_DrawFullCircle(120, 160, 60);
-//	LCD_SetTextColor(LCD_COLOR_GREEN); 
-//	LCD_DrawFullCircle(120, 160, 50);
-//	LCD_SetTextColor(LCD_COLOR_BLACK); 
-//	LCD_DrawFullCircle(120, 160, 40);
-//	LCD_SetTextColor(LCD_COLOR_WHITE);
-//	LCD_DrawRect(90,130,60,60);
-//	LCD_SetTextColor(LCD_COLOR_MAGENTA);
-//	LCD_FillTriangle(90, 120, 150, 130, 180, 130);
-//	LCD_SetFont(&Font12x12);
-//	LCD_DisplayStringLine(LINE(15), (uint8_t*)"      Success!    ");
-
-	osDelay(250);
-	}
-}
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 static uint8_t is_drawing;
 static COORDINATE_TYPE xs[255];
 static COORDINATE_TYPE ys[255];
@@ -143,7 +96,7 @@ void draw_from_db(void) {
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-void example_1b(void const *argument) {
+void receive_and_plot(void const *argument) {
 	is_drawing = FALSE;
 	lcd_writer_clear();
 	protocol_go_back_1_init(GO_BACK_ONE_MODE_RECEIVER);
@@ -204,7 +157,7 @@ void example_1b(void const *argument) {
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-void example_1c(void const *argument){
+void print_lcd_debug(void const *argument){
 	while(1){
 		if (is_drawing == FALSE) {
 			LCD_Clear(LCD_COLOR_WHITE);
@@ -217,12 +170,12 @@ void example_1c(void const *argument){
 	}
 }
 
-osThreadDef(example_1b, osPriorityNormal, 1, 0);
-osThreadDef(example_1c, osPriorityNormal, 1, 0);
+osThreadDef(receive_and_plot, osPriorityNormal, 1, 0);
+osThreadDef(print_lcd_debug, osPriorityNormal, 1, 0);
 
 // ID for theads
-osThreadId example_1b_thread;
-osThreadId example_1c_thread;
+osThreadId receive_and_plot_thread;
+osThreadId print_lcd_debug_thread;
 
 /*
  * main: initialize and start the system
@@ -262,16 +215,8 @@ int main (void) {
 	// draw_from_db();
 	//return 1;
 
-	/*******************************************************
-			 Uncomment the example you want to see
-	example_1a: Simple shape draw, fill and text display
-	example_1b: bitmap image display
-	example_1c: Simple animation
-	********************************************************/
-
-	//example_1a_thread = osThreadCreate(osThread(example_1a), NULL);
-	example_1b_thread = osThreadCreate(osThread(example_1b), NULL);
-	example_1c_thread = osThreadCreate(osThread(example_1c), NULL);
+	receive_and_plot_thread = osThreadCreate(osThread(receive_and_plot), NULL);
+	print_lcd_debug_thread = osThreadCreate(osThread(print_lcd_debug), NULL);
 
 	osKernelStart ();                         // start thread execution 
 }
