@@ -10,7 +10,7 @@
 #define WIRELESS_TRANSMISSION_STATE_ERROR      3
 
 //Maximum packet size (including headers and checksum)
-#define WIRELESS_TRANSMISSION_PACKET_SIZE           512
+#define WIRELESS_TRANSMISSION_PACKET_SIZE           120
 
 //Checksum validation result
 #define WIRELESS_TRANSMISSION_VERIFY_OK   					1
