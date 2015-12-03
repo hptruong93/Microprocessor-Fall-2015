@@ -419,12 +419,12 @@
             <File>
               <FileName>main.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\src_2\main.c</FilePath>
+              <FilePath>.\src\main.c</FilePath>
             </File>
             <File>
               <FileName>fputc_debug.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\src_2\fputc_debug.c</FilePath>
+              <FilePath>.\src\fputc_debug.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -434,12 +434,12 @@
             <File>
               <FileName>lsm9ds1.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\src_2\drivers\lsm9ds1.c</FilePath>
+              <FilePath>.\src\drivers\lsm9ds1.c</FilePath>
             </File>
             <File>
               <FileName>lsm9ds1.h</FileName>
               <FileType>5</FileType>
-              <FilePath>.\src_2\drivers\lsm9ds1.h</FilePath>
+              <FilePath>.\src\drivers\lsm9ds1.h</FilePath>
             </File>
           </Files>
         </Group>
@@ -449,32 +449,32 @@
             <File>
               <FileName>map.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\src_2\modules\map.c</FilePath>
+              <FilePath>.\src\modules\map.c</FilePath>
             </File>
             <File>
               <FileName>map.h</FileName>
               <FileType>5</FileType>
-              <FilePath>.\src_2\modules\map.h</FilePath>
+              <FilePath>.\src\modules\map.h</FilePath>
             </File>
             <File>
               <FileName>step.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\src_2\modules\step.c</FilePath>
+              <FilePath>.\src\modules\step.c</FilePath>
             </File>
             <File>
               <FileName>step.h</FileName>
               <FileType>5</FileType>
-              <FilePath>.\src_2\modules\step.h</FilePath>
+              <FilePath>.\src\modules\step.h</FilePath>
             </File>
             <File>
               <FileName>turn.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\src_2\modules\turn.c</FilePath>
+              <FilePath>.\src\modules\turn.c</FilePath>
             </File>
             <File>
               <FileName>turn.h</FileName>
               <FileType>5</FileType>
-              <FilePath>.\src_2\modules\turn.h</FilePath>
+              <FilePath>.\src\modules\turn.h</FilePath>
             </File>
           </Files>
         </Group>
@@ -484,22 +484,102 @@
             <File>
               <FileName>acc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\src_2\sensors\acc.c</FilePath>
+              <FilePath>.\src\sensors\acc.c</FilePath>
             </File>
             <File>
               <FileName>acc.h</FileName>
               <FileType>5</FileType>
-              <FilePath>.\src_2\sensors\acc.h</FilePath>
+              <FilePath>.\src\sensors\acc.h</FilePath>
             </File>
             <File>
               <FileName>gyro.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\src_2\sensors\gyro.c</FilePath>
+              <FilePath>.\src\sensors\gyro.c</FilePath>
             </File>
             <File>
               <FileName>gyro.h</FileName>
               <FileType>5</FileType>
-              <FilePath>.\src_2\sensors\gyro.h</FilePath>
+              <FilePath>.\src\sensors\gyro.h</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>New Group</GroupName>
+          <Files>
+            <File>
+              <FileName>my_types.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\src\my_types.h</FilePath>
+            </File>
+            <File>
+              <FileName>cc2500.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\interfaces\cc2500.c</FilePath>
+            </File>
+            <File>
+              <FileName>cc2500.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\src\interfaces\cc2500.h</FilePath>
+            </File>
+            <File>
+              <FileName>cc2500_settings.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\src\interfaces\cc2500_settings.h</FilePath>
+            </File>
+            <File>
+              <FileName>led_interface.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\interfaces\led_interface.c</FilePath>
+            </File>
+            <File>
+              <FileName>led_interface.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\src\interfaces\led_interface.h</FilePath>
+            </File>
+            <File>
+              <FileName>commands.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\src\modules\commands.h</FilePath>
+            </File>
+            <File>
+              <FileName>led_rotation_sm.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\modules\led_rotation_sm.c</FilePath>
+            </File>
+            <File>
+              <FileName>led_rotation_sm.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\src\modules\led_rotation_sm.h</FilePath>
+            </File>
+            <File>
+              <FileName>protocol_go_back_1.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\modules\protocol_go_back_1.c</FilePath>
+            </File>
+            <File>
+              <FileName>protocol_go_back_1.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\src\modules\protocol_go_back_1.h</FilePath>
+            </File>
+            <File>
+              <FileName>wireless_transmission_sm.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\modules\wireless_transmission_sm.c</FilePath>
+            </File>
+            <File>
+              <FileName>wireless_transmission_sm.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\src\modules\wireless_transmission_sm.h</FilePath>
+            </File>
+            <File>
+              <FileName>utils.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\utils\utils.c</FilePath>
+            </File>
+            <File>
+              <FileName>utils.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\src\utils\utils.h</FilePath>
             </File>
           </Files>
         </Group>
