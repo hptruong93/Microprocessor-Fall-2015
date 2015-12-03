@@ -9,6 +9,8 @@
 static uint16_t leds[LED_COUNT] = {LED_1, LED_2, LED_3, LED_4};
 
 void led_init(void) {
+	RCC_AHB1PeriphClockCmd (RCC_AHB1Periph_GPIOD, ENABLE); // Enables the AHB1 peripheral clock, providing power to GPIOD branch
+
 	GPIO_InitTypeDef gpio_init_s; // Structure to initilize definitions of GPIO
 	GPIO_StructInit(&gpio_init_s); // Fills each GPIO_InitStruct member with its default value
 	gpio_init_s.GPIO_Pin = LED_1 | LED_2 | LED_3 | LED_4; // Select the following pins to initialise

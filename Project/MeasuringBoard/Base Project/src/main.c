@@ -4,13 +4,14 @@
 #include "stm32f4xx.h"                  // Device header
 #include "stm32f4xx_conf.h"
 
-#include "system_config.h"
-
 #include "utils/utils.h"
 #include "interfaces/cc2500.h"
+#include "interfaces/led_interface.h"
 #include "modules/led_rotation_sm.h"
 #include "modules/commands.h"
 #include "modules/protocol_go_back_1.h"
+
+#define SYSTICK_FREQUENCY 100
 
 static uint8_t system_ticks;
 static uint8_t test[200];
@@ -114,10 +115,9 @@ void do_send(void) {
 
 int main() {
 	SysTick_Config(SystemCoreClock / SYSTICK_FREQUENCY);
+	led_init();
 	CC2500_LowLevel_Init();
 	CC2500_Reset();
-	
-	system_init();
 	
 	protocol_go_back_1_init(GO_BACK_ONE_MODE_SENDER);
 
