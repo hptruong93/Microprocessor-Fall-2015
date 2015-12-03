@@ -13,6 +13,9 @@ __IO uint32_t  CC2500Timeout = CC2500_FLAG_TIMEOUT;
 
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
+/******************************************************************************/
+/*************************** START REGISTER MAPPING  **************************/
+/******************************************************************************/
 static const uint8_t CC2500_SRES = 0x30;
 static const uint8_t CC2500_SNOP = 0x3D;
 static const uint8_t CC2500_SFRX = 0x3A;
@@ -101,44 +104,95 @@ void CC2500_Read(uint8_t* pBuffer, uint8_t ReadAddr, uint16_t NumByteToRead)
 	CC2500_CS_HIGH();
 }
 
+/**
+ * @brief  Read one byte from CC2500.
+ * @param  ReadAddr : address to read from
+ * @retval byte value read from CC2500
+ */
 __inline uint8_t CC2500_read_one(uint8_t ReadAddr) {
 	uint8_t temp;
 	CC2500_Read(&temp, ReadAddr, 1);
 	return temp;
 }
 
+/**
+ * @brief  Write one byte to CC2500.
+ * @param  WriteAddr : address to write to
+ * @retval void
+ */
 __inline void CC2500_write_one(uint8_t* value, uint8_t WriteAddr) {
 	CC2500_Write(value, WriteAddr, 1);
 }
 
+/**
+ * @brief  Get SFM state of CC2500.
+ * @param void
+ * @retval SFM state of CC2500
+ */
 __inline uint8_t CC2500_get_state(void) {
 	return CC2500_read_one(CC2500_MARCSTATE);
 }
 
+/**
+ * @brief  Get part num of CC2500.
+ * @param void
+ * @retval part num of CC2500
+ */
 __inline uint8_t CC2500_get_part_num(void) {
 	return CC2500_read_one(CC2500_PARTNUM);
 }
 
+/**
+ * @brief  Get number of bytes in RX FIFO of CC2500.
+ * @param void
+ * @retval number of bytes in RX FIFO of CC2500
+ */
 __inline uint8_t CC2500_get_rxbytes(void) {
 	return CC2500_read_one(CC2500_RXBYTES);
 }
 
+/**
+ * @brief  Get number of bytes in TX FIFO of CC2500.
+ * @param void
+ * @retval number of bytes in TX FIFO of CC2500
+ */
 __inline uint8_t CC2500_get_txbytes(void) {
 	return CC2500_read_one(CC2500_TXBYTES);
 }
 
+/**
+ * @brief  Flush RX FIFO of CC2500.
+ * @param void
+ * @retval byte received from CC2500
+ */
 __inline uint8_t CC2500_flush_rx(void) {
 	return CC2500_read_one(CC2500_SFRX);
 }
 
+/**
+ * @brief  Flush TX FIFO of CC2500.
+ * @param void
+ * @retval byte received from CC2500
+ */
 __inline uint8_t CC2500_flush_tx(void) {
 	return CC2500_read_one(CC2500_SFTX);
 }
 
+/**
+ * @brief  Read one byte from RX FIFO of CC2500.
+ * @param void
+ * @retval byte received from CC2500
+ */
 __inline uint8_t CC2500_read_rx_one(void) {
 	return CC2500_read_one(CC2500_RX_FIFO);
 }
 
+/**
+ * @brief  Read multiple bytes from RX FIFO of CC2500.
+ * @param buffer buffer to write result to
+ * @param NumByteToRead number of bytes to read from RX FIFO
+ * @retval void
+ */
 __inline void CC2500_read_rx(uint8_t* buffer, uint8_t NumByteToRead) {
 	if (NumByteToRead == 1) {
 		CC2500_Read(buffer, CC2500_RX_FIFO, NumByteToRead);
@@ -147,10 +201,21 @@ __inline void CC2500_read_rx(uint8_t* buffer, uint8_t NumByteToRead) {
 	}
 }
 
+/**
+ * @brief  Write one byte to TX FIFO of CC2500.
+ * @param value value to write
+ * @retval void
+ */
 __inline void CC2500_write_tx_one(uint8_t value) {
 	CC2500_write_one(&value, CC2500_TX_FIFO);
 }
 
+/**
+ * @brief  Write multiple bytes to TX FIFO of CC2500.
+ * @param buffer buffer to read values from
+ * @param NumByteToWrite number of bytes to write to TX FIFO
+ * @retval void
+ */
 __inline void CC2500_write_tx(uint8_t* buffer, uint8_t NumByteToWrite) {
 	if (NumByteToWrite == 1) {
 		CC2500_Write(buffer, CC2500_TX_FIFO, NumByteToWrite);
@@ -159,6 +224,11 @@ __inline void CC2500_write_tx(uint8_t* buffer, uint8_t NumByteToWrite) {
 	}
 }
 
+/**
+ * @brief  Reset CC2500 chip.
+ * @param  void
+ * @retval None
+ */
 void CC2500_Reset(void) {
 	static uint8_t value;
 	value = CC2500_read_one(CC2500_SRES);
@@ -193,12 +263,6 @@ void CC2500_LowLevel_Init(void)
 	/* Enable CS  GPIO clock */
 	RCC_AHB1PeriphClockCmd(CC2500_SPI_CS_GPIO_CLK, ENABLE);
 	
-	/* Enable INT1 GPIO clock */
-	// RCC_AHB1PeriphClockCmd(CC2500_SPI_INT1_GPIO_CLK, ENABLE);
-	
-	/* Enable INT2 GPIO clock */
-	// RCC_AHB1PeriphClockCmd(CC2500_SPI_INT2_GPIO_CLK, ENABLE);
-
 	GPIO_PinAFConfig(CC2500_SPI_SCK_GPIO_PORT, CC2500_SPI_SCK_SOURCE, CC2500_SPI_SCK_AF);
 	GPIO_PinAFConfig(CC2500_SPI_MISO_GPIO_PORT, CC2500_SPI_MISO_SOURCE, CC2500_SPI_MISO_AF);
 	GPIO_PinAFConfig(CC2500_SPI_MOSI_GPIO_PORT, CC2500_SPI_MOSI_SOURCE, CC2500_SPI_MOSI_AF);
@@ -245,17 +309,6 @@ void CC2500_LowLevel_Init(void)
 
 	/* Deselect : Chip Select high */
 	GPIO_SetBits(CC2500_SPI_CS_GPIO_PORT, CC2500_SPI_CS_PIN);
-	
-	/* Configure GPIO PINs to detect Interrupts */
-	// GPIO_InitStructure.GPIO_Pin = CC2500_SPI_INT1_PIN;
-	// GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN;
-	// GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
-	// GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-	// GPIO_InitStructure.GPIO_PuPd  = GPIO_PuPd_NOPULL;
-	// GPIO_Init(CC2500_SPI_INT1_GPIO_PORT, &GPIO_InitStructure);
-	
-	// GPIO_InitStructure.GPIO_Pin = CC2500_SPI_INT2_PIN;
-	// GPIO_Init(CC2500_SPI_INT2_GPIO_PORT, &GPIO_InitStructure);
 	
 	GPIO_InitTypeDef gpio_init_s; // Structure to initilize definitions of GPIO
 	GPIO_StructInit(&gpio_init_s); // Fills each GPIO_InitStruct member with its default value

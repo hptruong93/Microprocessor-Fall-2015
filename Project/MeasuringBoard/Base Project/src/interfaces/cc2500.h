@@ -1,10 +1,10 @@
 /**
 	******************************************************************************
-	* @file    stm32f4_discovery_CC2500.h
-	* @author  MCD Application Team
+	* @file    cc2500.h
+	* @author  Hoai Phuoc Truong
 	* @version V1.1.0
-	* @date    28-October-2011
-	* @brief   This file contains all the functions prototypes for the stm32f4_discovery_CC2500.c
+	* @date    01-Dec-2015
+	* @brief   This file contains all the functions prototypes for the cc2500.c
 	*          firmware driver.
 	******************************************************************************
 	* @attention
@@ -16,7 +16,7 @@
 	* FROM THE CONTENT OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE
 	* CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
 	*
-	* <h2><center>&copy; COPYRIGHT 2011 STMicroelectronics</center></h2>
+	* <h2><center>&copy; COPYRIGHT </center></h2>
 	******************************************************************************  
 	*/ 
 
@@ -70,25 +70,10 @@
 #define CC2500_SPI_CS_GPIO_PORT          GPIOB                       /* GPIOE */
 #define CC2500_SPI_CS_GPIO_CLK           RCC_AHB1Periph_GPIOB
 
-/************************************************************************************/
-// #define CC2500_SPI_INT1_PIN              GPIO_Pin_0
-// #define CC2500_SPI_INT1_GPIO_PORT        GPIOE
-// #define CC2500_SPI_INT1_GPIO_CLK         RCC_AHB1Periph_GPIOE
-// #define CC2500_SPI_INT1_EXTI_LINE        EXTI_Line0
-// #define CC2500_SPI_INT1_EXTI_PORT_SOURCE EXTI_PortSourceGPIOE
-// #define CC2500_SPI_INT1_EXTI_PIN_SOURCE  EXTI_PinSource0
-// #define CC2500_SPI_INT1_EXTI_IRQn        EXTI0_IRQn 
-
-// #define CC2500_SPI_INT2_PIN              GPIO_Pin_1
-// #define CC2500_SPI_INT2_GPIO_PORT        GPIOE
-// #define CC2500_SPI_INT2_GPIO_CLK         RCC_AHB1Periph_GPIOE
-// #define CC2500_SPI_INT2_EXTI_LINE        EXTI_Line1
-// #define CC2500_SPI_INT2_EXTI_PORT_SOURCE EXTI_PortSourceGPIOE
-// #define CC2500_SPI_INT2_EXTI_PIN_SOURCE  EXTI_PinSource1
-// #define CC2500_SPI_INT2_EXTI_IRQn        EXTI1_IRQn 
-
-
 /**********************************************************************************************************/
+/******************************************************************************/
+/*************************** START STATE LISTING ******************************/
+/******************************************************************************/
 #define CC2500_STATE_IDLE 1
 #define CC2500_STATE_RX 13
 #define CC2500_STATE_RX_OVERFLOW 17
@@ -158,7 +143,6 @@
 
 
 
-	
 #define CC2500_CS_LOW()       GPIO_ResetBits(CC2500_SPI_CS_GPIO_PORT, CC2500_SPI_CS_PIN)
 #define CC2500_CS_HIGH()      GPIO_SetBits(CC2500_SPI_CS_GPIO_PORT, CC2500_SPI_CS_PIN)
 
@@ -219,4 +203,4 @@ uint32_t CC2500_TIMEOUT_UserCallback(void);
 	*/ 
 
 
-/******************* (C) COPYRIGHT 2011 STMicroelectronics *****END OF FILE****/
+/******************* (C) COPYRIGHT *****END OF FILE****/
