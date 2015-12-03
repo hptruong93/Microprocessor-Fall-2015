@@ -159,7 +159,11 @@ void protocol_go_back_1_send(uint8_t* packet, uint8_t len) {
 	}
 
 	*(packet - ID_LEN) = next_id();
-	wireless_transmission_transmit(packet - ID_LEN, len + ID_LEN);
+	uint8_t transmitted = wireless_transmission_transmit(packet - ID_LEN, len + ID_LEN);
+	if (!transmitted) {
+		state = GO_BACK_ONE_STATE_ERROR;
+		return;
+	}
 	timeout_count = MAX_TIMEOUT;
 	state = GO_BACK_ONE_SENDER_STATE_SEND;
 }

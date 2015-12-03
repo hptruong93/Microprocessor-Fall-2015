@@ -229,6 +229,10 @@ int main (void) {
 	LCD_SetFont(&Font16x24);
 	LCD_Clear(LCD_COLOR_WHITE);
 
+	//For testing
+	static uint16_t test[] = {1, 1, 2, 2, 3, 3};
+	coordinate_db_insert_entry(test, 6);
+
 	/*******************************************************
 			 Uncomment the example you want to see
 	example_1a: Simple shape draw, fill and text display
