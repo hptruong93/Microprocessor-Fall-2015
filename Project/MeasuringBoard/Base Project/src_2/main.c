@@ -1,10 +1,14 @@
 #include <stdio.h>
+#include <stdbool.h>
 
 #include "stm32f4xx.h"
 
-#include "sensors/acc/acc.h"
-#include "sensors/gyro/gyro.h"
-#include "drivers/lsm9ds1/lsm9ds1.h"
+#include "drivers/lsm9ds1.h"
+#include "modules/map.h"
+#include "modules/step.h"
+#include "modules/turn.h"
+#include "sensors/acc.h"
+#include "sensors/gyro.h"
 
 /**
  * Flag to indicate when the SysTick timer ticks.
@@ -37,7 +41,7 @@ void init() {
 int main() {
     // Initialize all system components
     init();
-
+    
     // Application loop
     while (1) {
         // Interrupts
@@ -49,17 +53,8 @@ int main() {
         }
 
 		if (has_ticked) {
-            float x = gyro_get_y();
-            if (c == 0) {
-                printf("%f %f %f %f %f %f\n", acc_get_x(), acc_get_y(),
-                    acc_get_z(), gyro_get_x(), gyro_get_y(), gyro_get_z());
-            }
-            //c = (c + 1) % 10;
-            
-            if (x < 0.1f) {
-                gyro_init();
-                gyro_update();
-            }
+            step_update(acc_get_x());
+            turn_update(gyro_get_x());
             
             has_ticked = false;
         }
