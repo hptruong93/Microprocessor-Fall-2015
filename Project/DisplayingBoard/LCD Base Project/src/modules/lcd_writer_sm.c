@@ -4,14 +4,14 @@
 #include "lcd_writer_sm.h"
 
 static const uint8_t MAX_NUM_PER_LINE = 5;
-static uint8_t messages[LCD_WRITER_LINE_COUNT][LCD_WRITER_STR_LEN];
+static char messages[LCD_WRITER_LINE_COUNT][LCD_WRITER_STR_LEN];
 static uint8_t index;
 
 #define LCD_ADDR_MSG(i) (&(messages[i][1]))
 
 void lcd_writer_display(void) {
 	for (uint8_t i = 0;i < LCD_WRITER_LINE_COUNT; i++) {
-		LCD_DisplayStringLine(LINE(i), messages[i]);
+		LCD_DisplayStringLine(LINE(i), (uint8_t*)messages[i]);
 	}
 }
 
@@ -37,8 +37,8 @@ static void display_all_numbers(uint8_t* numbers, uint8_t len) {
 		return;
 	}
 	
-	static uint8_t long_addr[LCD_WRITER_STR_LEN];
-	uint8_t* writing_addr = long_addr + 1;
+	static char long_addr[LCD_WRITER_STR_LEN];
+	char* writing_addr = long_addr + 1;
 	long_addr[0] = '>';
 
 	if (len == 1) {
@@ -46,13 +46,13 @@ static void display_all_numbers(uint8_t* numbers, uint8_t len) {
 	} else if (len == 2) {
 		sprintf(writing_addr, "%d-%d", numbers[0], numbers[1]);
 	} else if (len == 3) {
-		sprintf(writing_addr, "%d-%d", numbers[0], numbers[1], numbers[2]);
+		sprintf(writing_addr, "%d-%d-%d", numbers[0], numbers[1], numbers[2]);
 	} else if (len == 4) {
-		sprintf(writing_addr, "%d-%d-%d", numbers[0], numbers[1], numbers[2], numbers[3]);
+		sprintf(writing_addr, "%d-%d-%d-%d", numbers[0], numbers[1], numbers[2], numbers[3]);
 	} else if (len == 5) {
-		sprintf(writing_addr, "%d-%d-%d-%d", numbers[0], numbers[1], numbers[2], numbers[3], numbers[4]);
+		sprintf(writing_addr, "%d-%d-%d-%d-%d", numbers[0], numbers[1], numbers[2], numbers[3], numbers[4]);
 	} else if (len == 6) {
-		sprintf(writing_addr, "%d-%d-%d-%d-%d", numbers[0], numbers[1], numbers[2], numbers[3], numbers[4], numbers[5]);
+		sprintf(writing_addr, "%d-%d-%d-%d-%d-%d", numbers[0], numbers[1], numbers[2], numbers[3], numbers[4], numbers[5]);
 	}
 	lcd_write_message(long_addr);
 }
