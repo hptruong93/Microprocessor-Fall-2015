@@ -20,10 +20,8 @@
 #include "modules/coordinate_db.h"
 #include "modules/lcd_writer_sm.h"
 #include "modules/commands.h"
-//#include "modules/wireless_transmission_sm.h"
 #include "modules/protocol_go_back_1.h"
 
-#include "system_config.h"
 #include "my_types.h"
 
 static char long_message[40];
@@ -83,7 +81,6 @@ void example_1a(void const *argument){
 	}
 }
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-static uint8_t temp;
 static uint8_t is_drawing;
 static COORDINATE_TYPE xs[255];
 static COORDINATE_TYPE ys[255];
@@ -117,13 +114,11 @@ void draw_from_db(void) {
 	}
 
 	static coordinate rr;
-	uint8_t count = 0;
 
 	for (uint8_t i = 0; i < len; i++) {
 		coordinate_db_get_entry(i, &rr);
 		xs[i] = rr.x;
 		ys[i] = rr.y;
-		count = 1;
 	}
 
 	draw_points(1, 1, xs, ys, len);
@@ -133,14 +128,13 @@ void draw_from_db(void) {
 void example_1b(void const *argument) {
 	is_drawing = FALSE;
 	lcd_writer_clear();
-	//coordinate_db_init();
 	protocol_go_back_1_init(GO_BACK_ONE_MODE_RECEIVER);
 	
 	static uint8_t result = 0;
 	
 	while (1) {
 		memset(test, 0, 12);
-		protocol_go_back_1_periodic(&temp);
+		protocol_go_back_1_periodic();
 
 		test[0] = protocol_go_back_1_get_state();
 		test[1] = CC2500_get_state();
@@ -203,12 +197,10 @@ void example_1c(void const *argument){
 	}
 }
 
-osThreadDef(example_1a, osPriorityNormal, 1, 0);
 osThreadDef(example_1b, osPriorityNormal, 1, 0);
 osThreadDef(example_1c, osPriorityNormal, 1, 0);
 
 // ID for theads
-osThreadId example_1a_thread;
 osThreadId example_1b_thread;
 osThreadId example_1c_thread;
 
@@ -236,16 +228,7 @@ int main (void) {
 
 	LCD_SetFont(&Font16x24);
 	LCD_Clear(LCD_COLOR_WHITE);
-	
-//	static int16_t sending_coordinatess[1][9] = {
-//		{0x00, 163, 266, 173, 266, 172, 238, 90, 238},
-//		{0x00, 0, 0, 10, 0, 10, 30, -30, 30},
-//	};
-//	coordinate_db_insert_entry(sending_coordinatess[0] + 1, 8);
-//	draw_from_db();
-//	return 1;
-	
-	
+
 	/*******************************************************
 			 Uncomment the example you want to see
 	example_1a: Simple shape draw, fill and text display
