@@ -22,7 +22,14 @@
 #include "modules/commands.h"
 #include "modules/protocol_go_back_1.h"
 
+#include "utils/utils.h"
 #include "my_types.h"
+
+#define MSTEP_TO_FEET 2.5f
+#define FEET_TO_PIXEL 1.88f
+#define MSTEP_TO_PIXEL MSTEP_TO_FEET * FEET_TO_PIXEL
+#define LAB_DOOR_PX_X 163
+#define LAB_DOOR_PX_Y 266
 
 static char long_message[40];
 static uint8_t test[100];
@@ -34,6 +41,17 @@ static void delay(__IO uint32_t nCount)
   {
   }
 }
+
+void mstep_to_pixloc(int16_t* mstep_coord, uint8_t length) {
+
+	if (length % 2 != 0) return;
+
+	for (uint8_t i = 0; i < length; i+=2) {
+		mstep_coord[i] = mstep_coord[i] * MSTEP_TO_PIXEL + LAB_DOOR_PX_X;
+		mstep_coord[i+1] = LAB_DOOR_PX_Y - mstep_coord[i+1] * MSTEP_TO_PIXEL;
+	}
+}
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void example_1a(void const *argument){
@@ -171,7 +189,9 @@ void example_1b(void const *argument) {
 			}
 
 			if (is_drawing == FALSE) {
-				if (len > 0 && len % sizeof(COORDINATE_TYPE) == 0) {
+				
+				if (len > 0 && len % sizeof(COORDINATE_TYPE) == 0) {			
+					mstep_to_pixloc((COORDINATE_TYPE*) (test + 2), len / sizeof(COORDINATE_TYPE));
 					result = coordinate_db_insert_entry((COORDINATE_TYPE*) (test + 2), len / sizeof(COORDINATE_TYPE));
 				}
 			}
@@ -230,8 +250,17 @@ int main (void) {
 	LCD_Clear(LCD_COLOR_WHITE);
 
 	//For testing
-	static uint16_t test[] = {1, 1, 2, 2, 3, 3};
-	coordinate_db_insert_entry(test, 6);
+	//static uint16_t test[] = {1, 1, 2, 2, 3, 3};
+	// static int16_t test[] = {	0, 0,
+	// 							2, 0,
+	// 							2, 5,
+	// 						  -10, 5,
+	// 						  -10, 9,
+	// 						    0, 9	};
+	// mstep_to_pixloc(test, sizeof(test) / sizeof(int16_t) );
+	// coordinate_db_insert_entry(test, sizeof(test) / sizeof(int16_t) );
+	// draw_from_db();
+	//return 1;
 
 	/*******************************************************
 			 Uncomment the example you want to see

@@ -6,7 +6,7 @@
 #define COORDINATE_DB_SIZE 100
 #define COORDINATE_SIZE    2
 
-typedef uint16_t COORDINATE_TYPE;
+typedef int16_t COORDINATE_TYPE;
 
 typedef struct {
 	COORDINATE_TYPE x;

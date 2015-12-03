@@ -73,7 +73,15 @@ void transform_array(int16_t* input, uint16_t* output, uint8_t len) {
 	}
 }
 
-static const uint8_t ready = 5;
+
+static int16_t test_michael[] =  {	0, 0, 0,
+								2, 0,
+								2, 5,
+							  -10, 5,
+							  -10, 9,
+							    0, 9	};
+static const uint8_t ready = 1;
+
 int8_t *next_coordinates;
 int length;
 
@@ -95,20 +103,23 @@ void do_send(void) {
 			protocol_go_back_1_send(test + 1, COMMAND_CLEAR_LEN);
 			sending_index = 0;
 		} else if (sending_index < ready) {
-            map_terminate_processing();
-			next_coordinates = map_get_next_coordinates(&length);
-			if (next_coordinates == NULL) {
-				sending_index = ready;
-			} else {
-				printf("Length: %d\n", length);
-				printf("Coordinates to send: ");
-				for (uint8_t i = 0; i < length; i++) {
-					printf("%" PRIi8 " - ", next_coordinates[i]);
-				}	
-				printf("\n");
-				//transform_array(next_coordinates, (uint16_t*) test, length);
-				protocol_go_back_1_send(test, length);
-			}
+   //          map_terminate_processing();
+			// next_coordinates = map_get_next_coordinates(&length);
+			// if (next_coordinates == NULL) {
+			// 	sending_index = ready;
+			// } else {
+			// 	printf("Length: %d\n", length);
+			// 	printf("Coordinates to send: ");
+			// 	for (uint8_t i = 0; i < length; i++) {
+			// 		printf("%" PRIi8 " - ", next_coordinates[i]);
+			// 	}	
+			// 	printf("\n");
+			// 	//transform_array(next_coordinates, (uint16_t*) test, length);
+			// 	protocol_go_back_1_send(test, length);
+			// }
+			protocol_go_back_1_send((uint8_t*) (&test_michael[1]), 12);
+			sending_index = ready;
+
 		} else if (sending_index == ready) {
 			printf("Sending PLOT\n");
 			memcpy(test + 1, PLOT_COMMAND, COMMAND_PLOT_LEN);
