@@ -2,12 +2,12 @@
 #include <math.h>
 
 #include "stm32f4xx.h"
-#include "../../drivers/lsm9ds1/lsm9ds1.h"
+#include "../drivers/lsm9ds1.h"
 
-#include "gyro.h"
+#include "acc.h"
 
 /**
- * Gyroscope data and constants
+ * Accelerometer data and constants
  */
 
 #define AXES_COUNT 3
@@ -18,7 +18,7 @@ typedef enum {
     AXIS_Z
 } axes_type;
 
-// Calibration matrices used to calibrate the gyroscope readings. The
+// Calibration matrices used to calibrate the accelerometer readings. The
 // matrices were derived from a 3 variable least-squares approximation on test
 // data
 static float calibration_matrix[AXES_COUNT][AXES_COUNT] = {
@@ -27,20 +27,20 @@ static float calibration_matrix[AXES_COUNT][AXES_COUNT] = {
     {0, 0, 1},
 };
 static float calibration_offset_matrix[AXES_COUNT] = {
-    -350,
-    -2050,
-    650
+    40,
+    12,
+    -6
 };
 
-// Flag indicating that the gyroscope interrupt has been triggered
-bool gyro_interrupt = false;
+// Flag indicating that the accelerometer interrupt has been triggered
+bool acc_interrupt = false;
 
 /**
- * Moving average filter used by gyroscope module
+ * Moving average filter used by accelerometer module
  */
 
 // Filter depth
-#define FILTER_SIZE 50
+#define FILTER_SIZE 15
 
 // Filter for each axis
 static float filter[FILTER_SIZE][AXES_COUNT];
@@ -53,21 +53,23 @@ static int8_t filter_index[AXES_COUNT];
 static int8_t filter_occupied[AXES_COUNT];
 
 /**
- * Initializes the gyroscope.
+ * Initializes the accelerometer.
  */
-void gyro_init(void) {
-    lsm9ds1_gyro_init_type init;
-    init.data_rate = LSM9DS1_G_DATA_RATE_119;
-    init.full_scale = LSM9DS1_G_FULL_SCALE_500;
-    init.anti_aliasing_bw = LSM9DS1_G_ANTI_ALIASING_BW_MODE_1;
-    init.axes_enable = LSM9DS1_G_AXIS_ENABLE_X | LSM9DS1_G_AXIS_ENABLE_Y |
-        LSM9DS1_G_AXIS_ENABLE_Z;
-    init.data_ready_interrupt_enabled = LSM9DS1_G_DR_INTERRUPT_ENABLED;
-    lsm9ds1_gyro_init(&init);
+void acc_init(void) {
+    lsm9ds1_acc_init_type init;
+    init.data_rate = LSM9DS1_XL_DATA_RATE_119;
+    init.full_scale = LSM9DS1_XL_FULL_SCALE_4;
+    init.anti_aliasing_auto = LSM9DS1_XL_ANTI_ALIASING_BW_MANUAL;
+    init.anti_aliasing_bw = LSM9DS1_XL_ANTI_ALIASING_BW_50;
+    init.axes_enable = LSM9DS1_XL_AXIS_ENABLE_X | LSM9DS1_XL_AXIS_ENABLE_Y | 
+        LSM9DS1_XL_AXIS_ENABLE_Z;
+    init.data_ready_interrupt_enabled = LSM9DS1_XL_DR_INTERRUPT_ENABLED;
+    lsm9ds1_acc_init(&init);
 }
 
+
 /**
- * Gets a calibrated gyroscope measurement using the calibration matrices
+ * Gets a calibrated accelerometer measurement using the calibration matrices
  * for a particular axis.
  *
  * @param filter_index The filter index.
@@ -86,7 +88,7 @@ static float raw_to_calibrated(uint8_t filter_index, axes_type axis_index) {
 }
 
 /**
- * Gets a calibrated and filtered gyroscope reading using a moving average
+ * Gets a calibrated and filtered accelerometer reading using a moving average
  * filter for the specified axis index.
  *
  * @param axis_index The axis index.
@@ -112,13 +114,13 @@ static float raw_to_calibrated_filtered(axes_type axis_index) {
 }
 
 /**
- * Gyroscope update function called by external line interrupt that gets
- * and stores the latest data from the gyroscope.
+ * Accelerometer update function called by external line interrupt that gets
+ * and stores the latest data from the accelerometer.
  */
-void gyro_update(void) {
-    lsm9ds1_get_angular_velocity(&filter[filter_index[AXIS_X]][AXIS_X],
-                                 &filter[filter_index[AXIS_Y]][AXIS_Y],
-                                 &filter[filter_index[AXIS_Z]][AXIS_Z]);
+void acc_update(void) {
+    lsm9ds1_get_acceleration(&filter[filter_index[AXIS_X]][AXIS_X],
+                             &filter[filter_index[AXIS_Y]][AXIS_Y],
+                             &filter[filter_index[AXIS_Z]][AXIS_Z]);
     for (uint8_t i = 0; i < AXES_COUNT; i++) {
         if (filter_occupied[i] < FILTER_SIZE) {
             filter_occupied[i] += 1;
@@ -126,42 +128,42 @@ void gyro_update(void) {
         filter_index[i] = (filter_index[i] + 1) % FILTER_SIZE;
     }
 
-    gyro_interrupt = false;
+    acc_interrupt = false;
 }
 
 /**
- * Interrupt handler for external interrupt line 1.
+ * Interrupt handler for external interrupt line 0.
  */
-void EXTI1_IRQHandler(void) {
-    if (EXTI_GetITStatus(EXTI_Line1) != RESET) {
-        EXTI_ClearITPendingBit(EXTI_Line1);
-        gyro_interrupt = true;
+void EXTI0_IRQHandler(void) {
+    if (EXTI_GetITStatus(EXTI_Line0) != RESET) {
+        EXTI_ClearITPendingBit(EXTI_Line0);
+        acc_interrupt = true;
     }
 }
 
 /**
- * Gets the current angular velocity in the x direction. This value is filtered.
+ * Gets the current acceleration in the x direction. This value is filtered.
  *
- * @return The current angular velocity in the x direction.
+ * @return The current acceleration in the x direction.
  */
-float gyro_get_x(void) {
+float acc_get_x(void) {
     return raw_to_calibrated_filtered(AXIS_X);
 }
 
 /**
- * Gets the current angular velocity in the y direction. This value is filtered.
+ * Gets the current acceleration in the y direction. This value is filtered.
  *
- * @return The current angular velocity in the y direction.
+ * @return The current acceleration in the y direction.
  */
-float gyro_get_y(void) {
+float acc_get_y(void) {
     return raw_to_calibrated_filtered(AXIS_Y);
 }
 
 /**
- * Gets the current angular velocity in the z direction. This value is filtered.
+ * Gets the current acceleration in the z direction. This value is filtered.
  *
- * @return The current angular velocity in the z direction.
+ * @return The current acceleration in the z direction.
  */
-float gyro_get_z(void) {
+float acc_get_z(void) {
     return raw_to_calibrated_filtered(AXIS_Z);
 }
