@@ -7,8 +7,8 @@
 /********************************************************************************************************************/
 /*****************************************************Variables******************************************************/
 /********************************************************************************************************************/
-static uint8_t send_buffer[WIRELESS_TRANSMISSION_PACKET_SIZE];
-static uint8_t receive_buffer[WIRELESS_TRANSMISSION_PACKET_SIZE];
+static uint8_t send_buffer[2*WIRELESS_TRANSMISSION_PACKET_SIZE];
+static uint8_t receive_buffer[2*WIRELESS_TRANSMISSION_PACKET_SIZE];
 
 static uint8_t operation_state;
 static uint8_t sending_len;
@@ -18,7 +18,7 @@ static uint8_t sending_index, receiving_index;
 /*****************************************************Typedef and constants******************************************/
 /********************************************************************************************************************/
 const uint8_t START_PACKET = 255;
-const uint8_t END_PACKET = 254;
+const uint8_t END_PACKET = START_PACKET - 1;
 
 /**
  * Since no byte in the packet can be START_PACKET or END_PACKET, we have to replace the checksum with some other values
@@ -30,6 +30,7 @@ static const uint8_t COLLISION_CHECKSUM_REPLACEMENT_2 = END_PACKET - 2;
 static const uint8_t COLLISION_CHECKSUM_REPLACEMENT_3 = END_PACKET - 3;
 static const uint8_t COLLISION_CHECKSUM_REPLACEMENT_4 = END_PACKET - 4;
 
+//Length and index constants
 static const uint8_t START_SIGNAL_LEN = 3;
 static const uint8_t LEN_LEN = 1;
 static const uint8_t FULL_HEADER_LEN = START_SIGNAL_LEN + LEN_LEN;
@@ -39,6 +40,15 @@ static const uint8_t CHECKSUM_LEN = 3;
 
 static const uint8_t MAX_DATA_SIZE = WIRELESS_TRANSMISSION_PACKET_SIZE - FULL_HEADER_LEN - CHECKSUM_LEN - END_SIGNAL_LEN;
 
+//Codec constant declarations
+static const uint8_t CODEC_ESCAPE_BYTE = 0x09;
+
+static const uint8_t CODEC_ESCAPED_CODEC_ESCAPE_BYTE = CODEC_ESCAPE_BYTE;
+static const uint8_t CODEC_ESCAPED_PAD_BYTE = 0x10;
+static const uint8_t CODEC_ESCAPED_START_PACKET = 0x11;
+static const uint8_t CODEC_ESCAPED_END_PACKET = 0x12;
+
+/********************************************************************************************************************/
 /**
  * Check sum is CHECKSUM_LEN bytes length. It contains the following bytes in order
  * 1) xor of all data bytes in the packet
@@ -53,12 +63,12 @@ typedef struct {
 
 
 /********************************************************************************************************************/
-/******************************************Forward declaration*******************************************************/
+/***************************************** Forward declaration ******************************************************/
 /********************************************************************************************************************/
 uint8_t wireless_transmission_protocol_checksum(uint8_t* raw_packet, uint8_t* check_sum, uint8_t packet_len);
 
 /********************************************************************************************************************/
-/******************************************Initialization and packet logic ******************************************/
+/***************************************** Initialization and packet encapsulation logic ****************************/
 /********************************************************************************************************************/
 /**
  * Initialize SFM of this module
@@ -173,6 +183,103 @@ uint8_t wireless_transmission_protocol_checksum(uint8_t* raw_packet, uint8_t* ch
 	return memcmp(check_sum, &expecting, CHECKSUM_LEN) == 0;
 }
 
+
+/********************************************************************************************************************/
+/****************************************** Codec section ***********************************************************/
+/********************************************************************************************************************/
+/**
+ * Pad a packet with null byte.
+ * This will append additional bytes at the end of the buffer. Therefore it is the responsibility of the client to ensure
+ * that there is enough space in the input buffer
+ *
+ * @param src	Pointer to the source buffer where input values are read
+ * @param len	Length of the source buffer
+ *
+ * @return number of bytes in the buffer after padding (padded length)
+ */
+static uint16_t wireless_transmission_codec_pad(uint8_t* src, uint16_t len) {
+	src[len] = CODEC_ESCAPE_BYTE;
+	src[len + 1] = CODEC_ESCAPED_PAD_BYTE;
+
+	return len + 2;
+}
+
+/**
+ * Encode a packet
+ *
+ * @param dst	Pointer to the destination buffer where result is written to
+ * @param src	Pointer to the source buffer where input values are read
+ * @param len	Length of the source buffer
+ *
+ * @return number of bytes in the destination buffer (encoded length)
+ */
+static uint16_t wireless_transmission_encode(uint8_t* dst, uint8_t* src, uint16_t len) {
+	uint16_t index = 0;
+
+	for (uint16_t i = 0; i < len; i++) {
+		uint8_t current = src[i];
+
+		if (current == CODEC_ESCAPE_BYTE) {
+			dst[index++] = CODEC_ESCAPE_BYTE;
+			dst[index++] = CODEC_ESCAPED_CODEC_ESCAPE_BYTE;
+		} else if (current == START_PACKET) {
+			dst[index++] = CODEC_ESCAPE_BYTE;
+			dst[index++] = CODEC_ESCAPED_START_PACKET;
+		} else if (current == END_PACKET) {
+			dst[index++] = CODEC_ESCAPE_BYTE;
+			dst[index++] = CODEC_ESCAPED_END_PACKET;
+		} else {
+			dst[index++] = current;
+		}
+	}
+
+	return index;
+}
+
+/**
+ * Decode a packet from an encoded packet
+ *
+ * @param dst	Pointer to the destination buffer where result is written to
+ * @param src	Pointer to the source buffer where input values are read
+ * @param len	Length of the source buffer
+ *
+ * @return number of bytes in the destination buffer (decoded length)
+ */
+static uint16_t wireless_transmission_decode(uint8_t* dst, uint8_t* src, uint16_t len) {
+	uint16_t index = 0, is_escaped = FALSE;
+
+	for (uint16_t i = 0; i < len; i++) {
+		uint8_t current = src[i];
+
+		if (is_escaped) {//Escaped mode
+			if (current == CODEC_ESCAPED_CODEC_ESCAPE_BYTE) {
+				dst[index++] = CODEC_ESCAPE_BYTE;
+			} else if (current == CODEC_ESCAPED_PAD_BYTE) {
+				//Intentionally left blank since padding element should be ignored
+			} else if (current == CODEC_ESCAPED_START_PACKET) {
+				dst[index++] = START_PACKET;
+			} else if (current == CODEC_ESCAPED_END_PACKET) {
+				dst[index++] = END_PACKET;
+			} else {//Invalid escaped sequence. Unable to decode
+				return 0;
+			}
+
+			is_escaped = FALSE;
+		} else {//Regular mode
+			if (current == CODEC_ESCAPE_BYTE) {
+				is_escaped = TRUE;
+			} else {
+				dst[index++] = current;
+			}
+		}
+	}
+
+	return index;
+}
+
+/********************************************************************************************************************/
+/***************************************** Main API *****************************************************************/
+/********************************************************************************************************************/
 /**
  * Retrieve the received packet information
  * If the packet was not successfully received, status will not be WIRELESS_TRANSMISSION_VERIFY_OK.
@@ -215,13 +322,16 @@ void wireless_transmission_get_received_packet(wireless_received_packet* receive
 		return;
 	}
 
-	memcpy(received_packet->buffer, receive_buffer + DATA_INDEX, receiving_index - DATA_INDEX - CHECKSUM_LEN);
+	uint16_t decoded_len = wireless_transmission_decode(received_packet->buffer, receive_buffer + DATA_INDEX, receiving_index - DATA_INDEX - CHECKSUM_LEN);
+	if (decoded_len == 0) {
+		received_packet->status = WIRELESS_TRANSMISSION_VERIFY_INVALID_CODEC;
+		return;
+	}
+
+	received_packet->len = (uint8_t) decoded_len;
 	received_packet->status = WIRELESS_TRANSMISSION_VERIFY_OK;
 }
 
-/********************************************************************************************************************/
-/******************************************Main API******************************************************************/
-/********************************************************************************************************************/
 /**
  * Tell SFM to transmit data wirelessly. This method will encapsulate the data with appropriate header and generate checksum.
  *
@@ -239,7 +349,20 @@ uint8_t wireless_transmission_transmit(uint8_t* packet, uint8_t len) {
 		return FALSE;
 	}
 
-	memcpy(send_buffer + FULL_HEADER_LEN, packet, len);
+	uint16_t encoded_len = wireless_transmission_encode(send_buffer + FULL_HEADER_LEN, packet, len);
+	if (encoded_len == 0) {
+		return FALSE;
+	}
+
+	while (encoded_len == END_PACKET || encoded_len == START_PACKET) {
+		encoded_len = wireless_transmission_codec_pad(send_buffer + FULL_HEADER_LEN, encoded_len);
+	}
+
+	if (encoded_len > MAX_DATA_SIZE) {
+		return FALSE;
+	} else {
+		len = (uint8_t) encoded_len;
+	}
 	
 	uint8_t new_len = wireless_transmission_protocol_encapsulate(send_buffer + FULL_HEADER_LEN, len);
 	if (new_len == 0) {

@@ -146,16 +146,16 @@ void init() {
 	protocol_go_back_1_init(GO_BACK_ONE_MODE_SENDER);
 	
     // Initialize accelerometer
-    acc_init();
-	// Initialize gyroscope
-    gyro_init();
-    // Initialize map
-    map_init();
+//    acc_init();
+//	// Initialize gyroscope
+//    gyro_init();
+//    // Initialize map
+//    map_init();
 
-    // Update accelerometer once manually to enable interrupt
-    acc_update();
-	// Update gyroscope once manually to enable interrupt
-	gyro_update();
+//    // Update accelerometer once manually to enable interrupt
+//    acc_update();
+//	// Update gyroscope once manually to enable interrupt
+//	gyro_update();
 }
 
 /**
@@ -167,19 +167,19 @@ int main() {
     
     // Application loop
     while (1) {
-        // Interrupts
-        if (acc_interrupt) {
-            acc_update();
-        }
-		if (gyro_interrupt) {
-            gyro_update();
-        }
+//        // Interrupts
+//        if (acc_interrupt) {
+//            acc_update();
+//        }
+//		if (gyro_interrupt) {
+//            gyro_update();
+//        }
 
 		if (has_ticked) {
 			led_rotation_rotate_leds();
 
-            step_update(acc_get_x());
-            turn_update(gyro_get_x());
+//            step_update(acc_get_x());
+//            turn_update(gyro_get_x());
             
 			static uint8_t count = 0;
 			count = (count + 1) % do_wait;
