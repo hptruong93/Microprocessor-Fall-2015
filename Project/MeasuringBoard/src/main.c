@@ -74,12 +74,22 @@ void transform_array(int16_t* input, uint16_t* output, uint8_t len) {
 }
 
 
-static int16_t test_michael[] =  {	0, 0, 0,
-								2, 0,
-								2, 5,
-							  -10, 5,
-							  -10, 9,
-							    0, 9	};
+static int16_t test_michael[] =  {	0,
+                                    0,  0,
+                                    2,  0,
+                                    2,  5,
+                                  -10,  5,
+                                  -10, 12,
+                                    0, 12,
+                                    2, 14,
+                                    2, 36,
+                                    5, 36,
+                                    5, 23,
+                                    2, 23,
+                                    1, 22,
+                                    1,  0,
+                                   -3,  0,
+                                   -3, -2		};
 static const uint8_t ready = 1;
 
 int8_t *next_coordinates;
@@ -117,7 +127,7 @@ void do_send(void) {
 			// 	//transform_array(next_coordinates, (uint16_t*) test, length);
 			// 	protocol_go_back_1_send(test, length);
 			// }
-			protocol_go_back_1_send((uint8_t*) (&test_michael[1]), 12);
+			protocol_go_back_1_send((uint8_t*) (&test_michael[1]), 15 * 2 * 2);
 			sending_index = ready;
 
 		} else if (sending_index == ready) {
