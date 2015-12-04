@@ -10,7 +10,6 @@
       <TargetName>Target 1</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
-      <pCCUsed>5060020::V5.06 (build 20)::ARMCC</pCCUsed>
       <TargetOption>
         <TargetCommonOption>
           <Device>STM32F429ZI</Device>
@@ -230,7 +229,6 @@
             <useUlib>1</useUlib>
             <EndSel>0</EndSel>
             <uLtcg>0</uLtcg>
-            <nSecure>0</nSecure>
             <RoSelD>3</RoSelD>
             <RwSelD>3</RwSelD>
             <CodeSel>0</CodeSel>
@@ -367,8 +365,6 @@
             <useXO>0</useXO>
             <v6Lang>0</v6Lang>
             <v6LangP>0</v6LangP>
-            <vShortEn>0</vShortEn>
-            <vShortWch>0</vShortWch>
             <VariousControls>
               <MiscControls>--c99</MiscControls>
               <Define>HSE_VALUE=8000000 USE_STDPERIPH_DRIVER</Define>
@@ -457,16 +453,6 @@
               <FilePath>.\src\stm32f429i_discovery_l3gd20.c</FilePath>
             </File>
             <File>
-              <FileName>system_config.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\src\system_config.c</FilePath>
-            </File>
-            <File>
-              <FileName>system_config.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\src\system_config.h</FilePath>
-            </File>
-            <File>
               <FileName>big_integer.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\src\utils\big_integer.c</FilePath>
@@ -517,66 +503,6 @@
               <FilePath>.\src\utils\utils.h</FilePath>
             </File>
             <File>
-              <FileName>accelerometer_sm.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\src\modules\accelerometer_sm.c</FilePath>
-            </File>
-            <File>
-              <FileName>accelerometer_sm.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\src\modules\accelerometer_sm.h</FilePath>
-            </File>
-            <File>
-              <FileName>keypad_input_sm.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\src\modules\keypad_input_sm.c</FilePath>
-            </File>
-            <File>
-              <FileName>keypad_input_sm.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\src\modules\keypad_input_sm.h</FilePath>
-            </File>
-            <File>
-              <FileName>led_rotation_sm.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\src\modules\led_rotation_sm.c</FilePath>
-            </File>
-            <File>
-              <FileName>led_rotation_sm.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\src\modules\led_rotation_sm.h</FilePath>
-            </File>
-            <File>
-              <FileName>seven_segments_sm.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\src\modules\seven_segments_sm.c</FilePath>
-            </File>
-            <File>
-              <FileName>seven_segments_sm.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\src\modules\seven_segments_sm.h</FilePath>
-            </File>
-            <File>
-              <FileName>temperature_sensor_sm.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\src\modules\temperature_sensor_sm.c</FilePath>
-            </File>
-            <File>
-              <FileName>temperature_sensor_sm.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\src\modules\temperature_sensor_sm.h</FilePath>
-            </File>
-            <File>
-              <FileName>accelerometer_interface.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\src\interfaces\accelerometer_interface.c</FilePath>
-            </File>
-            <File>
-              <FileName>accelerometer_interface.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\src\interfaces\accelerometer_interface.h</FilePath>
-            </File>
-            <File>
               <FileName>cc2500.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\src\interfaces\cc2500.c</FilePath>
@@ -592,64 +518,49 @@
               <FilePath>.\src\interfaces\cc2500_settings.h</FilePath>
             </File>
             <File>
-              <FileName>keypad_interface.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\src\interfaces\keypad_interface.c</FilePath>
-            </File>
-            <File>
-              <FileName>keypad_interface.h</FileName>
+              <FileName>commands.h</FileName>
               <FileType>5</FileType>
-              <FilePath>.\src\interfaces\keypad_interface.h</FilePath>
+              <FilePath>.\src\modules\commands.h</FilePath>
             </File>
             <File>
-              <FileName>led_interface.c</FileName>
+              <FileName>coordinate_db.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\src\interfaces\led_interface.c</FilePath>
+              <FilePath>.\src\modules\coordinate_db.c</FilePath>
             </File>
             <File>
-              <FileName>led_interface.h</FileName>
+              <FileName>coordinate_db.h</FileName>
               <FileType>5</FileType>
-              <FilePath>.\src\interfaces\led_interface.h</FilePath>
+              <FilePath>.\src\modules\coordinate_db.h</FilePath>
             </File>
             <File>
-              <FileName>lsm9ds1.c</FileName>
+              <FileName>lcd_writer_sm.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\src\interfaces\lsm9ds1.c</FilePath>
+              <FilePath>.\src\modules\lcd_writer_sm.c</FilePath>
             </File>
             <File>
-              <FileName>lsm9ds1.h</FileName>
+              <FileName>lcd_writer_sm.h</FileName>
               <FileType>5</FileType>
-              <FilePath>.\src\interfaces\lsm9ds1.h</FilePath>
+              <FilePath>.\src\modules\lcd_writer_sm.h</FilePath>
             </File>
             <File>
-              <FileName>motor_interface.c</FileName>
+              <FileName>protocol_go_back_1.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\src\interfaces\motor_interface.c</FilePath>
+              <FilePath>.\src\modules\protocol_go_back_1.c</FilePath>
             </File>
             <File>
-              <FileName>motor_interface.h</FileName>
+              <FileName>protocol_go_back_1.h</FileName>
               <FileType>5</FileType>
-              <FilePath>.\src\interfaces\motor_interface.h</FilePath>
+              <FilePath>.\src\modules\protocol_go_back_1.h</FilePath>
             </File>
             <File>
-              <FileName>seven_segments_interface.c</FileName>
+              <FileName>wireless_transmission_sm.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\src\interfaces\seven_segments_interface.c</FilePath>
+              <FilePath>.\src\modules\wireless_transmission_sm.c</FilePath>
             </File>
             <File>
-              <FileName>seven_segments_interface.h</FileName>
+              <FileName>wireless_transmission_sm.h</FileName>
               <FileType>5</FileType>
-              <FilePath>.\src\interfaces\seven_segments_interface.h</FilePath>
-            </File>
-            <File>
-              <FileName>temperature_sensor_interface.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\src\interfaces\temperature_sensor_interface.c</FilePath>
-            </File>
-            <File>
-              <FileName>temperature_sensor_interface.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\src\interfaces\temperature_sensor_interface.h</FilePath>
+              <FilePath>.\src\modules\wireless_transmission_sm.h</FilePath>
             </File>
           </Files>
         </Group>
