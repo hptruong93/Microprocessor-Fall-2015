@@ -426,6 +426,11 @@
               <FileType>1</FileType>
               <FilePath>.\src\fputc_debug.c</FilePath>
             </File>
+            <File>
+              <FileName>my_types.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\src\my_types.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -440,6 +445,21 @@
               <FileName>lsm9ds1.h</FileName>
               <FileType>5</FileType>
               <FilePath>.\src\drivers\lsm9ds1.h</FilePath>
+            </File>
+            <File>
+              <FileName>cc2500.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\drivers\cc2500.c</FilePath>
+            </File>
+            <File>
+              <FileName>cc2500.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\src\drivers\cc2500.h</FilePath>
+            </File>
+            <File>
+              <FileName>cc2500_settings.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\src\drivers\cc2500_settings.h</FilePath>
             </File>
           </Files>
         </Group>
@@ -476,66 +496,6 @@
               <FileType>5</FileType>
               <FilePath>.\src\modules\turn.h</FilePath>
             </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>sensors</GroupName>
-          <Files>
-            <File>
-              <FileName>acc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\src\sensors\acc.c</FilePath>
-            </File>
-            <File>
-              <FileName>acc.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\src\sensors\acc.h</FilePath>
-            </File>
-            <File>
-              <FileName>gyro.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\src\sensors\gyro.c</FilePath>
-            </File>
-            <File>
-              <FileName>gyro.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\src\sensors\gyro.h</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>New Group</GroupName>
-          <Files>
-            <File>
-              <FileName>my_types.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\src\my_types.h</FilePath>
-            </File>
-            <File>
-              <FileName>cc2500.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\src\interfaces\cc2500.c</FilePath>
-            </File>
-            <File>
-              <FileName>cc2500.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\src\interfaces\cc2500.h</FilePath>
-            </File>
-            <File>
-              <FileName>cc2500_settings.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\src\interfaces\cc2500_settings.h</FilePath>
-            </File>
-            <File>
-              <FileName>led_interface.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\src\interfaces\led_interface.c</FilePath>
-            </File>
-            <File>
-              <FileName>led_interface.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\src\interfaces\led_interface.h</FilePath>
-            </File>
             <File>
               <FileName>commands.h</FileName>
               <FileType>5</FileType>
@@ -571,6 +531,46 @@
               <FileType>5</FileType>
               <FilePath>.\src\modules\wireless_transmission_sm.h</FilePath>
             </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>interfaces</GroupName>
+          <Files>
+            <File>
+              <FileName>acc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\interfaces\acc.c</FilePath>
+            </File>
+            <File>
+              <FileName>acc.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\src\interfaces\acc.h</FilePath>
+            </File>
+            <File>
+              <FileName>gyro.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\interfaces\gyro.c</FilePath>
+            </File>
+            <File>
+              <FileName>gyro.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\src\interfaces\gyro.h</FilePath>
+            </File>
+            <File>
+              <FileName>led_interface.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\interfaces\led_interface.c</FilePath>
+            </File>
+            <File>
+              <FileName>led_interface.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\src\interfaces\led_interface.h</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>other</GroupName>
+          <Files>
             <File>
               <FileName>utils.c</FileName>
               <FileType>1</FileType>

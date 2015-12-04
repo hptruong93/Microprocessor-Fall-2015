@@ -1,6 +1,6 @@
 #include <string.h>
 #include "wireless_transmission_sm.h"
-#include "interfaces/cc2500.h"
+#include "drivers/cc2500.h"
 #include "utils/utils.h"
 #include "my_types.h"
 

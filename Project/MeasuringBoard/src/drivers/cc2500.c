@@ -1,5 +1,5 @@
 #include "cc2500.h"
-#include "interfaces/cc2500_settings.h"
+#include "cc2500_settings.h"
 
 
 __IO uint32_t  CC2500Timeout = CC2500_FLAG_TIMEOUT;   

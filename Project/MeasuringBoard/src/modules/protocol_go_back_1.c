@@ -1,8 +1,10 @@
 #include <string.h>
+#include <stdio.h>
 #include "protocol_go_back_1.h"
 
 #include "modules/wireless_transmission_sm.h"
 #include "my_types.h"
+#include "../utils/utils.h"
 
 static const uint8_t MAX_TIMEOUT = 100;
 static const uint8_t MIN_ACK_COUNT = 3;

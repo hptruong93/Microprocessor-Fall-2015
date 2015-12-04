@@ -1,7 +1,7 @@
 #ifndef CC2500_SETTINGS_H
 #define CC2500_SETTINGS_H
 
-#include "interfaces/cc2500.h"
+#include "cc2500.h"
 
 /**
   * @brief  CC2500 Register settings
