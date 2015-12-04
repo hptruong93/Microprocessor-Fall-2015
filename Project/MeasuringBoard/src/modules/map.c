@@ -4,7 +4,7 @@
 #include <stdbool.h>
 
 #define MAX_COORDINATES 1000
-#define COORDINATES_ARRAY_SIZE MAX_COORDINATES * 2 + 1
+#define COORDINATES_ARRAY_SIZE MAX_COORDINATES * 2
 
 typedef enum orientation {
     POS_X,
@@ -20,9 +20,9 @@ static int right_step_count = 0;
 static int left_turn_count = 0;
 static int right_turn_count = 0;
 
-static int8_t coordinates[COORDINATES_ARRAY_SIZE];
-static int coordinates_index = 3;
-static int retrieved_coordinates_index = 1;
+static int16_t coordinates[COORDINATES_ARRAY_SIZE];
+static int coordinates_index = 2;
+static int retrieved_coordinates_index = 0;
 
 static bool terminate_processing = false;
 
@@ -114,21 +114,23 @@ void map_turn_right(void) {
     }
 }
 
-int8_t *map_get_next_coordinates(int *length) {
-	if (retrieved_coordinates_index >= COORDINATES_ARRAY_SIZE) {
-		return NULL;
+uint8_t map_get_next_coordinates(int16_t *buf, uint16_t *length, 
+    uint16_t max_length) {
+	if (retrieved_coordinates_index >= coordinates_index) {
+		return 0;
 	}
 	
-	int8_t *next_coordinates = &coordinates[retrieved_coordinates_index];
-	if (coordinates_index - retrieved_coordinates_index < 50) {
+	int16_t *next_coordinates = &coordinates[retrieved_coordinates_index];
+	if (coordinates_index - retrieved_coordinates_index < max_length) {
 		*length = coordinates_index - retrieved_coordinates_index;
 	} else {
-		*length = 50;
+		*length = max_length;
 	}
+    memcpy(buf, next_coordinates, (*length) * sizeof(int16_t));
 	
-    retrieved_coordinates_index += 50;
+    retrieved_coordinates_index += max_length;
 	
-    return next_coordinates;
+    return 1;
 }
 
 void map_terminate_processing(void) {
