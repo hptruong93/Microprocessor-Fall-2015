@@ -42,6 +42,18 @@ static void delay(__IO uint32_t nCount)
   }
 }
 
+/**
+ *	Convert an array of coordinates in units of msteps (Michael-steps) to
+ *	pixel locations to display on the LCD map. Conversion happens in place to
+ *	save memory.
+ *
+ *	@author 			Jacob Barnett
+ *
+ *	@param mstep_coord 	array of coordinates in michael seps to convert
+ *	@param length 		length of the array to be converted
+ *
+ *	@return void
+ */
 void mstep_to_pixloc(int16_t* mstep_coord, uint8_t length) {
 
 	if (length % 2 != 0) return;
@@ -56,6 +68,19 @@ static uint8_t is_drawing;
 static COORDINATE_TYPE xs[255];
 static COORDINATE_TYPE ys[255];
 
+/**
+ *	Draw an array of points on the screen, taking into account a scaling factor.
+ *
+ *	@author				Jacob Barnett
+ *
+ *	@param scale_x		scaling factor for the x direction
+ *	@param scale_y		scaling factor for the y direction
+ *	@param xs			list of x coordinates
+ *	@param ys			list of y coordinates
+ *	@param length		length of each of the lists of coordinates
+ *
+ *	@return void
+ */
 void draw_points(uint16_t scale_x, uint16_t scale_y, COORDINATE_TYPE* xs, COORDINATE_TYPE* ys, uint16_t length) {
 
 	float prev_pixels_x = (float)xs[0] / scale_x;
@@ -74,6 +99,14 @@ void draw_points(uint16_t scale_x, uint16_t scale_y, COORDINATE_TYPE* xs, COORDI
 	}
 }
 
+/**
+ *	Draw the list of coordinates currently in the database
+ *
+ *	@author HP Truong, Jacob Barnett
+ *
+ *	@param void
+ *	@return void 
+ */
 void draw_from_db(void) {
 	LCD_Clear(LCD_COLOR_WHITE);
 	LCD_SetTextColor(LCD_COLOR_RED);
@@ -84,18 +117,35 @@ void draw_from_db(void) {
 		return;
 	}
 
-	static coordinate rr;
+	static coordinate next_coord;
 
 	for (uint8_t i = 0; i < len; i++) {
-		coordinate_db_get_entry(i, &rr);
-		xs[i] = rr.x;
-		ys[i] = rr.y;
+		coordinate_db_get_entry(i, &next_coord);
+		xs[i] = next_coord.x;
+		ys[i] = next_coord.y;
 	}
 
 	draw_points(1, 1, xs, ys, len);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/**
+ *	Receiving and plotting thread:
+ *	Can receive two types of commands from the measuring board along with
+ *	coordinate data. A message will either be a command or data. Commands are
+ *	as follows:
+ *
+ *	I. Clear	
+ *	clears the database of all stored values 	
+ *
+ *	II. Plot and terminate
+ *	plots database values on the LCD and terminates all other threads	
+ *
+ *	@author HP Truong, Jacob Barnett
+ *
+ *	@param argument			any arguments to be passed to the thread
+ *	@return void
+ */
 void receive_and_plot(void const *argument) {
 	is_drawing = FALSE;
 	lcd_writer_clear();
@@ -157,6 +207,15 @@ void receive_and_plot(void const *argument) {
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/**
+ *	Printing debug to the LCD thread:
+ *	Can print text to the LCD for debugging and informational purposes
+ *
+ *	@author HP Truong, Jacob Barnett
+ *
+ *	@param argument 		any arguments to be passed to the thread
+ *	@return void
+ */
 void print_lcd_debug(void const *argument){
 	while(1){
 		if (is_drawing == FALSE) {
@@ -178,7 +237,13 @@ osThreadId receive_and_plot_thread;
 osThreadId print_lcd_debug_thread;
 
 /*
- * main: initialize and start the system
+ *	Main function: initializes all system values and components, then starts
+ *	operation of the two threads.
+ *
+ *	@author HP Truong, Jacob Barnett
+ *
+ *	@param void
+ *	@return void
  */
 int main (void) {
 	CC2500_LowLevel_Init();
