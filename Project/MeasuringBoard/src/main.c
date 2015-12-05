@@ -53,7 +53,19 @@ static int16_t next_coordinates[MAX_COORDINATES_TO_SEND * 2 + 1];
  */
 static uint8_t wireless_wait = 30;
 
-void do_send(void) {
+/**
+ * Wireless sending and receiving section. This follows the following steps:
+ * 1) Send CLEAR command to LCD board. Wait for ACK
+ * 2) Once ACK for the CLEAR command is received, turn off step recognition,
+ * 3) Transmit all recorded coordinates to the LCD board.
+ * 4) Send PLOT command to LCD board.
+ * 5) Once ACK for PLOT command has been received, go back to 1
+ *
+ * @param void
+ *
+ * @return void
+ */
+void wireless_loop(void) {
 	protocol_go_back_1_periodic();
 
 	static uint8_t prev = 0;
@@ -167,7 +179,7 @@ int main() {
 			static uint8_t count = 0;
 			count = (count + 1) % wireless_wait;
 			if (count == 0) {
-				do_send();
+				wireless_loop();
 			}
 							
             has_ticked = false;
