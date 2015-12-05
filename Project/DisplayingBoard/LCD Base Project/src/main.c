@@ -47,7 +47,7 @@
 #define LAB_DOOR_PX_Y 266
 
 static char long_message[40];
-static uint8_t test[100];
+static uint8_t temp_buffer[100];
 
 static void delay(__IO uint32_t nCount)
 {
@@ -169,15 +169,15 @@ void receive_and_plot(void const *argument) {
 	static uint8_t result = 0;
 	
 	while (1) {
-		memset(test, 0, 12);
+		memset(temp_buffer, 0, 12);
 		protocol_go_back_1_periodic();
 
-		test[0] = protocol_go_back_1_get_state();
-		test[1] = CC2500_get_state();
+		temp_buffer[0] = protocol_go_back_1_get_state();
+		temp_buffer[1] = CC2500_get_state();
 		
-		uint8_t len = protocol_go_back_1_get_received_data(test + 2);
+		uint8_t len = protocol_go_back_1_get_received_data(temp_buffer + 2);
 		lcd_writer_clear();
-		lcd_writer_print_buffer(test, 14);
+		lcd_writer_print_buffer(temp_buffer, 14);
 		sprintf(long_message, "%d", 4);
 		lcd_write_message(long_message);
 		sprintf(long_message, "drawing = %d", is_drawing);
@@ -188,9 +188,9 @@ void receive_and_plot(void const *argument) {
 		lcd_write_message(long_message);
 		
 		
-		if (test[0] == GO_BACK_ONE_RECEIVER_STATE_IDLE) {
+		if (temp_buffer[0] == GO_BACK_ONE_RECEIVER_STATE_IDLE) {
 			if (len == COMMAND_CLEAR_LEN) {
-				if (memcmp(test + 2, CLEAR_COMMAND, len) == 0) {
+				if (memcmp(temp_buffer + 2, CLEAR_COMMAND, len) == 0) {
 					is_drawing = FALSE;
 					coordinate_db_clear();
 					protocol_go_back_1_init(GO_BACK_ONE_MODE_RECEIVER);
@@ -199,7 +199,7 @@ void receive_and_plot(void const *argument) {
 			}
 
 			if (len == COMMAND_PLOT_LEN) {
-				if (memcmp(test + 2, PLOT_COMMAND, len) == 0) {
+				if (memcmp(temp_buffer + 2, PLOT_COMMAND, len) == 0) {
 					is_drawing = TRUE;
 					draw_from_db();
 					break;
@@ -209,8 +209,8 @@ void receive_and_plot(void const *argument) {
 			if (is_drawing == FALSE) {
 				
 				if (len > 0 && len % sizeof(COORDINATE_TYPE) == 0) {			
-					mstep_to_pixloc((COORDINATE_TYPE*) (test + 2), len / sizeof(COORDINATE_TYPE));
-					result = coordinate_db_insert_entry((COORDINATE_TYPE*) (test + 2), len / sizeof(COORDINATE_TYPE));
+					mstep_to_pixloc((COORDINATE_TYPE*) (temp_buffer + 2), len / sizeof(COORDINATE_TYPE));
+					result = coordinate_db_insert_entry((COORDINATE_TYPE*) (temp_buffer + 2), len / sizeof(COORDINATE_TYPE));
 				}
 			}
 
