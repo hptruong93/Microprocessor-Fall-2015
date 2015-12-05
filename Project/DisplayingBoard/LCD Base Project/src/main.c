@@ -175,6 +175,7 @@ void receive_and_plot(void const *argument) {
 		temp_buffer[0] = protocol_go_back_1_get_state();
 		temp_buffer[1] = CC2500_get_state();
 		
+		//Debug prints
 		uint8_t len = protocol_go_back_1_get_received_data(temp_buffer + 2);
 		lcd_writer_clear();
 		lcd_writer_print_buffer(temp_buffer, 14);
@@ -186,6 +187,7 @@ void receive_and_plot(void const *argument) {
 		lcd_write_message(long_message);
 		sprintf(long_message, "result is %d", result);
 		lcd_write_message(long_message);
+		//End debug prints
 		
 		
 		if (temp_buffer[0] == GO_BACK_ONE_RECEIVER_STATE_IDLE) {

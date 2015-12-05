@@ -9,12 +9,26 @@ static uint8_t index;
 
 #define LCD_ADDR_MSG(i) (&(messages[i][1]))
 
+/**
+ * Display all messages to LCD screen
+ *
+ * @param void
+ *
+ * @return void
+ */
 void lcd_writer_display(void) {
 	for (uint8_t i = 0;i < LCD_WRITER_LINE_COUNT; i++) {
 		LCD_DisplayStringLine(LINE(i), (uint8_t*)messages[i]);
 	}
 }
 
+/**
+ * Increment the line index
+ *
+ * @param void
+ *
+ * @return void
+ */
 static void increment_index(void) {
 	if (messages[index][0] != '\0') {
 		messages[index][0] = ' ';	
@@ -26,12 +40,27 @@ static void increment_index(void) {
 	}
 }
 
+/**
+ * Write a message on the next line of LCD
+ *
+ * @param message 	pointer to the null terminated message string
+ *
+ * @return void
+ */
 void lcd_write_message(char* message) {
 	increment_index();
 	messages[index][0] = '*';
 	strcpy(LCD_ADDR_MSG(index), message);
 }
 
+/**
+ * Display all numbers in a buffer to the next line on LCD
+ *
+ * @param numbers 	pointer to the buffer containing the number
+ * @param len 		length of the buffer
+ *
+ * @return void
+ */
 static void display_all_numbers(uint8_t* numbers, uint8_t len) {
 	if (len == 0) {
 		return;
@@ -57,6 +86,14 @@ static void display_all_numbers(uint8_t* numbers, uint8_t len) {
 	lcd_write_message(long_addr);
 }
 
+/**
+ * Display a byte buffer on LCD. Can span multiple lines. Max 4 numbers per line
+ *
+ * @param buffers 	pointer to the buffer containing the numbers
+ * @param len 		length of the buffer
+ *
+ * @return void
+ */
 void lcd_writer_print_buffer(uint8_t* buffer, uint8_t len) {
 	if (len == 0) {
 		return;
@@ -83,6 +120,13 @@ void lcd_writer_print_buffer(uint8_t* buffer, uint8_t len) {
 	}
 }
 
+/**
+ * Clear all messages on LCD
+ *
+ * @param void
+ *
+ * @return void
+ */
 void lcd_writer_clear(void) {
 	index = LCD_WRITER_LINE_COUNT - 1;
 	for (uint8_t i = 0; i < LCD_WRITER_LINE_COUNT; i++) {
