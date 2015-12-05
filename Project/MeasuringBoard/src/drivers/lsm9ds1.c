@@ -218,6 +218,10 @@ void lsm9ds1_acc_init(lsm9ds1_acc_init_type *init)
     	buf = (uint8_t) (init->data_ready_interrupt_enabled);
     	lsm9ds1_write(&buf, LSM9DS1_INT1_CTRL, 1);
     }
+    
+    // Write bypass to LSM9DS1_FIFO_CTRL
+    buf = (uint8_t) 0;
+	lsm9ds1_write(&buf, LSM9DS1_FIFO_CTRL, 1);
 }
 
 /**

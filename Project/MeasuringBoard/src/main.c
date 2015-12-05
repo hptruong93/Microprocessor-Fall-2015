@@ -6,32 +6,52 @@
 
 #include "stm32f4xx.h"
 
+#include "drivers/cc2500.h"
 #include "drivers/lsm9ds1.h"
+#include "modules/commands.h"
+#include "modules/led_rotation_sm.h"
 #include "modules/map.h"
+#include "modules/protocol_go_back_1.h"
 #include "modules/step.h"
 #include "modules/turn.h"
 #include "interfaces/acc.h"
 #include "interfaces/gyro.h"
-
-#include "utils/utils.h"
-#include "drivers/cc2500.h"
 #include "interfaces/led_interface.h"
-#include "modules/led_rotation_sm.h"
-#include "modules/commands.h"
-#include "modules/protocol_go_back_1.h"
+#include "utils/utils.h"
+
+/**
+ * The maximum number of coordinates to send via the wireless.
+ */
+#define MAX_COORDINATES_TO_SEND 20
+
+/**
+ * Main function wireless states.
+ */
+typedef enum {
+    CLEAR_STATE,
+    COORDINATES_STATE,
+    PLOT_STATE
+} wireless_states;
 
 /**
  * Flag to indicate when the SysTick timer ticks.
  */
 bool has_ticked = false;
 
-#define MAX_COORDINATES_TO_SEND 20
-
+/**
+ * Temporary buffer used to transfer data to the wireless.
+ */
 static uint8_t wireless_temp[200];
-static int16_t next_coordinates[MAX_COORDINATES_TO_SEND * 2 + 1];
-static uint8_t do_wait = 30;
 
-static const uint8_t ready = 1;
+/**
+ * The next set of coordnates to send
+ */
+static int16_t next_coordinates[MAX_COORDINATES_TO_SEND * 2 + 1];
+
+/**
+ * Time to wait between wireless calls.
+ */
+static uint8_t wireless_wait = 30;
 
 void do_send(void) {
 	protocol_go_back_1_periodic();
@@ -39,19 +59,19 @@ void do_send(void) {
 	static uint8_t prev = 0;
 	uint8_t state = protocol_go_back_1_get_state();
 	if (state == GO_BACK_ONE_SENDER_STATE_IDLE) {
-		static uint8_t sending_index = 99;
-		if (sending_index == 99) {
+		static wireless_states sending_index = CLEAR_STATE;
+		if (sending_index == CLEAR_STATE) {
 			printf("Sending CLEAR\n");
 			memcpy(wireless_temp + 1, CLEAR_COMMAND, COMMAND_CLEAR_LEN);
 			protocol_go_back_1_send(wireless_temp + 1, COMMAND_CLEAR_LEN);
-			sending_index = 0;
-		} else if (sending_index < ready) {
+			sending_index = COORDINATES_STATE;
+		} else if (sending_index == COORDINATES_STATE) {
             uint16_t length;
             map_terminate_processing();
             int8_t ret = map_get_next_coordinates(next_coordinates + 1, &length, 
                 MAX_COORDINATES_TO_SEND * 2);
             if (!ret) {
-                sending_index = ready;
+                sending_index = PLOT_STATE;
             } else {
                 printf("Length: %d\n", length);
                 printf("Coordinates to send: ");
@@ -62,20 +82,20 @@ void do_send(void) {
                 protocol_go_back_1_send((uint8_t *) (next_coordinates + 1), 
                     length * sizeof(int16_t));
             }
-		} else if (sending_index == ready) {
+		} else if (sending_index == PLOT_STATE) {
 			printf("Sending PLOT\n");
 			memcpy(wireless_temp + 1, PLOT_COMMAND, COMMAND_PLOT_LEN);
 			protocol_go_back_1_send(wireless_temp + 1, COMMAND_PLOT_LEN);
 			sending_index++;
 		} else {
-			sending_index = 99;
+			sending_index = CLEAR_STATE;
 			printf("Done\n");
 		}
 	} else {
 		if (state == GO_BACK_ONE_SENDER_STATE_SEND) {
-			do_wait = 3;
+			wireless_wait = 3;
 		} else {
-			do_wait = 1;
+			wireless_wait = 1;
 		}
 		
 		if (state != prev) {
@@ -92,12 +112,12 @@ void init() {
     // Set the frequency of the SysTick interrupt to 50 Hz
 	SysTick_Config(SystemCoreClock / 50);
 
+    // Initialize LEDs
 	led_init();
+    // Initialize wireless
 	CC2500_LowLevel_Init();
 	CC2500_Reset();
-	
 	protocol_go_back_1_init(GO_BACK_ONE_MODE_SENDER);
-	
     // Initialize accelerometer
     acc_init();
 	// Initialize gyroscope
@@ -129,19 +149,28 @@ int main() {
         }
 
 		if (has_ticked) {
+            // LED rotation (for fun!)
 			led_rotation_rotate_leds();
 
+            // Step and turn detection
             step_update(acc_get_x());
             turn_update(gyro_get_x());
             
+            // Print out acc and gyro values for debug purposes
+            static uint8_t agcount = 0;
+            agcount = (agcount + 1) % 50;
+            if (agcount == 0) {
+                printf("%f - %f\n", acc_get_x(), gyro_get_x());
+            }
+            
+            // Wireless transmission
 			static uint8_t count = 0;
-			count = (count + 1) % do_wait;
+			count = (count + 1) % wireless_wait;
 			if (count == 0) {
 				do_send();
 			}
 							
             has_ticked = false;
-			
         }
     }
 }

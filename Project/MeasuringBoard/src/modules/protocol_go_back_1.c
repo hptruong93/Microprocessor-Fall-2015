@@ -204,8 +204,8 @@ static void protocol_go_back_1_periodic_sender(void) {
 		}
 
 		wireless_transmission_get_received_packet(&received_packet);
-		// printf("Received %d bytes\n", received_packet.len);
-		// print_buffer(receive_buffer, 20);
+		printf("Received %d bytes\n", received_packet.len);
+		print_buffer(receive_buffer, 20);
 		if (received_packet.status != WIRELESS_TRANSMISSION_VERIFY_OK) {
 			if (consider_retransmit() == FALSE) {
 				wireless_transmission_receive_packet();	

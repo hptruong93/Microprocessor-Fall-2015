@@ -32,6 +32,28 @@ static float calibration_offset_matrix[AXES_COUNT] = {
     650
 };
 
+
+#define GYRO_TIM               TIM3
+#define GYRO_TIM_RCC           RCC_APB1Periph_TIM3
+
+/**
+ * The timer frequency is 120 Hz.
+ *
+ * The following formula was used to calculate the prescaler and period to get
+ * this frequency:
+ *
+ * 120 Hz = 84000000 Hz / (prescaler * period)
+ *
+ * 5 and 56000 happens to be one integer solution to this formula, but others
+ * would work.
+ */
+#define GYRO_TIM_PRESCALER     (uint16_t) 15
+#define GYRO_TIM_PERIOD        (uint16_t) 56000
+
+#define GYRO_NVIC_CHANNEL      TIM3_IRQn
+#define GYRO_NVIC_PRIORITY     (uint8_t) 1
+#define GYRO_NVIC_SUBPRIORITY  (uint8_t) 0
+
 // Flag indicating that the gyroscope interrupt has been triggered
 bool gyro_interrupt = false;
 
@@ -56,6 +78,7 @@ static int8_t filter_occupied[AXES_COUNT];
  * Initializes the gyroscope.
  */
 void gyro_init(void) {
+    // Initialize gyroscope
     lsm9ds1_gyro_init_type init;
     init.data_rate = LSM9DS1_G_DATA_RATE_119;
     init.full_scale = LSM9DS1_G_FULL_SCALE_500;
@@ -64,6 +87,36 @@ void gyro_init(void) {
         LSM9DS1_G_AXIS_ENABLE_Z;
     init.data_ready_interrupt_enabled = LSM9DS1_G_DR_INTERRUPT_ENABLED;
     lsm9ds1_gyro_init(&init);
+    
+    // Enable clock for 7-segment timer
+    RCC_APB1PeriphClockCmd(GYRO_TIM_RCC, ENABLE);
+
+    // Configure the 7-segment timer
+    TIM_TimeBaseInitTypeDef tim_init;
+    // Period and prescaler used to divide the clock frequency to the desired
+    // timer frequency; see comments above for how these values were determined
+    tim_init.TIM_Prescaler = GYRO_TIM_PERIOD - 1;
+    tim_init.TIM_Period = GYRO_TIM_PRESCALER - 1;
+    // Counter mode arbitrarily selected (either up or down could work)
+    tim_init.TIM_CounterMode = TIM_CounterMode_Up;
+    // No clock division (set divisior to /1) for digital filter (no external
+    // triggering)
+    tim_init.TIM_ClockDivision = TIM_CKD_DIV1;
+    TIM_TimeBaseInit(GYRO_TIM, &tim_init);
+
+    // Enable the timer interrupt (from the timer point of view; we still have
+    // to set up NVIC separately)
+    TIM_ITConfig(GYRO_TIM, TIM_IT_Update, ENABLE);
+    // Enable timer
+    TIM_Cmd(GYRO_TIM, ENABLE);
+
+    // Configure NVIC for timer so that timer ticks will trigger interrupts
+    NVIC_InitTypeDef nvic_init;
+    nvic_init.NVIC_IRQChannel = GYRO_NVIC_CHANNEL;
+    nvic_init.NVIC_IRQChannelPreemptionPriority = GYRO_NVIC_PRIORITY;
+    nvic_init.NVIC_IRQChannelSubPriority = GYRO_NVIC_SUBPRIORITY;
+    nvic_init.NVIC_IRQChannelCmd = ENABLE;
+    NVIC_Init(&nvic_init);
 }
 
 /**
@@ -135,6 +188,16 @@ void gyro_update(void) {
 void EXTI1_IRQHandler(void) {
     if (EXTI_GetITStatus(EXTI_Line1) != RESET) {
         EXTI_ClearITPendingBit(EXTI_Line1);
+        // Do nothing - replaced by timer
+    }
+}
+
+/**
+ * Interrupt handler for TIM3.
+ */
+void TIM3_IRQHandler(void) {
+    if (TIM_GetITStatus(GYRO_TIM, TIM_IT_Update) != RESET) {
+        TIM_ClearITPendingBit(GYRO_TIM, TIM_IT_Update);
         gyro_interrupt = true;
     }
 }

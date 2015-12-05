@@ -84,12 +84,14 @@
 #define LSM9DS1_CTRL_REG4                    ((uint8_t) 0x1E)
 #define LSM9DS1_CTRL_REG5_XL                 ((uint8_t) 0x1F)
 #define LSM9DS1_CTRL_REG6_XL                 ((uint8_t) 0x20)
+#define LSM9DS1_CTRL_REG8                    ((uint8_t) 0x22)
 #define LSM9DS1_OUT_X_L_XL                   ((uint8_t) 0x28)
 #define LSM9DS1_OUT_X_H_XL                   ((uint8_t) 0x29)
 #define LSM9DS1_OUT_Y_L_XL                   ((uint8_t) 0x2A)
 #define LSM9DS1_OUT_Y_H_XL                   ((uint8_t) 0x2B)
 #define LSM9DS1_OUT_Z_L_XL                   ((uint8_t) 0x2C)
 #define LSM9DS1_OUT_Z_H_XL                   ((uint8_t) 0x2D)
+#define LSM9DS1_FIFO_CTRL                    ((uint8_t) 0x2E)
 
 /**
  * Options
@@ -158,6 +160,14 @@
 #define LSM9DS1_XL_ANTI_ALIASING_BW_211      ((uint8_t) 0x01)
 #define LSM9DS1_XL_ANTI_ALIASING_BW_105      ((uint8_t) 0x02)
 #define LSM9DS1_XL_ANTI_ALIASING_BW_50       ((uint8_t) 0x03)
+
+// LSM9DS1_CTRL_REG8
+
+#define LSM9DS1_BOOT_ON                      ((uint8_t) 0x01 << 7)
+#define LSM9DS1_BOOT_OFF                     ((uint8_t) 0x00 << 7)
+
+#define LSM9DS1_SW_RESET_ON                  ((uint8_t) 0x01)
+#define LSM9DS1_SW_RESET_OFF                 ((uint8_t) 0x00)
 
 /**
  * Initialization struct definitions

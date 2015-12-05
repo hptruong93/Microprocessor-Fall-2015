@@ -18,6 +18,27 @@ typedef enum {
     AXIS_Z
 } axes_type;
 
+#define ACC_TIM               TIM2
+#define ACC_TIM_RCC           RCC_APB1Periph_TIM2
+
+/**
+ * The timer frequency is 100 Hz.
+ *
+ * The following formula was used to calculate the prescaler and period to get
+ * this frequency:
+ *
+ * 100 Hz = 84000000 Hz / (prescaler * period)
+ *
+ * 5 and 56000 happens to be one integer solution to this formula, but others
+ * would work.
+ */
+#define ACC_TIM_PRESCALER     (uint16_t) 15
+#define ACC_TIM_PERIOD        (uint16_t) 56000
+
+#define ACC_NVIC_CHANNEL      TIM2_IRQn
+#define ACC_NVIC_PRIORITY     (uint8_t) 1
+#define ACC_NVIC_SUBPRIORITY  (uint8_t) 0
+
 // Calibration matrices used to calibrate the accelerometer readings. The
 // matrices were derived from a 3 variable least-squares approximation on test
 // data
@@ -56,6 +77,7 @@ static int8_t filter_occupied[AXES_COUNT];
  * Initializes the accelerometer.
  */
 void acc_init(void) {
+    // Initialize accelerometer
     lsm9ds1_acc_init_type init;
     init.data_rate = LSM9DS1_XL_DATA_RATE_119;
     init.full_scale = LSM9DS1_XL_FULL_SCALE_4;
@@ -65,6 +87,36 @@ void acc_init(void) {
         LSM9DS1_XL_AXIS_ENABLE_Z;
     init.data_ready_interrupt_enabled = LSM9DS1_XL_DR_INTERRUPT_ENABLED;
     lsm9ds1_acc_init(&init);
+    
+    // Enable clock for 7-segment timer
+    RCC_APB1PeriphClockCmd(ACC_TIM_RCC, ENABLE);
+
+    // Configure the 7-segment timer
+    TIM_TimeBaseInitTypeDef tim_init;
+    // Period and prescaler used to divide the clock frequency to the desired
+    // timer frequency; see comments above for how these values were determined
+    tim_init.TIM_Prescaler = ACC_TIM_PERIOD - 1;
+    tim_init.TIM_Period = ACC_TIM_PRESCALER - 1;
+    // Counter mode arbitrarily selected (either up or down could work)
+    tim_init.TIM_CounterMode = TIM_CounterMode_Up;
+    // No clock division (set divisior to /1) for digital filter (no external
+    // triggering)
+    tim_init.TIM_ClockDivision = TIM_CKD_DIV1;
+    TIM_TimeBaseInit(ACC_TIM, &tim_init);
+
+    // Enable the timer interrupt (from the timer point of view; we still have
+    // to set up NVIC separately)
+    TIM_ITConfig(ACC_TIM, TIM_IT_Update, ENABLE);
+    // Enable timer
+    TIM_Cmd(ACC_TIM, ENABLE);
+
+    // Configure NVIC for timer so that timer ticks will trigger interrupts
+    NVIC_InitTypeDef nvic_init;
+    nvic_init.NVIC_IRQChannel = ACC_NVIC_CHANNEL;
+    nvic_init.NVIC_IRQChannelPreemptionPriority = ACC_NVIC_PRIORITY;
+    nvic_init.NVIC_IRQChannelSubPriority = ACC_NVIC_SUBPRIORITY;
+    nvic_init.NVIC_IRQChannelCmd = ENABLE;
+    NVIC_Init(&nvic_init);
 }
 
 
@@ -121,6 +173,7 @@ void acc_update(void) {
     lsm9ds1_get_acceleration(&filter[filter_index[AXIS_X]][AXIS_X],
                              &filter[filter_index[AXIS_Y]][AXIS_Y],
                              &filter[filter_index[AXIS_Z]][AXIS_Z]);
+    
     for (uint8_t i = 0; i < AXES_COUNT; i++) {
         if (filter_occupied[i] < FILTER_SIZE) {
             filter_occupied[i] += 1;
@@ -137,6 +190,16 @@ void acc_update(void) {
 void EXTI0_IRQHandler(void) {
     if (EXTI_GetITStatus(EXTI_Line0) != RESET) {
         EXTI_ClearITPendingBit(EXTI_Line0);
+        // Do nothing - replaced with timer
+    }
+}
+
+/**
+ * Interrupt handler for TIM2.
+ */
+void TIM2_IRQHandler(void) {
+    if (TIM_GetITStatus(ACC_TIM, TIM_IT_Update) != RESET) {
+        TIM_ClearITPendingBit(ACC_TIM, TIM_IT_Update);
         acc_interrupt = true;
     }
 }
