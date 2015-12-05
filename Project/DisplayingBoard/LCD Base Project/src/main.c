@@ -25,8 +25,23 @@
 #include "utils/utils.h"
 #include "my_types.h"
 
+/**
+ *	Micro P lab has 34 floor tiles
+ *	Each floor tile is 12 inches = 1 foot
+ *		calcualted by almost 2 US dollar bills
+ *		around 1 + 1/12 sheet of US letter paper
+ *		verfied with measuring tape
+ *
+ *	bottom of lab is pixel 316
+ *	top of lab is pixel 253
+ *
+ *	lab is 63 pixels long and 34 feet
+ *	each pixel is then 34/63 ~= 0.540 feet
+ *
+ *	Each foot is 1.85194 = approx. 1.853x
+ */
 #define MSTEP_TO_FEET 2.5f
-#define FEET_TO_PIXEL 1.88f
+#define FEET_TO_PIXEL 1.853f
 #define MSTEP_TO_PIXEL MSTEP_TO_FEET * FEET_TO_PIXEL
 #define LAB_DOOR_PX_X 163
 #define LAB_DOOR_PX_Y 266
@@ -65,8 +80,8 @@ void mstep_to_pixloc(int16_t* mstep_coord, uint8_t length) {
 }
 
 static uint8_t is_drawing;
-static COORDINATE_TYPE xs[255];
-static COORDINATE_TYPE ys[255];
+static COORDINATE_TYPE xs[COORDINATE_DB_SIZE];
+static COORDINATE_TYPE ys[COORDINATE_DB_SIZE];
 
 /**
  *	Draw an array of points on the screen, taking into account a scaling factor.

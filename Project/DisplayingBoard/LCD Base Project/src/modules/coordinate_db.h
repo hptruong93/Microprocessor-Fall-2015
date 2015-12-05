@@ -3,7 +3,7 @@
 
 #include "stm32f4xx.h"
 
-#define COORDINATE_DB_SIZE 100
+#define COORDINATE_DB_SIZE 250
 #define COORDINATE_SIZE    2
 
 typedef int16_t COORDINATE_TYPE;
