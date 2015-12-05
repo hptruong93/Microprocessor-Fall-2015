@@ -1,3 +1,9 @@
+"""
+    Converts a bitmap image (.bmp) to text usable in a header file for deployment on an STM board.
+
+    This script converts our Trottier floor map bmp file into hex that is deployable
+"""
+
 import sys
 
 if __name__ == "__main__":
