@@ -284,19 +284,6 @@ int main (void) {
 	LCD_SetFont(&Font16x24);
 	LCD_Clear(LCD_COLOR_WHITE);
 
-	//For testing
-	//static uint16_t test[] = {1, 1, 2, 2, 3, 3};
-	// static int16_t test[] = {	0, 0,
-	// 							2, 0,
-	// 							2, 5,
-	// 						  -10, 5,
-	// 						  -10, 9,
-	// 						    0, 9	};
-	// mstep_to_pixloc(test, sizeof(test) / sizeof(int16_t) );
-	// coordinate_db_insert_entry(test, sizeof(test) / sizeof(int16_t) );
-	// draw_from_db();
-	//return 1;
-
 	receive_and_plot_thread = osThreadCreate(osThread(receive_and_plot), NULL);
 	print_lcd_debug_thread = osThreadCreate(osThread(print_lcd_debug), NULL);
 
