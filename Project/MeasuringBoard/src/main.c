@@ -9,14 +9,12 @@
 #include "drivers/cc2500.h"
 #include "drivers/lsm9ds1.h"
 #include "modules/commands.h"
-#include "modules/led_rotation_sm.h"
 #include "modules/map.h"
 #include "modules/protocol_go_back_1.h"
 #include "modules/step.h"
 #include "modules/turn.h"
 #include "interfaces/acc.h"
 #include "interfaces/gyro.h"
-#include "interfaces/led_interface.h"
 #include "utils/utils.h"
 
 /**
@@ -124,8 +122,6 @@ void init() {
     // Set the frequency of the SysTick interrupt to 50 Hz
 	SysTick_Config(SystemCoreClock / 50);
 
-    // Initialize LEDs
-	led_init();
     // Initialize wireless
 	CC2500_LowLevel_Init();
 	CC2500_Reset();
@@ -161,8 +157,6 @@ int main() {
         }
 
 		if (has_ticked) {
-            // LED rotation (for fun!)
-			led_rotation_rotate_leds();
 
             // Step and turn detection
             step_update(acc_get_x());
